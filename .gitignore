@@ -7,3 +7,4 @@ npm-debug.*
 *.mobileprovision
 haters/
 .DS_Store
+secrets.js
