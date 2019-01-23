@@ -1,4 +1,6 @@
 {
+  "name": "omw",
+  "version": "0.0.1",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -21,5 +23,6 @@
     "babel-preset-expo": "^5.0.0",
     "jest-expo": "^32.0.0"
   },
-  "private": true
+  "private": true,
+  "author": "On My Way"
 }
