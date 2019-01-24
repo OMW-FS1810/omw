@@ -33,7 +33,7 @@ export default class EventMap extends React.Component {
     return (
       <MapView
         style={styles.container}
-        // showsUserLocation={true}
+        showsUserLocation={true}
         region={region}
         provider={MapView.PROVIDER_GOOGLE}
       >

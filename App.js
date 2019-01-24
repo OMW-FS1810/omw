@@ -1,9 +1,7 @@
 import React from 'react';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
-import { EventMap } from './screens';
-import { Homepage } from './components';
 import { Provider as StoreProvider } from 'react-redux';
-import store from './store';
+import { AppWithNavigationState, store } from './redux/store';
 
 const theme = {
   ...DefaultTheme,
@@ -19,7 +17,7 @@ export default class App extends React.Component {
     return (
       <StoreProvider store={store}>
         <PaperProvider theme={theme}>
-          <EventMap />
+          <AppWithNavigationState />
         </PaperProvider>
       </StoreProvider>
     );
