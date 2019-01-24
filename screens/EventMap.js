@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
-import { Location, Permissions } from 'expo';
+import { Location, Permissions, TaskManager, Notifications } from 'expo';
 import { Map } from '../components';
 import { connect } from 'react-redux';
 
@@ -12,12 +12,26 @@ let styles = StyleSheet.create({
   }
 });
 
+const SEND_LOCATION = 'sendLocation';
+
+//This logs our location, running in the background -- NOT IN USE
+TaskManager.defineTask(SEND_LOCATION, ({ data: { locations }, err }) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log('Received new location:', locations[0]);
+});
+
 export default class EventMap extends React.Component {
   constructor() {
     super();
     this.state = {
       region: null,
-      coordinate: null,
+      eventLocation: {
+        latitude: 41.8789,
+        longitude: -87.6358
+      },
       errorMessage: ''
     };
   }
@@ -28,7 +42,7 @@ export default class EventMap extends React.Component {
         errorMessage: 'Permission to access location was denied'
       });
     }
-
+    //This gets our position for our map
     const location = await Location.getCurrentPositionAsync({});
 
     const region = {
@@ -37,22 +51,21 @@ export default class EventMap extends React.Component {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421
     };
-    const coordinate = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude
-    };
-    await this.setState({ region, coordinate });
+    await this.setState({ region });
   };
   async componentDidMount() {
+    //gets my location
     this.getLocationAsync();
-    await Location.watchPositionAsync({ distanceInterval: 10 }, locObj =>
-      console.log(locObj)
-    );
-    console.log(this.state);
+    //triggers sending my location in the background -- NOT IN USE
+    // await Location.startLocationUpdatesAsync(SEND_LOCATION, {
+    //   accuracy: Location.Accuracy.BestForNavigation,
+    //   distanceInterval: 50,
+    //   timeInterval: 60000
+    // });
   }
   render() {
     return (
-      <Map region={this.state.region} coordinate={this.state.coordinate} />
+      <Map region={this.state.region} coordinate={this.state.eventLocation} />
     );
   }
 }
