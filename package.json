@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "expo": "^32.0.0",
+    "expo-server-sdk": "^3.1.0",
     "firebase": "^5.8.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-maps": "^0.23.0",
     "react-native-paper": "^2.6.1",
     "react-navigation": "^3.0.9",
     "react-navigation-redux-helpers": "^2.0.9",

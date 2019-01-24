@@ -1,19 +1,26 @@
 import React from 'react';
-import { createStackNavigator, createDrawerNavigator, DrawerActions } from 'react-navigation';
+import {
+  createStackNavigator,
+  createDrawerNavigator,
+  DrawerActions
+} from 'react-navigation';
 import { Text, Button } from 'react-native';
 
-import LoginScreen from '../screen/LoginScreen';
-import SignupScreen from '../screen/SignupScreen';
-import ForgotPasswordScreen from '../screen/ForgotPasswordScreen';
-import Screen1 from '../screen/Screen1';
-import Screen2 from '../screen/Screen2';
-import Screen3 from '../screen/Screen3';
+import {
+  LoginScreen,
+  SignupScreen,
+  ForgotPasswordScreen,
+  EventMap,
+  Screen1,
+  Screen2,
+  Screen3
+} from '../screen';
 
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator({
   screen1: { screen: Screen1 },
   screen2: { screen: Screen2 },
-  screen3: { screen: Screen3 }
+  EventMap: { screen: EventMap }
 });
 
 //LOGGED IN DRAWER STACK
@@ -26,7 +33,12 @@ const DrawerNavigation = createStackNavigator(
     navigationOptions: ({ navigation }) => ({
       headerStyle: { backgroundColor: '#384D66' },
       title: 'Logged in!',
-      headerLeft: <Button onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} title='MENU'/>
+      headerLeft: (
+        <Button
+          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          title="MENU"
+        />
+      )
     })
   }
 );

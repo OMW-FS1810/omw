@@ -1,8 +1,7 @@
 import React from 'react';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Provider as StoreProvider } from 'react-redux';
-import {AppWithNavigationState, store} from './redux/store';
-
+import { AppWithNavigationState, store } from './redux/store';
 
 const theme = {
   ...DefaultTheme,
