@@ -12,6 +12,12 @@
 
 ---
 
-### Technologies:
+### Technologies used:
 
-React-Native • Firebase • Expo • Redux • GoogleMaps API
+React Native • Expo.io • Redux • Firebase • Google Maps API • Facebook OAuth
+
+---
+
+OMW (On My Way) is a social collaboration mobile app that helps bring people together for successful events.
+
+Users create an event, mark it with a destination and time, invite their friends, and then track in real-time as everyone arrives.

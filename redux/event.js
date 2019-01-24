@@ -1,11 +1,26 @@
-const defaultEvent = {};
+import { database } from '../config/firebase';
 
-/**
- * REDUCER
- */
-export default function(state = defaultEvent, action) {
+// ACTION TYPES
+
+// ACTION CREATORS
+
+// THUNK CREATORS
+// export const createEvent = () => async dispatch => {
+//   try {
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+
+const defaultEvent = {
+  events: []
+};
+// REDUCER
+const event = (state = defaultEvent, action) => {
   switch (action.type) {
     default:
       return state;
   }
-}
+};
+
+export default event;

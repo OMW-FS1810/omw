@@ -11,16 +11,15 @@ import {
   SignupScreen,
   ForgotPasswordScreen,
   EventMap,
-  Screen1,
-  Screen2,
-  Screen3
-} from '../screen';
+  CreateEvent,
+  Screen1
+} from '../screens';
 
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator({
   screen1: { screen: Screen1 },
-  screen2: { screen: Screen2 },
-  EventMap: { screen: EventMap }
+  'Create an Event': { screen: CreateEvent },
+  'Event Map': { screen: EventMap }
 });
 
 //LOGGED IN DRAWER STACK
