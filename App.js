@@ -1,12 +1,7 @@
 import React from 'react';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
-import { Homepage } from './components';
-import { CreateEvent } from './screens';
 import { Provider as StoreProvider } from 'react-redux';
-import store from './store';
-import * as firebase from 'firebase';
-
-import { config } from './config/firebase';
+import { AppWithNavigationState, store } from './redux/store';
 
 const theme = {
   ...DefaultTheme,
@@ -27,7 +22,7 @@ export default class App extends React.Component {
     return (
       <StoreProvider store={store}>
         <PaperProvider theme={theme}>
-          <CreateEvent />
+          <AppWithNavigationState />
         </PaperProvider>
       </StoreProvider>
     );

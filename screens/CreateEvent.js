@@ -24,14 +24,14 @@ class CreateEvent extends Component {
         time,
         location
       });
-      console.log(event);
+      // console.log(event);
     } catch (error) {
       console.error(error);
     }
   };
 
   render() {
-    console.log(this.state);
+    // console.log(this.state);
 
     return (
       <View style={styles.container}>
