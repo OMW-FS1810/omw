@@ -1,7 +1,9 @@
 import React from 'react';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Homepage } from './components';
+import { CreateEvent } from './screens';
 import { Provider as StoreProvider } from 'react-redux';
+import { Font } from 'expo';
 import store from './store';
 
 const theme = {
@@ -14,11 +16,17 @@ const theme = {
 };
 
 export default class App extends React.Component {
+  // componentDidMount() {
+  //   Font.loadAsync({
+  //     'San-Francisco-Light': require('./assets/fonts/SFCompactDisplay-Thin.otf')
+  //   });
+  // }
+
   render() {
     return (
       <StoreProvider store={store}>
         <PaperProvider theme={theme}>
-          <Homepage />
+          <CreateEvent />
         </PaperProvider>
       </StoreProvider>
     );
