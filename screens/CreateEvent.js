@@ -1,42 +1,10 @@
+/* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { TextInput } from 'react-native-paper';
+import { TextInput, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  input: {
-    marginBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    marginTop: 10,
-    // paddingLeft: 20,
-    // paddingRight: 20,
-    width: '95%'
-  },
-  title: {
-    fontFamily: 'System',
-    fontSize: 30,
-    paddingBottom: 20,
-    marginBottom: 20
-  },
-  date: {
-    marginBottom: 5,
-    marginTop: 10,
-    // flex: 1,
-    width: '95%',
-    // backgroundColor: 'powderblue'
-    justifyContent: 'center',
-    borderRadius: 5
-  }
-});
 const now = new Date();
 class CreateEvent extends Component {
   state = {
@@ -50,7 +18,9 @@ class CreateEvent extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Create an event!</Text>
+        <View style={styles.titleView}>
+          <Text style={styles.title}>Create an event!</Text>
+        </View>
         <TextInput
           style={styles.input}
           mode="outlined"
@@ -80,10 +50,66 @@ class CreateEvent extends Component {
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
         />
+        <View style={styles.bottom}>
+          <Button
+            onPress={() => console.log('button pressed')}
+            type="contained"
+            disabled={!this.state.date || !this.state.name || !this.state.time}
+          >
+            <Text style={styles.butonText}>next</Text>
+          </Button>
+        </View>
       </View>
     );
   }
 }
-// </View>
+let styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+    // backgroundColor: '#98B1C4'
+  },
+  titleView: {
+    marginTop: 100,
+    flex: 1
+  },
+  input: {
+    // backgroundColor: '#C8D7E3',
+    marginBottom: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 10,
+    width: '95%'
+  },
+  title: {
+    fontFamily: 'System',
+    fontSize: 40,
+    paddingBottom: 20,
+    marginBottom: 20,
+    color: '#2F4E6F',
+    fontWeight: '500'
+  },
+  date: {
+    marginBottom: 5,
+    // backgroundColor: '#C8D7E3',
+    marginTop: 10,
+    width: '95%',
+    justifyContent: 'center',
+    borderRadius: 5
+  },
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 36
+  },
+  butonText: {
+    // color: 'black',
+    fontSize: 30,
+    position: 'absolute',
+    bottom: 0
+  },
+  button: {}
+});
 
 export default CreateEvent;

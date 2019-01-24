@@ -16,12 +16,6 @@ const theme = {
 };
 
 export default class App extends React.Component {
-  // componentDidMount() {
-  //   Font.loadAsync({
-  //     'San-Francisco-Light': require('./assets/fonts/SFCompactDisplay-Thin.otf')
-  //   });
-  // }
-
   render() {
     return (
       <StoreProvider store={store}>
