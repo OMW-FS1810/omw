@@ -1,8 +1,9 @@
+import {
+  createNavigationReducer,
+} from 'react-navigation-redux-helpers';
+
 import AppNavigation from '../navigation/AppNavigation'
 
-const navReducer = (state, action) => {
-  const newState = AppNavigation.router.getStateForAction(action, state)
-  return newState || state
-}
+const navReducer = createNavigationReducer(AppNavigation)
 
 export default navReducer
