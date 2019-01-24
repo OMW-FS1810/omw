@@ -6,13 +6,15 @@ import {
 } from 'react-navigation';
 import { Text, Button } from 'react-native';
 
-import LoginScreen from '../screen/LoginScreen';
-import SignupScreen from '../screen/SignupScreen';
-import ForgotPasswordScreen from '../screen/ForgotPasswordScreen';
-import EventMap from '../screen/EventMap';
-import Screen1 from '../screen/Screen1';
-import Screen2 from '../screen/Screen2';
-import Screen3 from '../screen/Screen3';
+import {
+  LoginScreen,
+  SignupScreen,
+  ForgotPasswordScreen,
+  EventMap,
+  Screen1,
+  Screen2,
+  Screen3
+} from '../screen';
 
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator({
