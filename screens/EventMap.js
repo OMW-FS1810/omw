@@ -45,11 +45,12 @@ export default class EventMap extends React.Component {
     //This gets our position for our map
     const location = await Location.getCurrentPositionAsync({});
 
+    //might want to calculate starting delta based on event location so it's shown along with user position
     const region = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421
+      latitudeDelta: 0.0461,
+      longitudeDelta: 0.021
     };
     await this.setState({ region });
   };
@@ -57,11 +58,11 @@ export default class EventMap extends React.Component {
     //gets my location
     this.getLocationAsync();
     //triggers sending my location in the background -- NOT IN USE
-    // await Location.startLocationUpdatesAsync(SEND_LOCATION, {
-    //   accuracy: Location.Accuracy.BestForNavigation,
-    //   distanceInterval: 50,
-    //   timeInterval: 60000
-    // });
+    await Location.startLocationUpdatesAsync(SEND_LOCATION, {
+      accuracy: Location.Accuracy.BestForNavigation,
+      distanceInterval: 50,
+      timeInterval: 60000
+    });
   }
   render() {
     return (
