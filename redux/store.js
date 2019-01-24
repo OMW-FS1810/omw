@@ -4,10 +4,12 @@ import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import user from './user';
 import event from './event';
+import navReducer from './nav'
 
 const reducer = combineReducers({
   user,
-  event
+  event,
+  nav: navReducer
 });
 
 const middleware = composeWithDevTools(
