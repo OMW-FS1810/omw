@@ -22,11 +22,9 @@ export default class EventMap extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.coordinate) {
-      this.setState({
-        coordinate: this.props.coordinate
-      });
-    }
+    this.setState({
+      coordinate: this.props.coordinate
+    });
   }
   render() {
     const { region } = this.props;
@@ -37,12 +35,10 @@ export default class EventMap extends React.Component {
         style={styles.container}
         showsUserLocation={true}
         region={region}
+        provider={MapView.PROVIDER_GOOGLE}
       >
         {/* <Marker
-          coordinate={{
-            longitude: this.state.coordinate.longitude,
-            latitude: this.state.coordinate.latitude
-          }}
+          coordinate={this.state.coordinate}
           draggable={true}
           // coordinate={this.props.coordinate}
           onDragEnd={e =>

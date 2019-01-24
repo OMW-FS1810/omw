@@ -43,8 +43,12 @@ export default class EventMap extends React.Component {
     };
     await this.setState({ region, coordinate });
   };
-  componentDidMount() {
+  async componentDidMount() {
     this.getLocationAsync();
+    await Location.watchPositionAsync({ distanceInterval: 10 }, locObj =>
+      console.log(locObj)
+    );
+    console.log(this.state);
   }
   render() {
     return (
