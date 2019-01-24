@@ -6,3 +6,4 @@ export { default as Screen3 } from './Screen3';
 export { default as SignupScreen } from './SignupScreen';
 export { default as LoginScreen } from './LoginScreen';
 export { default as ForgotPasswordScreen } from './ForgotPasswordScreen';
+export { default as Auth } from './Auth';
