@@ -13,11 +13,6 @@ const theme = {
 };
 
 export default class App extends React.Component {
-  componentDidMount() {
-    // if (!firebase.apps.length) {
-    // firebase.initializeApp(config);
-    // }
-  }
   render() {
     return (
       <StoreProvider store={store}>

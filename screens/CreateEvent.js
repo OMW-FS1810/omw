@@ -18,7 +18,7 @@ class CreateEvent extends Component {
   handlePress = async () => {
     const { name, date, time, location } = this.state;
     try {
-      const { event } = await database.ref('/Events/').set({
+      await database.ref('/Events/').set({
         name,
         date,
         time,

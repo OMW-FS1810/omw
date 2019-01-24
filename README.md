@@ -12,7 +12,7 @@
 
 ---
 
-### technologies used:
+### Technologies used:
 
 React Native • Expo.io • Redux • Firebase • Google Maps API • Facebook OAuth
 
