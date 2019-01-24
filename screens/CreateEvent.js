@@ -1,16 +1,33 @@
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { TextInput, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
+import { database } from '../config/firebase';
 
 const now = new Date();
 class CreateEvent extends Component {
   state = {
     name: '',
     date: '',
-    time: ''
+    time: '',
+    location: ''
+  };
+
+  handlePress = async () => {
+    const { name, date, time, location } = this.state;
+    try {
+      const { event } = await database.ref('/Events/').set({
+        name,
+        date,
+        time,
+        location
+      });
+      console.log(event);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   render() {
@@ -27,6 +44,13 @@ class CreateEvent extends Component {
           label="Name"
           value={this.state.name}
           onChangeText={name => this.setState({ name })}
+        />
+        <TextInput
+          style={styles.input}
+          mode="outlined"
+          label="Location"
+          value={this.state.location}
+          onChangeText={location => this.setState({ location })}
         />
         <DatePicker
           label="Date"
@@ -52,9 +76,17 @@ class CreateEvent extends Component {
         />
         <View style={styles.bottom}>
           <Button
-            onPress={() => console.log('button pressed')}
+            onPress={() => {
+              console.log('button pressed');
+              // this.handlePress();
+            }}
             type="contained"
-            disabled={!this.state.date || !this.state.name || !this.state.time}
+            disabled={
+              !this.state.date ||
+              !this.state.name ||
+              !this.state.time ||
+              !this.state.location
+            }
           >
             <Text style={styles.butonText}>next</Text>
           </Button>
@@ -76,10 +108,11 @@ let styles = StyleSheet.create({
   },
   input: {
     // backgroundColor: '#C8D7E3',
-    marginBottom: 20,
+    // marginBottom: ,
+    borderColor: '#98B1C4',
     marginLeft: 20,
     marginRight: 20,
-    marginTop: 10,
+    marginTop: 5,
     width: '95%'
   },
   title: {
@@ -111,5 +144,9 @@ let styles = StyleSheet.create({
   },
   button: {}
 });
+
+// const mapDispatch = dispatch => ({
+//   createEvent
+// });
 
 export default CreateEvent;
