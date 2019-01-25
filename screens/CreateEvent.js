@@ -15,17 +15,18 @@ class CreateEvent extends Component {
   };
 
   handlePress = async () => {
-    const { name, date, time, location } = this.state;
-    try {
-      const data = await database.ref('Events/').push({
-        name,
-        date,
-        time,
-        location
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    this.props.navigation.navigate('Invite');
+    // const { name, date, time, location } = this.state;
+    // try {
+    //   const data = await database.ref('Events/').push({
+    //     name,
+    //     date,
+    //     time,
+    //     location
+    //   });
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   render() {
@@ -73,7 +74,6 @@ class CreateEvent extends Component {
         <View style={styles.bottom}>
           <Button
             onPress={() => {
-              console.log('button pressed');
               this.handlePress();
             }}
             type="contained"

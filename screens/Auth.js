@@ -78,7 +78,6 @@ class Auth extends React.Component {
         email: user.email
       });
       const currDevices = await database.ref(`/Devices/`);
-      console.log(user.uid);
       currDevices
         .orderByChild('userId')
         .equalTo(user.uid)
@@ -87,7 +86,6 @@ class Auth extends React.Component {
           const oldDevice = Object.keys(allDevices).filter(
             device => device !== deviceId
           )[0];
-          console.log('all', allDevices, 'old', oldDevice);
           await database.ref(`/Devices/${oldDevice}`).remove();
         });
     } catch (error) {

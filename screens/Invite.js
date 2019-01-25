@@ -22,11 +22,9 @@ class Invite extends Component {
     emails.push(email);
     this.setState({ emails });
     this.setState({ input: '' });
-    console.log(this.state);
   };
 
   render() {
-    console.log(this.state);
     return (
       <View style={styles.container}>
         <View style={styles.titleView}>
@@ -37,14 +35,17 @@ class Invite extends Component {
             value={this.state.input}
             label="Email"
             style={styles.input}
-            onChangeText={input => {
-              console.log(this.state);
-              this.setState({ input });
-            }}
+            onChangeText={input => this.setState({ input })}
           />
           <Button onPress={this.handleAddToInviteList}>
             <Text>invite this friendo!</Text>
           </Button>
+        </View>
+        <View>
+          {!!this.state.emails.length && <Text>Currently inviting:</Text>}
+          {this.state.emails.map(email => (
+            <Text key={email}>{email}</Text>
+          ))}
         </View>
         <View style={styles.button}>
           <Button onPress={this.handleCreateEvent}>

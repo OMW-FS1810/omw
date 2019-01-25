@@ -44,6 +44,12 @@ const DrawerNavigation = createStackNavigator(
   }
 );
 
+//CREATE EVENT STACK
+const CreateEventStack = createStackNavigator({
+  createEventScreen: { screen: CreateEvent },
+  inviteScreen: { screen: Invite }
+});
+
 //LOGIN STACK
 const LoginStack = createStackNavigator(
   {
@@ -67,7 +73,8 @@ const LoginStack = createStackNavigator(
 const PrimaryNav = createStackNavigator(
   {
     loginStack: { screen: LoginStack },
-    DrawerStack: { screen: DrawerNavigation }
+    DrawerStack: { screen: DrawerNavigation },
+    createEventStack: { screen: CreateEventStack }
   },
   {
     headerMode: 'float',
