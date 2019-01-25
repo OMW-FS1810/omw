@@ -51,14 +51,12 @@ class Auth extends React.Component{
     try {
       const data = await auth.signInWithEmailAndPassword(email.trim(), password);
       if (data) {
-        console.log('AM i ever in here', data.user);
         this.props.setUser(data.user);
         this.props.navigation.navigate('Create an Event');
 
       }
       this.setState({email: '', password: ''});
     } catch(error) {
-      console.log('AM i ever in here');
       this.setState({error: error.message})
 
     }
@@ -71,7 +69,6 @@ class Auth extends React.Component{
   // }
 
   render (){
-    // console.log('what are my props,', this.props);
     return (
       <View style={styles.container}>
         <View style={styles.content}>
