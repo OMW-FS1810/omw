@@ -6,7 +6,6 @@ import { TextInput, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { database } from '../config/firebase';
 
-const now = new Date();
 class CreateEvent extends Component {
   state = {
     name: '',
@@ -16,23 +15,21 @@ class CreateEvent extends Component {
   };
 
   handlePress = async () => {
-    const { name, date, time, location } = this.state;
-    try {
-      await database.ref('/Events/').set({
-        name,
-        date,
-        time,
-        location
-      });
-      // console.log(event);
-    } catch (error) {
-      console.error(error);
-    }
+    this.props.navigation.navigate('Invite');
+    // const { name, date, time, location } = this.state;
+    // try {
+    //   const data = await database.ref('Events/').push({
+    //     name,
+    //     date,
+    //     time,
+    //     location
+    //   });
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   render() {
-    // console.log(this.state);
-
     return (
       <View style={styles.container}>
         <View style={styles.titleView}>
@@ -77,8 +74,7 @@ class CreateEvent extends Component {
         <View style={styles.bottom}>
           <Button
             onPress={() => {
-              console.log('button pressed');
-              // this.handlePress();
+              this.handlePress();
             }}
             type="contained"
             disabled={
@@ -108,7 +104,6 @@ let styles = StyleSheet.create({
   },
   input: {
     // backgroundColor: '#C8D7E3',
-    // marginBottom: ,
     borderColor: '#98B1C4',
     marginLeft: 20,
     marginRight: 20,
@@ -137,16 +132,11 @@ let styles = StyleSheet.create({
     marginBottom: 36
   },
   butonText: {
-    // color: 'black',
     fontSize: 30,
     position: 'absolute',
     bottom: 0
   },
   button: {}
 });
-
-// const mapDispatch = dispatch => ({
-//   createEvent
-// });
 
 export default CreateEvent;

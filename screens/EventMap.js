@@ -24,7 +24,6 @@ TaskManager.defineTask(SEND_LOCATION, async ({ data: { locations }, err }) => {
     console.error(err);
     return;
   }
-  console.log('Sending new location:', locations[0]);
   try {
     await database.ref(`/Devices/${deviceId}`).update({
       coords: locations[0].coords,
@@ -88,7 +87,6 @@ class EventMap extends React.Component {
   };
   locateMembers = members => {
     //turns the object into an array
-    console.log(members);
     const eventMembers = Object.keys(members)
       // filters this device out of the group of members (disabled)
       // .filter(member => member !== myId)
@@ -96,7 +94,6 @@ class EventMap extends React.Component {
         return [device, members[device]];
       });
     this.setState({ eventMembers });
-    // console.log('state in locate mems: ', this.state);
   };
   async componentDidMount() {
     try {

@@ -21,7 +21,6 @@ export default class EventMap extends React.Component {
   renderMemberMarkers = () => {
     return this.props.eventMembers.map(member => {
       let markerName;
-      console.log(member);
       if (member[1].email) {
         markerName = member[1].email;
       } else {

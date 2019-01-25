@@ -12,14 +12,16 @@ import {
   ForgotPasswordScreen,
   EventMap,
   CreateEvent,
-  Auth
+  Auth,
+  Invite
 } from '../screens';
 
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator({
-  'Auth': { screen: Auth },
+  Auth: { screen: Auth },
   'Create an Event': { screen: CreateEvent },
-  'Event Map': { screen: EventMap }
+  'Event Map': { screen: EventMap },
+  Invite: { screen: Invite }
 });
 
 //LOGGED IN DRAWER STACK
@@ -42,11 +44,17 @@ const DrawerNavigation = createStackNavigator(
   }
 );
 
+//CREATE EVENT STACK
+const CreateEventStack = createStackNavigator({
+  createEventScreen: { screen: CreateEvent },
+  inviteScreen: { screen: Invite }
+});
+
 //LOGIN STACK
 const LoginStack = createStackNavigator(
   {
     loginScreen: { screen: LoginScreen },
-    'signupScreen': { screen: SignupScreen },
+    signupScreen: { screen: SignupScreen },
     forgotPasswordScreen: {
       screen: ForgotPasswordScreen,
       navigationOptions: { title: 'Forgot Password' }
@@ -65,7 +73,8 @@ const LoginStack = createStackNavigator(
 const PrimaryNav = createStackNavigator(
   {
     loginStack: { screen: LoginStack },
-    DrawerStack: { screen: DrawerNavigation }
+    DrawerStack: { screen: DrawerNavigation },
+    createEventStack: { screen: CreateEventStack }
   },
   {
     headerMode: 'float',
