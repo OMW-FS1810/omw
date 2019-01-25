@@ -18,21 +18,19 @@ class CreateEvent extends Component {
   handlePress = async () => {
     const { name, date, time, location } = this.state;
     try {
-      await database.ref('/Events/').set({
+      const data = await database.ref('Events/').push({
         name,
         date,
         time,
         location
       });
-      // console.log(event);
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
   };
 
   render() {
-    // console.log(this.state);
-
     return (
       <View style={styles.container}>
         <View style={styles.titleView}>
@@ -78,7 +76,7 @@ class CreateEvent extends Component {
           <Button
             onPress={() => {
               console.log('button pressed');
-              // this.handlePress();
+              this.handlePress();
             }}
             type="contained"
             disabled={
