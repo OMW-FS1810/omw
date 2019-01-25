@@ -20,53 +20,57 @@ const myId = Constants.installationId;
 export default class EventMap extends React.Component {
   renderMemberMarkers = () => {
     return this.props.eventMembers.map(member => {
-      return member[0] === myId ? (
-        <Marker
-          key={member[0]}
-          title="Me"
-          description={member[0]}
-          coordinate={member[1].location.coords}
-          pinColor="green"
-        />
-      ) : (
-        <Marker
-          key={member[0]}
-          title="Event Member"
-          description={member[0]}
-          coordinate={member[1].location.coords}
-          pinColor="blue"
-        />
+      let markerName;
+      console.log(member);
+      if (member[1].email) {
+        markerName = member[1].email;
+      } else {
+        markerName = 'Unknown Member';
+      }
+      return (
+        //only return members who are not this device -- give device ID as description
+        member[0] !== myId && (
+          <Marker
+            key={member[0]}
+            title={markerName}
+            description={member[0]}
+            coordinate={member[1].coords}
+            pinColor="blue"
+          />
+        )
       );
+      // );
     });
   };
   componentDidMount() {}
   render() {
-    const { region, updateMapRegion } = this.props;
-
+    const { region, updateMapRegion, user } = this.props;
     return (
-      <MapView
-        style={styles.container}
-        // showsUserLocation={true}
-        followsUserLocation={true}
-        showsMyLocationButton={true}
-        showsCompass={true}
-        showsScale={true}
-        region={region}
-        onRegionChangeComplete={e => updateMapRegion(e)}
-        provider={MapView.PROVIDER_GOOGLE}
-        customMapStyle={mapStyle}
-      >
-        {this.renderMemberMarkers()}
-        <Marker
-          coordinate={this.props.coordinate}
-          title={this.props.coordinate.title}
-          description={this.props.coordinate.description}
-          // draggable={true}
-          // onDragEnd={e =>
-          //   this.setState({ coordinate: e.nativeEvent.coordinate })
-          // }
-        />
-      </MapView>
+      region && (
+        <MapView
+          style={styles.container}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          showsMyLocationButton={true}
+          showsCompass={true}
+          showsScale={true}
+          region={region}
+          onRegionChangeComplete={e => updateMapRegion(e)}
+          provider={MapView.PROVIDER_GOOGLE}
+          customMapStyle={mapStyle}
+        >
+          {this.renderMemberMarkers()}
+          <Marker
+            coordinate={this.props.coordinate}
+            title={this.props.coordinate.title}
+            description={this.props.coordinate.description}
+            // draggable={true}
+            // onDragEnd={e =>
+            //   this.setState({ coordinate: e.nativeEvent.coordinate })
+            // }
+          />
+        </MapView>
+      )
     );
   }
 }
