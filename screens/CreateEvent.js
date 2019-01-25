@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { TextInput, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { database } from '../config/firebase';
+import { populateEventDeets } from '../redux/event';
 
 class CreateEvent extends Component {
   state = {
@@ -14,19 +14,21 @@ class CreateEvent extends Component {
     location: ''
   };
 
-  handlePress = async () => {
+  componentDidMount() {
+    if (this.props.state.deets.name) {
+      this.setState({ ...this.props.state.deets });
+    }
+  }
+
+  handlePress = () => {
     this.props.navigation.navigate('Invite');
-    // const { name, date, time, location } = this.state;
-    // try {
-    //   const data = await database.ref('Events/').push({
-    //     name,
-    //     date,
-    //     time,
-    //     location
-    //   });
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    this.props.populateDeets(this.state);
+    this.setState({
+      name: '',
+      date: '',
+      time: '',
+      location: ''
+    });
   };
 
   render() {
@@ -73,9 +75,7 @@ class CreateEvent extends Component {
         />
         <View style={styles.bottom}>
           <Button
-            onPress={() => {
-              this.handlePress();
-            }}
+            onPress={this.handlePress}
             type="contained"
             disabled={
               !this.state.date ||
@@ -139,4 +139,15 @@ let styles = StyleSheet.create({
   button: {}
 });
 
-export default CreateEvent;
+const mapState = state => ({
+  deets: state.event.pendingCreateEventDeets
+});
+
+const mapDispatch = dispatch => ({
+  populateDeets: event => dispatch(populateEventDeets(event))
+});
+
+export default connect(
+  null,
+  mapDispatch
+)(CreateEvent);

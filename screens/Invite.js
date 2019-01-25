@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
+import { connect } from 'react-redux';
+import { populateEventEmails, createEvent } from '../redux/event';
 
 class Invite extends Component {
   state = {
@@ -9,11 +11,13 @@ class Invite extends Component {
     input: ''
   };
 
-  handleCreateEvent = async () => {
-    // try {
-    // } catch (error) {
-    //   console.error(error)
-    // }
+  handleCreateEvent = () => {
+    this.props.populateEmails(this.state.emails);
+    //! FINISH CREATEEVENT !!!!!!!!
+    this.props.this.setState({
+      emails: [],
+      input: ''
+    });
   };
 
   handleAddToInviteList = () => {
@@ -98,4 +102,11 @@ let styles = StyleSheet.create({
   }
 });
 
-export default Invite;
+const mapDispatch = dispatch => ({
+  populateEmails: emails => dispatch(populateEventEmails(emails))
+});
+
+export default connect(
+  null,
+  mapDispatch
+)(Invite);
