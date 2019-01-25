@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput, Text } from 'react-native';
-import { auth } from '../config/firebase';
+import { auth, provider } from '../config/firebase';
 import {setUser} from '../redux/store';
 import { connect } from 'react-redux'
 // import { Button } from 'react-native-paper'
@@ -62,6 +62,25 @@ class Auth extends React.Component{
     }
   }
 
+  googlePress = async () => {
+    console.log('Do I get here?')
+    try {
+      const data = await auth.signInWithPopup(provider)
+      if (data) {
+        console.log('Success!!!!')
+
+        // this.props.setUser(data.user);
+        // this.props.navigation.navigate('Create an Event');
+
+      }
+      // this.setState({email: '', password: ''});
+    } catch(error) {
+      console.log('Do I get here?')
+      this.setState({error: error.message})
+
+    }
+  }
+
   // placeNameChangeHandler = val => {
   //   this.setState({
   //     placeName: val
@@ -90,8 +109,8 @@ class Auth extends React.Component{
           <TouchableOpacity style={styles.button} onPress={this.handlePress}>
             <Text style={styles.buttonText}>Sign in</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up withGoogle</Text>
+          <TouchableOpacity style={styles.button} onPress={this.googlePress}>
+            <Text style={styles.buttonText}>Sign up with Google</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Sign up with Facebook</Text>
