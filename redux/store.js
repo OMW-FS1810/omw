@@ -10,14 +10,15 @@ import {
 } from 'react-navigation-redux-helpers';
 
 import AppNavigation from '../navigation/AppNavigation'
-import user from './user';
+
 import event from './event';
 import navReducer from './nav'
+import AuthReducer from './auth'
 
 const reducer = combineReducers({
-  user,
   event,
-  nav: navReducer
+  nav: navReducer,
+  user: AuthReducer
 });
 
 const middleware = createReactNavigationReduxMiddleware(
@@ -42,5 +43,6 @@ export const store = createStore(
 // );
 
 
-export * from './user';
+
 export * from './event';
+export * from './auth';
