@@ -46,7 +46,7 @@ const DrawerNavigation = createStackNavigator(
 const LoginStack = createStackNavigator(
   {
     loginScreen: { screen: LoginScreen },
-    signupScreen: { screen: SignupScreen },
+    'signupScreen': { screen: SignupScreen },
     forgotPasswordScreen: {
       screen: ForgotPasswordScreen,
       navigationOptions: { title: 'Forgot Password' }

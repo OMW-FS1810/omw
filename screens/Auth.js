@@ -1,5 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput, Text } from 'react-native';
+import { auth } from '../config/firebase';
+import {setUser} from '../redux/store';
+import { connect } from 'react-redux'
 // import { Button } from 'react-native-paper'
 
 let styles = StyleSheet.create({
@@ -38,7 +41,25 @@ let styles = StyleSheet.create({
 
 class Auth extends React.Component{
   state = {
-    name: ''
+    email: '',
+    password: '',
+    error: ''
+  }
+
+  handlePress = async () => {
+    const { email, password } = this.state;
+    try {
+      const data = await auth.signInWithEmailAndPassword(email.trim(), password);
+      if (data) {
+        this.props.setUser(data.user);
+        this.props.navigation.navigate('Create an Event');
+
+      }
+      this.setState({email: '', password: ''});
+    } catch(error) {
+      this.setState({error: error.message})
+
+    }
   }
 
   // placeNameChangeHandler = val => {
@@ -51,28 +72,32 @@ class Auth extends React.Component{
     return (
       <View style={styles.container}>
         <View style={styles.content}>
+          <Text> {this.state.error} </Text>
           <TextInput style={styles.inputContainer}
             placeholder="Email"
             placeholderTextColor = "#aaa"
             keyboardType="email-address"
-            onChangeText={this.placeNameChangeHandler}
+            onChangeText={email => this.setState({ email })}
+            value={this.state.email}
             />
           <TextInput style={styles.inputContainer}
             placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor='#aaa'
+            onChangeText={password => this.setState({ password })}
+            value={this.state.password}
             />
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign in{this.props.type}</Text>
+          <TouchableOpacity style={styles.button} onPress={this.handlePress}>
+            <Text style={styles.buttonText}>Sign in</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up withGoogle{this.props.type}</Text>
+            <Text style={styles.buttonText}>Sign up withGoogle</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up with Facebook{this.props.type}</Text>
+            <Text style={styles.buttonText}>Sign up with Facebook</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up with email{this.props.type}</Text>
+          <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('signupScreen')}>
+            <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -81,4 +106,14 @@ class Auth extends React.Component{
   }
 
 
-  export default Auth
+  const mapStateToProps = (state) => ({
+
+  });
+
+  const mapDispatchToProps = (dispatch) => ({
+    setUser(user) {
+      return dispatch(setUser(user));
+    }
+  })
+
+  export default connect(mapStateToProps, mapDispatchToProps)(Auth);

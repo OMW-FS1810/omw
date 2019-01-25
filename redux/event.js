@@ -1,4 +1,4 @@
-import { database } from '../config/firebase';
+
 
 // ACTION TYPES
 
