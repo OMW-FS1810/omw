@@ -4,6 +4,7 @@ import { Location, Permissions, TaskManager, Constants } from 'expo';
 import { Map } from '../components';
 import { database } from '../config/firebase';
 import { connect } from 'react-redux';
+import { store } from '../redux/store';
 
 let styles = StyleSheet.create({
   container: {
@@ -15,7 +16,7 @@ let styles = StyleSheet.create({
 
 const SEND_LOCATION = 'sendLocation';
 
-const myId = Constants.installationId;
+const deviceId = Constants.installationId;
 
 //This logs our location, running in the background -- eventually move this to when the app is opened
 TaskManager.defineTask(SEND_LOCATION, async ({ data: { locations }, err }) => {
@@ -24,15 +25,16 @@ TaskManager.defineTask(SEND_LOCATION, async ({ data: { locations }, err }) => {
     return;
   }
   try {
-    await database.ref(`/Locations/${myId}`).set({
-      location: locations[0]
+    await database.ref(`/Devices/${deviceId}`).update({
+      coords: locations[0].coords,
+      timestamp: locations[0].timestamp
     });
   } catch (error) {
     console.error(error);
   }
 });
 
-export default class EventMap extends React.Component {
+class EventMap extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -61,6 +63,15 @@ export default class EventMap extends React.Component {
         });
       }
       const location = await Location.getCurrentPositionAsync({});
+      //send initial location to the DB
+      try {
+        await database.ref(`/Devices/${deviceId}`).update({
+          coords: location.coords,
+          timestamp: location.timestamp
+        });
+      } catch (error) {
+        console.error(error);
+      }
 
       //might want to calculate starting delta based on event location so it's shown along with user position
       const region = {
@@ -76,11 +87,12 @@ export default class EventMap extends React.Component {
   };
   locateMembers = members => {
     //turns the object into an array
+    console.log(members);
     const eventMembers = Object.keys(members)
       // filters this device out of the group of members (disabled)
       // .filter(member => member !== myId)
-      .map(key => {
-        return [key, members[key]];
+      .map(device => {
+        return [device, members[device]];
       });
     this.setState({ eventMembers });
   };
@@ -91,26 +103,26 @@ export default class EventMap extends React.Component {
       //triggers sending my location -- works in the background on iOS
       await Location.startLocationUpdatesAsync(SEND_LOCATION, {
         accuracy: Location.Accuracy.BestForNavigation,
-        distanceInterval: 10,
-        timeInterval: 5000
+        distanceInterval: 50,
+        timeInterval: 60000
       });
-      //create array to use for markers BELOW
 
       //FIX!!!!! This will have to be event-specific eventually -- and tied into users
-      const userLocationsDB = database.ref(`/Locations/`);
+      const userLocationsDB = database.ref(`/Devices/`);
 
-      const userLocations = await userLocationsDB.on('value', snapshot => {
+      await userLocationsDB.on('value', snapshot => {
         return this.locateMembers(snapshot.val());
       });
-      this.locateMembers(userLocations);
     } catch (err) {
       console.error(err);
     }
   }
   render() {
     const { region, eventMembers, eventLocation } = this.state;
+    const { user } = this.props;
     return (
       <Map
+        user={user.user}
         region={region}
         eventMembers={eventMembers}
         coordinate={eventLocation}
@@ -119,3 +131,7 @@ export default class EventMap extends React.Component {
     );
   }
 }
+
+const mapStateToProps = ({ user }) => ({ user });
+
+export default connect(mapStateToProps)(EventMap);
