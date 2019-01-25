@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { MapView } from 'expo';
+import { MapView, Constants } from 'expo';
 // import { Marker } from 'react-native-maps';
 import { connect } from 'react-redux';
 import { mapStyle } from './mapStyle';
@@ -14,18 +14,29 @@ let styles = StyleSheet.create({
 });
 
 const { Marker, Callout } = MapView;
+const myId = Constants.installationId;
 
 export default class EventMap extends React.Component {
   renderMemberMarkers = () => {
-    return this.props.eventMembers.map(member => (
-      <Marker
-        key={member[0]}
-        title="Event Member"
-        description={member[0]}
-        coordinate={member[1].location.coords}
-        pinColor="blue"
-      />
-    ));
+    return this.props.eventMembers.map(member => {
+      return member[0] === myId ? (
+        <Marker
+          key={member[0]}
+          title="Me"
+          description={member[0]}
+          coordinate={member[1].location.coords}
+          pinColor="green"
+        />
+      ) : (
+        <Marker
+          key={member[0]}
+          title="Event Member"
+          description={member[0]}
+          coordinate={member[1].location.coords}
+          pinColor="blue"
+        />
+      );
+    });
   };
   componentDidMount() {}
   render() {
@@ -34,7 +45,7 @@ export default class EventMap extends React.Component {
     return (
       <MapView
         style={styles.container}
-        showsUserLocation={true}
+        // showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}

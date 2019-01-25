@@ -76,9 +76,10 @@ export default class EventMap extends React.Component {
     }
   };
   locateMembers = members => {
-    //filters this device out of the group of members and turns the object into an array
+    //turns the object into an array
     const eventMembers = Object.keys(members)
-      .filter(member => member !== myId)
+      // filters this device out of the group of members (disabled)
+      // .filter(member => member !== myId)
       .map(key => {
         return [key, members[key]];
       });
