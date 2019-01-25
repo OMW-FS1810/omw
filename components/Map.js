@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import { MapView } from 'expo';
 // import { Marker } from 'react-native-maps';
 import { connect } from 'react-redux';
+import { mapStyle } from './mapStyle';
 
 let styles = StyleSheet.create({
   container: {
@@ -11,240 +12,24 @@ let styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
-const Marker = MapView.Marker;
+
+const { Marker, Callout } = MapView;
 
 export default class EventMap extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      coordinate: { latitude: 10, longitude: 10 }
-    };
-  }
-
-  componentDidMount() {
-    this.setState({
-      coordinate: this.props.coordinate
-    });
-  }
+  renderMemberMarkers = () => {
+    return this.props.eventMembers.map(member => (
+      <Marker
+        key={member[0]}
+        title="Event Member"
+        description={member[0]}
+        coordinate={member[1].location.coords}
+        pinColor="blue"
+      />
+    ));
+  };
+  componentDidMount() {}
   render() {
-    const { region } = this.props;
-    let { coordinate } = this.state;
-
-    const mapStyle = [
-      {
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#ebe3cd'
-          }
-        ]
-      },
-      {
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#523735'
-          }
-        ]
-      },
-      {
-        elementType: 'labels.text.stroke',
-        stylers: [
-          {
-            color: '#f5f1e6'
-          }
-        ]
-      },
-      {
-        featureType: 'administrative',
-        elementType: 'geometry.stroke',
-        stylers: [
-          {
-            color: '#c9b2a6'
-          }
-        ]
-      },
-      {
-        featureType: 'administrative.land_parcel',
-        elementType: 'geometry.stroke',
-        stylers: [
-          {
-            color: '#dcd2be'
-          }
-        ]
-      },
-      {
-        featureType: 'administrative.land_parcel',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#ae9e90'
-          }
-        ]
-      },
-      {
-        featureType: 'landscape.natural',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#dfd2ae'
-          }
-        ]
-      },
-      {
-        featureType: 'poi',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#dfd2ae'
-          }
-        ]
-      },
-      {
-        featureType: 'poi',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#93817c'
-          }
-        ]
-      },
-      {
-        featureType: 'poi.park',
-        elementType: 'geometry.fill',
-        stylers: [
-          {
-            color: '#a5b076'
-          }
-        ]
-      },
-      {
-        featureType: 'poi.park',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#447530'
-          }
-        ]
-      },
-      {
-        featureType: 'road',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#f5f1e6'
-          }
-        ]
-      },
-      {
-        featureType: 'road.arterial',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#fdfcf8'
-          }
-        ]
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#f8c967'
-          }
-        ]
-      },
-      {
-        featureType: 'road.highway',
-        elementType: 'geometry.stroke',
-        stylers: [
-          {
-            color: '#e9bc62'
-          }
-        ]
-      },
-      {
-        featureType: 'road.highway.controlled_access',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#e98d58'
-          }
-        ]
-      },
-      {
-        featureType: 'road.highway.controlled_access',
-        elementType: 'geometry.stroke',
-        stylers: [
-          {
-            color: '#db8555'
-          }
-        ]
-      },
-      {
-        featureType: 'road.local',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#806b63'
-          }
-        ]
-      },
-      {
-        featureType: 'transit.line',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#dfd2ae'
-          }
-        ]
-      },
-      {
-        featureType: 'transit.line',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#8f7d77'
-          }
-        ]
-      },
-      {
-        featureType: 'transit.line',
-        elementType: 'labels.text.stroke',
-        stylers: [
-          {
-            color: '#ebe3cd'
-          }
-        ]
-      },
-      {
-        featureType: 'transit.station',
-        elementType: 'geometry',
-        stylers: [
-          {
-            color: '#dfd2ae'
-          }
-        ]
-      },
-      {
-        featureType: 'water',
-        elementType: 'geometry.fill',
-        stylers: [
-          {
-            color: '#b9d3c2'
-          }
-        ]
-      },
-      {
-        featureType: 'water',
-        elementType: 'labels.text.fill',
-        stylers: [
-          {
-            color: '#92998d'
-          }
-        ]
-      }
-    ];
+    const { region, updateMapRegion } = this.props;
 
     return (
       <MapView
@@ -255,16 +40,19 @@ export default class EventMap extends React.Component {
         showsCompass={true}
         showsScale={true}
         region={region}
+        onRegionChangeComplete={e => updateMapRegion(e)}
         provider={MapView.PROVIDER_GOOGLE}
         customMapStyle={mapStyle}
       >
+        {this.renderMemberMarkers()}
         <Marker
-          coordinate={this.state.coordinate}
-          draggable={true}
-          // coordinate={this.props.coordinate}
-          onDragEnd={e =>
-            this.setState({ coordinate: e.nativeEvent.coordinate })
-          }
+          coordinate={this.props.coordinate}
+          title={this.props.coordinate.title}
+          description={this.props.coordinate.description}
+          // draggable={true}
+          // onDragEnd={e =>
+          //   this.setState({ coordinate: e.nativeEvent.coordinate })
+          // }
         />
       </MapView>
     );
