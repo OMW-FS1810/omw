@@ -4,6 +4,7 @@ import { MapView, Constants } from 'expo';
 // import { Marker } from 'react-native-maps';
 import { connect } from 'react-redux';
 import { mapStyle } from './mapStyle';
+//vectir icons '@expo/vector-icons'
 
 let styles = StyleSheet.create({
   container: {
