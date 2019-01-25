@@ -1,8 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { MapView } from 'expo';
+import { MapView, Constants } from 'expo';
 // import { Marker } from 'react-native-maps';
 import { connect } from 'react-redux';
+import { mapStyle } from './mapStyle';
+//vectir icons '@expo/vector-icons'
 
 let styles = StyleSheet.create({
   container: {
@@ -11,39 +13,58 @@ let styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
-const Marker = MapView.Marker;
+
+const { Marker, Callout } = MapView;
+const myId = Constants.installationId;
 
 export default class EventMap extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      coordinate: { latitude: 10, longitude: 10 }
-    };
-  }
-
-  componentDidMount() {
-    this.setState({
-      coordinate: this.props.coordinate
+  renderMemberMarkers = () => {
+    return this.props.eventMembers.map(member => {
+      return member[0] === myId ? (
+        <Marker
+          key={member[0]}
+          title="Me"
+          description={member[0]}
+          coordinate={member[1].location.coords}
+          pinColor="green"
+        />
+      ) : (
+        <Marker
+          key={member[0]}
+          title="Event Member"
+          description={member[0]}
+          coordinate={member[1].location.coords}
+          pinColor="blue"
+        />
+      );
     });
-  }
+  };
+  componentDidMount() {}
   render() {
-    const { region } = this.props;
-    let { coordinate } = this.state;
+    const { region, updateMapRegion } = this.props;
 
     return (
       <MapView
         style={styles.container}
-        showsUserLocation={true}
+        // showsUserLocation={true}
+        followsUserLocation={true}
+        showsMyLocationButton={true}
+        showsCompass={true}
+        showsScale={true}
         region={region}
+        onRegionChangeComplete={e => updateMapRegion(e)}
         provider={MapView.PROVIDER_GOOGLE}
+        customMapStyle={mapStyle}
       >
+        {this.renderMemberMarkers()}
         <Marker
-          coordinate={this.state.coordinate}
-          draggable={true}
-          // coordinate={this.props.coordinate}
-          onDragEnd={e =>
-            this.setState({ coordinate: e.nativeEvent.coordinate })
-          }
+          coordinate={this.props.coordinate}
+          title={this.props.coordinate.title}
+          description={this.props.coordinate.description}
+          // draggable={true}
+          // onDragEnd={e =>
+          //   this.setState({ coordinate: e.nativeEvent.coordinate })
+          // }
         />
       </MapView>
     );
