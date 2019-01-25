@@ -50,19 +50,16 @@ class SignupScreen extends React.Component {
     try {
       const data = await auth.createUserWithEmailAndPassword(email.trim(), password);
       if (data) {
-        console.log('AM i ever in here', data.user);
         this.props.setUser(data.user);
         this.props.navigation.navigate('Create an Event');
       }
       this.setState({email: '', password: ''});
     } catch(error) {
-      console.log('AM i ever in here');
       this.setState({error: error.message})
     }
   }
 
   render() {
-    console.log('Is my user being set', this.props.user);
     return (
       <View style={styles.container}>
         <View style={styles.content}>
