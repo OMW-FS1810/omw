@@ -6,7 +6,6 @@ import { TextInput, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { database } from '../config/firebase';
 
-const now = new Date();
 class CreateEvent extends Component {
   state = {
     name: '',
@@ -24,7 +23,6 @@ class CreateEvent extends Component {
         time,
         location
       });
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -106,7 +104,6 @@ let styles = StyleSheet.create({
   },
   input: {
     // backgroundColor: '#C8D7E3',
-    // marginBottom: ,
     borderColor: '#98B1C4',
     marginLeft: 20,
     marginRight: 20,
@@ -135,16 +132,11 @@ let styles = StyleSheet.create({
     marginBottom: 36
   },
   butonText: {
-    // color: 'black',
     fontSize: 30,
     position: 'absolute',
     bottom: 0
   },
   button: {}
 });
-
-// const mapDispatch = dispatch => ({
-//   createEvent
-// });
 
 export default CreateEvent;

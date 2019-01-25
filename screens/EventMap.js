@@ -23,7 +23,6 @@ TaskManager.defineTask(SEND_LOCATION, async ({ data: { locations }, err }) => {
     console.error(err);
     return;
   }
-  console.log('Sending new location:', locations[0]);
   try {
     await database.ref(`/Locations/${myId}`).set({
       location: locations[0]
@@ -84,7 +83,6 @@ export default class EventMap extends React.Component {
         return [key, members[key]];
       });
     this.setState({ eventMembers });
-    console.log('state in locate mems: ', this.state);
   };
   async componentDidMount() {
     try {
