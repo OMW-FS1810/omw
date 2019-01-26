@@ -2,22 +2,27 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, Surface } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { populateEventDeets } from '../redux/event';
+import { GOOGLE_API } from '../secrets';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 class CreateEvent extends Component {
   state = {
     name: '',
     date: '',
     time: '',
-    location: ''
+    location: '',
+    locationName: '',
+    locationAddress: '',
+    locationGeocode: {}
   };
 
   componentDidMount() {
-    if (this.props.state.deets.name) {
-      this.setState({ ...this.props.state.deets });
-    }
+    // if (this.props.state.deets.name) {
+    //   this.setState({ ...this.props.state.deets });
+    // }
   }
 
   handlePress = () => {
@@ -27,7 +32,10 @@ class CreateEvent extends Component {
       name: '',
       date: '',
       time: '',
-      location: ''
+      location: '',
+      locationName: '',
+      locationAddress: '',
+      locationGeocode: {}
     });
   };
 
@@ -40,18 +48,77 @@ class CreateEvent extends Component {
         <TextInput
           style={styles.input}
           mode="outlined"
-          label="Name"
+          label="Event Name"
           value={this.state.name}
           onChangeText={name => this.setState({ name })}
         />
-        <TextInput
+
+        <GooglePlacesAutocomplete
+          style={styles.location}
+          placeholder="Location"
+          minLength={2} // minimum length of text to search
+          autoFocus={false}
+          // returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+          listViewDisplayed="auto" // true/false/undefined
+          fetchDetails={true}
+          renderDescription={row => row.description} // custom description render
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            console.log(data, details.geometry);
+          }}
+          getDefaultValue={() => ''}
+          query={{
+            // available options: https://developers.google.com/places/web-service/autocomplete
+            key: GOOGLE_API,
+            language: 'en' // language of the results
+            // types: '(cities)' // default: 'geocode'
+          }}
+          styles={{
+            textInputContainer: {
+              // backgroundColor: 'rgba(0,0,0,0)',
+              // borderColor: 'black',
+              // borderWidth: 1,
+              margin: 10,
+              width: '95%',
+              borderRadius: 3
+            },
+
+            description: {
+              fontWeight: 'bold'
+            },
+            predefinedPlacesDescription: {
+              color: '#1faadb'
+            }
+          }}
+          currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+          currentLocationLabel="Current location"
+          nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+          GoogleReverseGeocodingQuery={
+            {
+              // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+            }
+          }
+          GooglePlacesSearchQuery={{
+            // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+            rankby: 'distance'
+            // types: 'food'
+          }}
+          filterReverseGeocodingByTypes={[
+            'locality',
+            'administrative_area_level_3'
+          ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+          debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+        />
+
+        {/* below is the old location input */}
+        {/* <TextInput
           style={styles.input}
           mode="outlined"
           label="Location"
           value={this.state.location}
           onChangeText={location => this.setState({ location })}
-        />
-        <DatePicker
+        /> */}
+        {/* <DatePicker
           label="Date"
           date={this.state.date}
           mode="date"
@@ -72,15 +139,15 @@ class CreateEvent extends Component {
           onDateChange={time => this.setState({ time })}
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
-        />
+        /> */}
         <View style={styles.bottom}>
           <Button
             onPress={this.handlePress}
             type="contained"
             disabled={
-              !this.state.date ||
+              // !this.state.date ||
               !this.state.name ||
-              !this.state.time ||
+              // !this.state.time ||
               !this.state.location
             }
           >
@@ -95,13 +162,10 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'flex-start'
     // backgroundColor: '#98B1C4'
   },
-  titleView: {
-    marginTop: 100,
-    flex: 1
-  },
+  titleView: { padding: 10 },
   input: {
     // backgroundColor: '#C8D7E3',
     borderColor: '#98B1C4',
@@ -113,8 +177,8 @@ let styles = StyleSheet.create({
   title: {
     fontFamily: 'System',
     fontSize: 40,
-    paddingBottom: 20,
-    marginBottom: 20,
+    marginBottom: 0,
+    paddingBottom: 0,
     color: '#2F4E6F',
     fontWeight: '500'
   },
@@ -136,6 +200,7 @@ let styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0
   },
+  location: {},
   button: {}
 });
 

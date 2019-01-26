@@ -15,7 +15,7 @@ let styles = StyleSheet.create({
 });
 
 const { Marker, Callout } = MapView;
-const myId = Constants.installationId;
+const deviceId = Constants.installationId;
 
 export default class EventMap extends React.Component {
   renderMemberMarkers = () => {
@@ -28,7 +28,8 @@ export default class EventMap extends React.Component {
       }
       return (
         //only return members who are not this device -- give device ID as description
-        member[0] !== myId && (
+        member[0] !== deviceId &&
+        member[1].coords && (
           <Marker
             key={member[0]}
             title={markerName}

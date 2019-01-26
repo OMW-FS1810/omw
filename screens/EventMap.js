@@ -101,7 +101,7 @@ class EventMap extends React.Component {
       await this.getLocationAsync();
       //triggers sending my location -- works in the background on iOS
       await Location.startLocationUpdatesAsync(SEND_LOCATION, {
-        accuracy: Location.Accuracy.BestForNavigation,
+        accuracy: Location.Accuracy.Balanced,
         distanceInterval: 50,
         timeInterval: 60000
       });
