@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, Button } from 'react-native';
 import { Location, Permissions, TaskManager, Constants } from 'expo';
 import { Map } from '../components';
 import { database } from '../config/firebase';
@@ -43,7 +43,8 @@ class EventMap extends React.Component {
         latitude: 41.8789,
         longitude: -87.6358,
         title: 'Event Title',
-        description: 'Description of event'
+        description: 'Description of event',
+        backgroundLocation: false
       },
       eventMembers: [],
       errorMessage: ''
@@ -85,6 +86,23 @@ class EventMap extends React.Component {
       console.error(err);
     }
   };
+  setBackgroundLocation = async () => {
+    const isPolling = await Location.hasStartedLocationUpdatesAsync(
+      SEND_LOCATION
+    );
+    if (isPolling) {
+      await Location.stopLocationUpdatesAsync(SEND_LOCATION);
+      this.setState({ backgroundLocation: false });
+    } else {
+      //triggers sending my location -- works in the background on iOS
+      await Location.startLocationUpdatesAsync(SEND_LOCATION, {
+        accuracy: Location.Accuracy.Balanced,
+        distanceInterval: 50,
+        timeInterval: 60000
+      });
+      this.setState({ backgroundLocation: true });
+    }
+  };
   locateMembers = members => {
     //turns the object into an array
     const eventMembers = Object.keys(members)
@@ -99,12 +117,6 @@ class EventMap extends React.Component {
     try {
       //gets my location
       await this.getLocationAsync();
-      //triggers sending my location -- works in the background on iOS
-      await Location.startLocationUpdatesAsync(SEND_LOCATION, {
-        accuracy: Location.Accuracy.Balanced,
-        distanceInterval: 50,
-        timeInterval: 60000
-      });
 
       //FIX!!!!! This will have to be event-specific eventually -- and tied into users
       const userLocationsDB = database.ref(`/Devices/`);
@@ -117,7 +129,12 @@ class EventMap extends React.Component {
     }
   }
   render() {
-    const { region, eventMembers, eventLocation } = this.state;
+    const {
+      region,
+      eventMembers,
+      eventLocation,
+      backgroundLocation
+    } = this.state;
     const { user } = this.props;
     return (
       <Map
@@ -126,6 +143,8 @@ class EventMap extends React.Component {
         eventMembers={eventMembers}
         coordinate={eventLocation}
         updateMapRegion={this.updateMapRegion}
+        backgroundLocation={backgroundLocation}
+        setBackgroundLocation={this.setBackgroundLocation}
       />
     );
   }
