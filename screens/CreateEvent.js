@@ -13,10 +13,11 @@ class CreateEvent extends Component {
     name: '',
     date: '',
     time: '',
-    location: '',
-    locationName: '',
-    locationAddress: '',
-    locationGeocode: {}
+    location: {
+      locationName: '',
+      locationAddress: '',
+      locationGeocode: {}
+    }
   };
 
   componentDidMount() {
@@ -27,15 +28,18 @@ class CreateEvent extends Component {
 
   handlePress = () => {
     this.props.navigation.navigate('Invite');
-    this.props.populateDeets(this.state);
+    // I commented out the below function call for testing because it's currently throwing an error from the redux store
+    //this.props.populateDeets(this.state);
+    console.log(this.state);
     this.setState({
       name: '',
       date: '',
       time: '',
-      location: '',
-      locationName: '',
-      locationAddress: '',
-      locationGeocode: {}
+      location: {
+        locationName: '',
+        locationAddress: '',
+        locationGeocode: {}
+      }
     });
   };
 
@@ -55,16 +59,21 @@ class CreateEvent extends Component {
 
         <GooglePlacesAutocomplete
           style={styles.location}
-          placeholder="Location"
+          placeholder="Event Location"
           minLength={2} // minimum length of text to search
           autoFocus={false}
-          // returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-          listViewDisplayed="auto" // true/false/undefined
+          listViewDisplayed="false" // true/false/undefined
           fetchDetails={true}
           renderDescription={row => row.description} // custom description render
-          onPress={(data, details = null) => {
+          onPress={async (data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            console.log(data, details.geometry);
+            await this.setState({
+              location: {
+                locationName: data.structured_formatting.main_text,
+                locationAddress: data.description,
+                locationGeocode: details.geometry.location
+              }
+            });
           }}
           getDefaultValue={() => ''}
           query={{
@@ -74,13 +83,23 @@ class CreateEvent extends Component {
             // types: '(cities)' // default: 'geocode'
           }}
           styles={{
-            textInputContainer: {
-              // backgroundColor: 'rgba(0,0,0,0)',
-              // borderColor: 'black',
-              // borderWidth: 1,
-              margin: 10,
+            container: {
               width: '95%',
-              borderRadius: 3
+              marginTop: 10,
+              borderWidth: 1,
+              borderColor: 'grey',
+              marginBottom: 5,
+              borderRadius: 4
+            },
+            textInputContainer: {
+              backgroundColor: 'rgba(0,0,0,0)',
+              padding: 0,
+              borderTopWidth: 0
+            },
+            textInput: {
+              width: '100%',
+              paddingLeft: 3,
+              paddingRight: 3
             },
 
             description: {
@@ -90,7 +109,7 @@ class CreateEvent extends Component {
               color: '#1faadb'
             }
           }}
-          currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+          // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
           currentLocationLabel="Current location"
           nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
           GoogleReverseGeocodingQuery={
@@ -118,7 +137,7 @@ class CreateEvent extends Component {
           value={this.state.location}
           onChangeText={location => this.setState({ location })}
         /> */}
-        {/* <DatePicker
+        <DatePicker
           label="Date"
           date={this.state.date}
           mode="date"
@@ -139,15 +158,15 @@ class CreateEvent extends Component {
           onDateChange={time => this.setState({ time })}
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
-        /> */}
+        />
         <View style={styles.bottom}>
           <Button
             onPress={this.handlePress}
             type="contained"
             disabled={
-              // !this.state.date ||
+              !this.state.date ||
               !this.state.name ||
-              // !this.state.time ||
+              !this.state.time ||
               !this.state.location
             }
           >
@@ -200,7 +219,9 @@ let styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0
   },
-  location: {},
+  location: {
+    borderWidth: 0
+  },
   button: {}
 });
 
