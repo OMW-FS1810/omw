@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, AsyncStorage } from 'react-native';
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
@@ -35,6 +35,10 @@ let styles = StyleSheet.create({
 });
 
 class Auth extends React.Component {
+  static navigationOptions={
+    title: 'OMW'
+  }
+
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user != null) {
@@ -46,18 +50,23 @@ class Auth extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-          <Login navigation={this.props.navigation} />
+          <Login navigation={this.props.navigation} onPress={this._signInAsync}/>
           <Google navigation={this.props.navigation} />
           <Facebook navigation={this.props.navigation} />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('signupScreen')}
+            onPress={() => this.props.navigation.navigate('signup')}
           >
             <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
+  }
+
+  _signInAsync = async() =>{
+    await AsyncStorage.setItem('userToken', 'password')
+    this.props.navigate('App')
   }
 }
 
