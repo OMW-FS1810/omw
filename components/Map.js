@@ -5,6 +5,7 @@ import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './mapStyle';
 //vectir icons '@expo/vector-icons'
+import { convertTimestamp } from '../helpers/convertTimestamp';
 
 let styles = StyleSheet.create({
   // container: {
@@ -55,7 +56,7 @@ export default class Map extends React.Component {
           <Marker
             key={member[0]}
             title={markerName}
-            description={member[0]}
+            description={convertTimestamp(member[1].timestamp)}
             coordinate={member[1].coords}
             pinColor="blue"
           />
@@ -69,6 +70,7 @@ export default class Map extends React.Component {
       region,
       updateMapRegion,
       user,
+      event,
       backgroundLocation,
       setBackgroundLocation
     } = this.props;
@@ -89,9 +91,12 @@ export default class Map extends React.Component {
           >
             {this.renderMemberMarkers()}
             <Marker
-              coordinate={this.props.coordinate}
-              title={this.props.coordinate.title}
-              description={this.props.coordinate.description}
+              coordinate={event.location.locationGeocode}
+              title={event.name}
+              description={`${event.location.locationName} ${event.date} ${
+                event.time
+              }`}
+              //dragging is disabled
               // draggable={true}
               // onDragEnd={e =>
               //   this.setState({ coordinate: e.nativeEvent.coordinate })

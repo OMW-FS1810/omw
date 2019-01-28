@@ -39,14 +39,19 @@ class EventMap extends React.Component {
     super();
     this.state = {
       region: null,
-      eventLocation: {
-        latitude: 41.8789,
-        longitude: -87.6358,
-        title: 'Event Title',
-        description: 'Description of event',
-        backgroundLocation: false
+      //Eventually state will be tied to the redux store
+      event: {
+        name: 'Party on the Roof',
+        date: '2-15-2019',
+        time: '7:00 PM',
+        location: {
+          locationName: 'Willis Tower',
+          locationAddress: '',
+          locationGeocode: { latitude: 41.8789, longitude: -87.6358 }
+        }
       },
       eventMembers: [],
+      backgroundLocation: false,
       errorMessage: ''
     };
   }
@@ -78,8 +83,8 @@ class EventMap extends React.Component {
       const region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.0461,
-        longitudeDelta: 0.021
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.043
       };
       this.setState({ region });
     } catch (err) {
@@ -119,6 +124,7 @@ class EventMap extends React.Component {
       await this.getLocationAsync();
 
       //FIX!!!!! This will have to be event-specific eventually -- and tied into users
+      // local state can be set to match redux store selected event or the props can just be passed down from the store to the map
       const userLocationsDB = database.ref(`/Devices/`);
 
       await userLocationsDB.on('value', snapshot => {
@@ -129,19 +135,14 @@ class EventMap extends React.Component {
     }
   }
   render() {
-    const {
-      region,
-      eventMembers,
-      eventLocation,
-      backgroundLocation
-    } = this.state;
+    const { region, eventMembers, event, backgroundLocation } = this.state;
     const { user } = this.props;
     return (
       <Map
         user={user.user}
         region={region}
         eventMembers={eventMembers}
-        coordinate={eventLocation}
+        event={event}
         updateMapRegion={this.updateMapRegion}
         backgroundLocation={backgroundLocation}
         setBackgroundLocation={this.setBackgroundLocation}
