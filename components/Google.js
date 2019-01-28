@@ -84,7 +84,7 @@ class Google extends React.Component {
               if (result.additionalUserInfo.isNewUser) {
                 firebase
                   .database()
-                  .ref('/users/' + result.user.uid)
+                  .ref('/Users/' + result.user.uid)
                   .set({
                     email: result.user.email,
                     profile_picture: result.additionalUserInfo.profile.picture,
@@ -97,7 +97,7 @@ class Google extends React.Component {
               } else {
                 firebase
                   .database()
-                  .ref('/users/' + result.user.uid)
+                  .ref('/Users/' + result.user.uid)
                   .update({
                     last_logged_in: Date.now()
                   });

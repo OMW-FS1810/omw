@@ -5,6 +5,7 @@ import store from './store';
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
 const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
+const REQUEST_EVENTS = 'FETCH_EVENTS';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -18,17 +19,17 @@ export const populateEventEmails = emails => ({
 const clearPendingInfo = () => ({
   type: CLEAR_PENDING_INFO
 });
+const requestEvents = events => ({
+  type: REQUEST_EVENTS,
+  events
+});
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
-  const invites = {};
-  eventInvites.map(user => {
-    invites[user] = true;
-  });
   try {
     const data = await database.ref('Events/').push({
       ...eventDeets,
-      invites
+      invites: eventInvites
     });
     dispatch(clearPendingInfo);
   } catch (err) {
@@ -36,8 +37,40 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
   }
 };
 export const fetchAllEvents = userId => async dispatch => {
-  
-}
+  try {
+    let hostEvents = [];
+    let invitedEvents = [];
+    // find all events where this user is the host
+    const eventRef = database.ref('/Events/');
+    await eventRef
+      .orderByChild('host')
+      .equalTo(userId)
+      .on('value', event => {
+        hostEvents.push(event);
+      });
+    // find all events where this user is invited
+    // first grab the email address since invites are based on email address
+    let email;
+    let emailRef = database.ref(`/Users/${userId}`);
+    await emailRef.once('value', person => {
+      email = person.val().email;
+    });
+    console.log('before .on()');
+    // then query all events where this email is in invites
+    await eventRef.on('child_added', snapshot => {
+      snapshot.val().invites.map(value => {
+        if (value === email) {
+          invitedEvents.push(snapshot);
+        }
+      });
+      console.log('THE END OF .on()', invitedEvents);
+    });
+    console.log('THE END OF try block INVITED EVENTS', invitedEvents);
+    // console.log('THE END OF try block HOST EVENTs', hostEvents);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 // DEFAULT STATE
 const defaultEvent = {
