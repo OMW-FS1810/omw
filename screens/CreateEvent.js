@@ -2,31 +2,44 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, Surface } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { database } from '../config/firebase';
+import { populateEventDeets } from '../redux/event';
+import { GOOGLE_API } from '../secrets';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 class CreateEvent extends Component {
   state = {
     name: '',
     date: '',
     time: '',
-    location: ''
+    location: {
+      locationName: '',
+      locationAddress: '',
+      locationGeocode: {}
+    }
   };
 
-  handlePress = async () => {
+  // componentDidMount() {
+  //   if (this.props.eventDeets.name) {
+  //     this.setState({ ...this.props.eventDeets });
+  //   }
+  // }
+
+  handlePress = () => {
     this.props.navigation.navigate('Invite');
-    // const { name, date, time, location } = this.state;
-    // try {
-    //   const data = await database.ref('Events/').push({
-    //     name,
-    //     date,
-    //     time,
-    //     location
-    //   });
-    // } catch (error) {
-    //   console.error(error);
-    // }
+    // I commented out the below function call for testing because it's currently throwing an error from the redux store
+    this.props.populateDeets(this.state);
+    this.setState({
+      name: '',
+      date: '',
+      time: '',
+      location: {
+        locationName: '',
+        locationAddress: '',
+        locationGeocode: {}
+      }
+    });
   };
 
   render() {
@@ -38,17 +51,91 @@ class CreateEvent extends Component {
         <TextInput
           style={styles.input}
           mode="outlined"
-          label="Name"
+          label="Event Name"
           value={this.state.name}
           onChangeText={name => this.setState({ name })}
         />
-        <TextInput
+
+        <GooglePlacesAutocomplete
+          style={styles.location}
+          placeholder="Event Location"
+          minLength={2} // minimum length of text to search
+          autoFocus={false}
+          listViewDisplayed="false" // true/false/undefined
+          fetchDetails={true}
+          renderDescription={row => row.description} // custom description render
+          onPress={async (data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            await this.setState({
+              location: {
+                locationName: data.structured_formatting.main_text,
+                locationAddress: data.description,
+                locationGeocode: details.geometry.location
+              }
+            });
+          }}
+          getDefaultValue={() => ''}
+          query={{
+            // available options: https://developers.google.com/places/web-service/autocomplete
+            key: GOOGLE_API,
+            language: 'en' // language of the results
+            // types: '(cities)' // default: 'geocode'
+          }}
+          styles={{
+            container: {
+              width: '95%',
+              marginTop: 10,
+              borderWidth: 1,
+              borderColor: 'grey',
+              marginBottom: 5,
+              borderRadius: 4
+            },
+            textInputContainer: {
+              backgroundColor: 'rgba(0,0,0,0)',
+              padding: 0,
+              borderTopWidth: 0
+            },
+            textInput: {
+              width: '100%',
+              paddingLeft: 3,
+              paddingRight: 3
+            },
+
+            description: {
+              fontWeight: 'bold'
+            },
+            predefinedPlacesDescription: {
+              color: '#1faadb'
+            }
+          }}
+          // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+          currentLocationLabel="Current location"
+          nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+          GoogleReverseGeocodingQuery={
+            {
+              // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+            }
+          }
+          GooglePlacesSearchQuery={{
+            // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+            rankby: 'distance'
+            // types: 'food'
+          }}
+          filterReverseGeocodingByTypes={[
+            'locality',
+            'administrative_area_level_3'
+          ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+          debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+        />
+
+        {/* below is the old location input */}
+        {/* <TextInput
           style={styles.input}
           mode="outlined"
           label="Location"
           value={this.state.location}
           onChangeText={location => this.setState({ location })}
-        />
+        /> */}
         <DatePicker
           label="Date"
           date={this.state.date}
@@ -73,9 +160,7 @@ class CreateEvent extends Component {
         />
         <View style={styles.bottom}>
           <Button
-            onPress={() => {
-              this.handlePress();
-            }}
+            onPress={this.handlePress}
             type="contained"
             disabled={
               !this.state.date ||
@@ -95,13 +180,10 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'flex-start'
     // backgroundColor: '#98B1C4'
   },
-  titleView: {
-    marginTop: 100,
-    flex: 1
-  },
+  titleView: { padding: 10 },
   input: {
     // backgroundColor: '#C8D7E3',
     borderColor: '#98B1C4',
@@ -113,8 +195,8 @@ let styles = StyleSheet.create({
   title: {
     fontFamily: 'System',
     fontSize: 40,
-    paddingBottom: 20,
-    marginBottom: 20,
+    marginBottom: 0,
+    paddingBottom: 0,
     color: '#2F4E6F',
     fontWeight: '500'
   },
@@ -136,7 +218,21 @@ let styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0
   },
+  location: {
+    borderWidth: 0
+  },
   button: {}
 });
 
-export default CreateEvent;
+const mapState = state => ({
+  eventDeets: state.event.pendingCreateEventDeets
+});
+
+const mapDispatch = dispatch => ({
+  populateDeets: event => dispatch(populateEventDeets(event))
+});
+
+export default connect(
+  mapState,
+  mapDispatch
+)(CreateEvent);
