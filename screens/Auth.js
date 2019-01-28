@@ -3,14 +3,17 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   Text
 } from 'react-native';
-import { auth, database } from '../config/firebase';
+import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
 // import { Button } from 'react-native-paper'
+import * as firebase from 'firebase';
+import Login from '../components/Login';
+import Google from '../components/Google';
+import Facebook from '../components/Facebook';
 
 const deviceId = Constants.installationId;
 
@@ -22,15 +25,6 @@ let styles = StyleSheet.create({
   },
   content: {
     alignItems: 'center'
-  },
-  inputContainer: {
-    width: 300,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: '#aaa',
-    marginVertical: 10
   },
   button: {
     width: 300,
@@ -47,30 +41,17 @@ let styles = StyleSheet.create({
   }
 });
 
-class Auth extends React.Component {
-  state = {
-    email: '',
-    password: '',
-    error: ''
-  };
 
-  handlePress = async () => {
-    const { email, password } = this.state;
-    try {
-      const data = await auth.signInWithEmailAndPassword(
-        email.trim(),
-        password
-      );
-      if (data) {
-        this.props.setUser(data.user);
-        this.associateUserWithDevice(data.user);
-        this.props.navigation.navigate('Create an Event');
+class Auth extends React.Component {
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user != null){
+        //console.log(user)
       }
-      this.setState({ email: '', password: '' });
-    } catch (error) {
-      this.setState({ error: error.message });
-    }
-  };
+    })
+  }
+
   associateUserWithDevice = async user => {
     try {
       await database.ref(`/Devices/${deviceId}`).update({
@@ -93,46 +74,16 @@ class Auth extends React.Component {
     }
   };
 
-  // placeNameChangeHandler = val => {
-  //   this.setState({
-  //     placeName: val
-  //   })
-  // }
-
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text> {this.state.error} </Text>
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            onChangeText={email => this.setState({ email })}
-            value={this.state.email}
-          />
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Password"
-            secureTextEntry={true}
-            placeholderTextColor="#aaa"
-            onChangeText={password => this.setState({ password })}
-            value={this.state.password}
-          />
-          <TouchableOpacity style={styles.button} onPress={this.handlePress}>
-            <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up withGoogle</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up with Facebook</Text>
-          </TouchableOpacity>
+          <Login navigation={this.props.navigation}/>
+          <Google navigation={this.props.navigation}/>
+          <Facebook navigation={this.props.navigation}/>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('signupScreen')}
-          >
+            onPress={() => this.props.navigation.navigate('signupScreen')}>
             <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
         </View>

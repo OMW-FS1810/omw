@@ -6,12 +6,11 @@ import {
   TextInput,
   Text
 } from 'react-native';
-import { database } from '../config/firebase';
+import { auth, database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
 // import { Button } from 'react-native-paper'
-import * as firebase from 'firebase';
 
 const deviceId = Constants.installationId;
 
@@ -48,22 +47,17 @@ let styles = StyleSheet.create({
   }
 });
 
-
-class Login extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      email: '',
-      password: '',
-      error: ''
-    };
-  }
-
+class Profile extends React.Component {
+  state = {
+    email: '',
+    password: '',
+    error: ''
+  };
 
   handlePress = async () => {
     const { email, password } = this.state;
     try {
-      const data = await firebase.auth().signInWithEmailAndPassword(
+      const data = await auth.signInWithEmailAndPassword(
         email.trim(),
         password
       );
@@ -99,9 +93,15 @@ class Login extends React.Component {
     }
   };
 
+  // placeNameChangeHandler = val => {
+  //   this.setState({
+  //     placeName: val
+  //   })
+  // }
+
   render() {
     return (
-
+      <View style={styles.container}>
         <View style={styles.content}>
           <Text> {this.state.error} </Text>
           <TextInput
@@ -120,13 +120,23 @@ class Login extends React.Component {
             onChangeText={password => this.setState({ password })}
             value={this.state.password}
           />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.handlePress}>
+          <TouchableOpacity style={styles.button} onPress={this.handlePress}>
             <Text style={styles.buttonText}>Sign in</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Sign up withGoogle</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Sign up with Facebook</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => this.props.navigation.navigate('signupScreen')}
+          >
+            <Text style={styles.buttonText}>Sign up with email</Text>
+          </TouchableOpacity>
         </View>
-
+      </View>
     );
   }
 }
@@ -142,4 +152,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Login);
+)(Profile);

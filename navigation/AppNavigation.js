@@ -13,7 +13,9 @@ import {
   EventMap,
   CreateEvent,
   Auth,
-  Invite
+  Invite,
+  Profile,
+  UserProfile
 } from '../screens';
 
 //DRAWER STACK
@@ -21,7 +23,9 @@ const DrawerStack = createDrawerNavigator({
   Auth: { screen: Auth },
   'Create an Event': { screen: CreateEvent },
   'Event Map': { screen: EventMap },
-  Invite: { screen: Invite }
+  Invite: { screen: Invite },
+  Profile: { screen: Profile},
+  UserProfile: { screen: UserProfile }
 });
 
 //LOGGED IN DRAWER STACK

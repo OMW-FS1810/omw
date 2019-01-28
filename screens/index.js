@@ -8,3 +8,5 @@ export { default as LoginScreen } from './LoginScreen';
 export { default as ForgotPasswordScreen } from './ForgotPasswordScreen';
 export { default as Auth } from './Auth';
 export { default as Invite } from './Invite';
+export { default as Profile } from './Profile';
+export { default as UserProfile } from './UserProfile';

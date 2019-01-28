@@ -1,8 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native'
-import { auth } from '../config/firebase';
+import { database } from '../config/firebase';
 import {setUser} from '../redux/store';
 import { connect } from 'react-redux'
+import * as firebase from 'firebase';
 
 let styles = StyleSheet.create({
   container: {
@@ -42,15 +43,28 @@ class SignupScreen extends React.Component {
   state = {
     email: '',
     password: '',
+    firstName: '',
+    lastName: '',
     error: ''
   }
 
   handlePress = async () => {
-    const { email, password } = this.state;
+    const { email, password, firstName, lastName } = this.state;
     try {
-      const data = await auth.createUserWithEmailAndPassword(email.trim(), password);
+      const data = await firebase.auth().createUserWithEmailAndPassword(email.trim(), password);
       if (data) {
         this.props.setUser(data.user);
+
+        await firebase.database()
+          .ref('/users/' + data.user.uid)
+          .set({
+            email,
+            // profile_picture: result.additionalUserInfo.profile.picture,
+            // locale: result.additionalUserInfo.profile.locale,
+            first_name: firstName,
+            last_name: lastName,
+            created_at: Date.now()
+          })
         this.props.navigation.navigate('Create an Event');
       }
       this.setState({email: '', password: ''});
@@ -78,6 +92,18 @@ class SignupScreen extends React.Component {
             onChangeText={password => this.setState({ password })}
             value={this.state.password}
             />
+          <TextInput style={styles.inputContainer}
+            placeholder="First Name"
+            placeholderTextColor="#aaa"
+            onChangeText={firstName => this.setState({ firstName })}
+            value={this.state.firstName}
+          />
+          <TextInput style={styles.inputContainer}
+            placeholder="Last name"
+            placeholderTextColor='#aaa'
+            onChangeText={lastName => this.setState({ lastName })}
+            value={this.state.lastName}
+          />
             <TouchableOpacity style={styles.button} onPress={this.handlePress}>
             <Text style={styles.buttonText}>Sign up with email </Text>
           </TouchableOpacity>
