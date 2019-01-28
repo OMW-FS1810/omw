@@ -21,12 +21,14 @@ const clearPendingInfo = () => ({
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
-  const { name, date, time, location } = eventDeets;
-
+  const invites = {};
+  eventInvites.map(user => {
+    invites[user] = true;
+  });
   try {
     const data = await database.ref('Events/').push({
       ...eventDeets,
-      invites: eventInvites
+      invites
     });
     dispatch(clearPendingInfo);
   } catch (err) {
