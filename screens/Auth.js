@@ -42,28 +42,6 @@ class Auth extends React.Component {
     });
   }
 
-  associateUserWithDevice = async user => {
-    try {
-      await database.ref(`/Devices/${deviceId}`).update({
-        userId: user.uid,
-        email: user.email
-      });
-      const currDevices = await database.ref(`/Devices/`);
-      currDevices
-        .orderByChild('userId')
-        .equalTo(user.uid)
-        .once('value', async snapshot => {
-          const allDevices = snapshot.val();
-          const oldDevice = Object.keys(allDevices).filter(
-            device => device !== deviceId
-          )[0];
-          await database.ref(`/Devices/${oldDevice}`).remove();
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   render() {
     return (
       <View style={styles.container}>
