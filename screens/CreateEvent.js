@@ -15,8 +15,8 @@ class CreateEvent extends Component {
   };
 
   // componentDidMount() {
-  //   if (this.props.state.deets.name) {
-  //     this.setState({ ...this.props.state.deets });
+  //   if (this.props.eventDeets.name) {
+  //     this.setState({ ...this.props.eventDeets });
   //   }
   // }
 
@@ -140,7 +140,7 @@ let styles = StyleSheet.create({
 });
 
 const mapState = state => ({
-  deets: state.event.pendingCreateEventDeets
+  eventDeets: state.event.pendingCreateEventDeets
 });
 
 const mapDispatch = dispatch => ({
@@ -148,6 +148,6 @@ const mapDispatch = dispatch => ({
 });
 
 export default connect(
-  null,
+  mapState,
   mapDispatch
 )(CreateEvent);
