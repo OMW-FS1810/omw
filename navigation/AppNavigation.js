@@ -6,7 +6,9 @@ import {
   createAppContainer,
   createSwitchNavigator
 } from 'react-navigation';
-import { Text, Button } from 'react-native';
+import { Text } from 'react-native';
+import { Icon } from 'react-native-elements';
+import {color} from '../styles/theme'
 
 import {
   Signup,
@@ -34,12 +36,14 @@ const DrawerStack = createDrawerNavigator(
     headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: '#384D66' },
-      title: 'Logged in!',
+      headerStyle: { backgroundColor: color.whiteGrey },
+      // title: 'Logged in!',
       headerRight: (
-        <Button
+        <Icon
+          name="menu"
+          color= {color.blue}
+          containerStyle={{ paddingRight: 10 }}
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-          title="MENU"
         />
       )
     })
