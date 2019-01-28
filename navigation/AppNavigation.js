@@ -2,89 +2,79 @@ import React from 'react';
 import {
   createStackNavigator,
   createDrawerNavigator,
-  DrawerActions
+  DrawerActions,
+  createAppContainer,
+  createSwitchNavigator
 } from 'react-navigation';
-import { Text, Button } from 'react-native';
+import { Text } from 'react-native';
+import { Icon } from 'react-native-elements';
+import {color} from '../styles/theme'
 
 import {
-  LoginScreen,
-  SignupScreen,
-  ForgotPasswordScreen,
+  Signup,
   EventMap,
   CreateEvent,
   Auth,
   Invite,
   Profile,
-  UserProfile
+  UserProfile,
+  Settings,
+  AuthLoading
 } from '../screens';
 
 //DRAWER STACK
-const DrawerStack = createDrawerNavigator({
-  Auth: { screen: Auth },
-  'Create an Event': { screen: CreateEvent },
-  'Event Map': { screen: EventMap },
-  Invite: { screen: Invite },
-  Profile: { screen: Profile},
-  UserProfile: { screen: UserProfile }
-});
-
-//LOGGED IN DRAWER STACK
-const DrawerNavigation = createStackNavigator(
+const DrawerStack = createDrawerNavigator(
   {
-    DrawerStack: { screen: DrawerStack }
+    'Event Map': { screen: EventMap },
+    'Create an Event': { screen: CreateEvent },
+    Invite: { screen: Invite },
+    Profile: { screen: Profile },
+    UserProfile: { screen: UserProfile },
+    Settings: { screen: Settings }
   },
   {
     headerMode: 'float',
+    drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: '#384D66' },
-      title: 'Logged in!',
-      headerLeft: (
-        <Button
+      headerStyle: { backgroundColor: color.whiteGrey },
+      // title: 'Logged in!',
+      headerRight: (
+        <Icon
+          name="menu"
+          color= {color.blue}
+          containerStyle={{ paddingRight: 10 }}
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-          title="MENU"
         />
       )
     })
   }
 );
 
-//CREATE EVENT STACK
-const CreateEventStack = createStackNavigator({
-  createEventScreen: { screen: CreateEvent },
-  inviteScreen: { screen: Invite }
+const DrawerNavigation = createStackNavigator({
+  DrawerStack: { screen: DrawerStack }
 });
 
+//CREATE EVENT STACK
+// const CreateEventStack = createStackNavigator({
+//   createEventScreen: { screen: CreateEvent },
+//   inviteScreen: { screen: Invite }
+// });
+
 //LOGIN STACK
-const LoginStack = createStackNavigator(
-  {
-    loginScreen: { screen: LoginScreen },
-    signupScreen: { screen: SignupScreen },
-    forgotPasswordScreen: {
-      screen: ForgotPasswordScreen,
-      navigationOptions: { title: 'Forgot Password' }
-    }
-  },
-  {
-    headerMode: 'float',
-    navigationOptions: {
-      headerStyle: { backgroundColor: '#827B84' },
-      title: 'Not Logged In',
-      headerTintColor: 'white'
-    }
-  }
-);
+const LoginStack = createStackNavigator({
+  loginScreen: { screen: Auth },
+  signupScreen: { screen: Signup }
+});
 
-const PrimaryNav = createStackNavigator(
-  {
-    loginStack: { screen: LoginStack },
-    DrawerStack: { screen: DrawerNavigation },
-    createEventStack: { screen: CreateEventStack }
-  },
-  {
-    headerMode: 'float',
-    title: 'Main',
-    initialRouteName: 'DrawerStack'
-  }
+export default createAppContainer(
+  createSwitchNavigator(
+    {
+      AuthLoading: { screen: AuthLoading },
+      LoginStack: { screen: LoginStack },
+      App: { screen: DrawerNavigation }
+    },
+    {
+      initialRouteName: 'AuthLoading'
+    }
+  )
 );
-
-export default PrimaryNav;

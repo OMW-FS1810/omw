@@ -38,7 +38,7 @@ let styles = StyleSheet.create({
   }
 });
 
-class SignupScreen extends React.Component {
+class Signup extends React.Component {
 
   state = {
     email: '',
@@ -123,4 +123,4 @@ class SignupScreen extends React.Component {
     }
   })
 
-  export default connect(mapStateToProps, mapDispatchToProps)(SignupScreen);
+  export default connect(mapStateToProps, mapDispatchToProps)(Signup);

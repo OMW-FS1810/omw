@@ -131,7 +131,7 @@ class Profile extends React.Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('signupScreen')}
+            onPress={() => this.props.navigation.navigate('signup')}
           >
             <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
