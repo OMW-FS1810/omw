@@ -49,7 +49,6 @@ class Facebook extends React.Component {
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
       if(user != null){
-        //console.log(user)
       }
     })
   }
@@ -81,7 +80,6 @@ class Facebook extends React.Component {
             created_at: Date.now()
           })
           .then(function (snapshot) {
-            // console.log('Snapshot', snapshot)
           })
       } else {
         firebase
@@ -93,7 +91,6 @@ class Facebook extends React.Component {
       }
 
 
-      console.log('What am i getting back from facebook authentication:', user);
     }
   }
 
