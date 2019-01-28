@@ -72,7 +72,7 @@ class Google extends React.Component {
   }
 
   onSignIn = googleUser => {
-    console.log('Google Auth Response', googleUser);
+    // console.log('Google Auth Response', googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     var unsubscribe = firebase.auth().onAuthStateChanged(function(firebaseUser) {
       unsubscribe();
@@ -85,7 +85,7 @@ class Google extends React.Component {
             );
         // Sign in with credential from the Google user.
         firebase.auth().signInAndRetrieveDataWithCredential(credential).then(function(result){
-          console.log('user signed in');
+          // console.log('user signed in');
           if(result.additionalUserInfo.isNewUser){
             firebase
               .database()
@@ -121,7 +121,7 @@ class Google extends React.Component {
           // ...
         });
       } else {
-        console.log('User already signed-in Firebase.');
+        // console.log('User already signed-in Firebase.');
       }
     });
   };
