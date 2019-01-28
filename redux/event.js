@@ -1,4 +1,5 @@
 import { database } from '../config/firebase';
+import store from './store';
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
@@ -7,20 +8,20 @@ const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
-  action: POPULATE_EVENT_DEETS,
+  type: POPULATE_EVENT_DEETS,
   event
 });
 export const populateEventEmails = emails => ({
-  action: POPULATE_EVENT_INVITES,
+  type: POPULATE_EVENT_INVITES,
   emails
 });
 const clearPendingInfo = () => ({
-  action: CLEAR_PENDING_INFO
+  type: CLEAR_PENDING_INFO
 });
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
-  // const { name, date, time, location } = eventDeets;
+  const { name, date, time, location } = eventDeets;
 
   try {
     const data = await database.ref('Events/').push({
@@ -42,7 +43,7 @@ const defaultEvent = {
 };
 
 // REDUCER
-const event = (state = defaultEvent, action) => {
+const eventReducer = (state = defaultEvent, action) => {
   switch (action.type) {
     case POPULATE_EVENT_DEETS: {
       return {
@@ -68,4 +69,4 @@ const event = (state = defaultEvent, action) => {
   }
 };
 
-export default event;
+export default eventReducer;

@@ -13,8 +13,8 @@ class Invite extends Component {
 
   handleCreateEvent = () => {
     this.props.populateEmails(this.state.emails);
-    //! FINISH CREATEEVENT !!!!!!!!
-    this.props.this.setState({
+    this.props.createTheEvent(this.props.eventDeets, this.state.emails);
+    this.setState({
       emails: [],
       input: ''
     });
@@ -102,11 +102,16 @@ let styles = StyleSheet.create({
   }
 });
 
+const mapState = state => ({
+  eventDeets: state.event.pendingCreateEventDeets
+});
+
 const mapDispatch = dispatch => ({
-  populateEmails: emails => dispatch(populateEventEmails(emails))
+  populateEmails: emails => dispatch(populateEventEmails(emails)),
+  createTheEvent: (deets, emails) => dispatch(createEvent(deets, emails))
 });
 
 export default connect(
-  null,
+  mapState,
   mapDispatch
 )(Invite);

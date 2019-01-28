@@ -14,11 +14,11 @@ class CreateEvent extends Component {
     location: ''
   };
 
-  componentDidMount() {
-    if (this.props.state.deets.name) {
-      this.setState({ ...this.props.state.deets });
-    }
-  }
+  // componentDidMount() {
+  //   if (this.props.state.deets.name) {
+  //     this.setState({ ...this.props.state.deets });
+  //   }
+  // }
 
   handlePress = () => {
     this.props.navigation.navigate('Invite');
