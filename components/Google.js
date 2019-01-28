@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { setUser } from '../redux/store';
+import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
+// import { Expo } from 'expo';
+import { GOOGLE_IOS_LOGIN_KEY } from '../secrets';
+import { database } from '../config/firebase';
 
 let styles = StyleSheet.create({
   container: {
@@ -45,7 +48,8 @@ const isUserEqual = (googleUser, firebaseUser) => {
       if (
         providerData[i].providerId ===
           firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
-        providerData[i].uid === googleUser.getBasicProfile().getId()
+        providerData[i].uid === googleUser.user.id
+        // GoogleUser.getBasicProfile().getId()
       ) {
         // We don't need to reauth the Firebase connection.
         return true;
@@ -84,7 +88,7 @@ class Google extends React.Component {
               if (result.additionalUserInfo.isNewUser) {
                 firebase
                   .database()
-                  .ref('/users/' + result.user.uid)
+                  .ref('/Users/' + result.user.uid)
                   .set({
                     email: result.user.email,
                     profile_picture: result.additionalUserInfo.profile.picture,
@@ -97,12 +101,13 @@ class Google extends React.Component {
               } else {
                 firebase
                   .database()
-                  .ref('/users/' + result.user.uid)
+                  .ref('/Users/' + result.user.uid)
                   .update({
                     last_logged_in: Date.now()
                   });
               }
             })
+            .then(result => {})
             .catch(function(error) {
               // Handle Errors here.
               var errorCode = error.code;
@@ -123,13 +128,30 @@ class Google extends React.Component {
       const result = await Expo.Google.logInAsync({
         behavior: 'web',
         // androidClientId: YOUR_CLIENT_ID_HERE,
-        iosClientId:
-          '855800896568-ivtj6637pq8oarnfq94hqde8kfth0e8f.apps.googleusercontent.com',
+        iosClientId: GOOGLE_IOS_LOGIN_KEY,
         scopes: ['profile', 'email']
       });
 
       if (result.type === 'success') {
-        this.onSignIn(result);
+        await this.onSignIn(result);
+        const currUser = await database.ref('/Users/');
+        let thisUid;
+        await currUser
+          .orderByChild('email')
+          .equalTo(result.user.email)
+          .once('value', async snapshot => {
+            thisUid = snapshot.val();
+          });
+        const thisUidFormatted = await Object.keys(thisUid)[0];
+        const thisUser = {
+          email: result.user.email,
+          firstName: result.user.givenName,
+          lastName: result.user.familyName,
+          pictureUrl: result.user.photoUrl,
+          uid: thisUidFormatted
+        };
+        this.props.setUserAndDevice(thisUser);
+        this.props.navigation.navigate('Create an Event');
         return result.accessToken;
       } else {
         return { cancelled: true };
@@ -156,9 +178,7 @@ class Google extends React.Component {
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
-  setUser(user) {
-    return dispatch(setUser(user));
-  }
+  setUserAndDevice: user => dispatch(setUserAndDevice(user))
 });
 
 export default connect(

@@ -45,6 +45,7 @@ class CreateEvent extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {console.log('on create event page user', this.props.user)}
         <View style={styles.titleView}>
           <Text style={styles.title}>Create an event!</Text>
         </View>
@@ -225,7 +226,8 @@ let styles = StyleSheet.create({
 });
 
 const mapState = state => ({
-  eventDeets: state.event.pendingCreateEventDeets
+  eventDeets: state.event.pendingCreateEventDeets,
+  user: state.user
 });
 
 const mapDispatch = dispatch => ({

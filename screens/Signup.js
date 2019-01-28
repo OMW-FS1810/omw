@@ -1,8 +1,14 @@
-import React from 'react'
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native'
+import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity
+} from 'react-native';
 import { database } from '../config/firebase';
-import {setUser} from '../redux/store';
-import { connect } from 'react-redux'
+import { setUserAndDevice } from '../redux/store';
+import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 
 let styles = StyleSheet.create({
@@ -12,7 +18,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'blue'
   },
   content: {
-    alignItems: 'center',
+    alignItems: 'center'
   },
   inputContainer: {
     width: 300,
@@ -39,24 +45,24 @@ let styles = StyleSheet.create({
 });
 
 class Signup extends React.Component {
-
   state = {
     email: '',
     password: '',
     firstName: '',
     lastName: '',
     error: ''
-  }
+  };
 
   handlePress = async () => {
     const { email, password, firstName, lastName } = this.state;
     try {
-      const data = await firebase.auth().createUserWithEmailAndPassword(email.trim(), password);
+      const data = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email.trim(), password);
       if (data) {
-        this.props.setUser(data.user);
-
-        await firebase.database()
-          .ref('/users/' + data.user.uid)
+        await firebase
+          .database()
+          .ref('/Users/' + data.user.uid)
           .set({
             email,
             // profile_picture: result.additionalUserInfo.profile.picture,
@@ -64,63 +70,76 @@ class Signup extends React.Component {
             first_name: firstName,
             last_name: lastName,
             created_at: Date.now()
-          })
+          });
+        const thisUser = {
+          email,
+          firstName,
+          lastName,
+          uid: data.user.uid
+        };
+
+        this.props.setUserAndDevice(thisUser);
         this.props.navigation.navigate('Create an Event');
       }
-      this.setState({email: '', password: ''});
-    } catch(error) {
-      this.setState({error: error.message})
+      this.setState({ email: '', password: '' });
+    } catch (error) {
+      this.setState({ error: error.message });
     }
-  }
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
           <Text> {this.state.error} </Text>
-          <TextInput style={styles.inputContainer}
+          <TextInput
+            style={styles.inputContainer}
             placeholder="Email"
-            placeholderTextColor = "#aaa"
+            placeholderTextColor="#aaa"
             keyboardType="email-address"
             onChangeText={email => this.setState({ email })}
             value={this.state.email}
-            />
-          <TextInput style={styles.inputContainer}
+          />
+          <TextInput
+            style={styles.inputContainer}
             placeholder="Password"
             secureTextEntry={true}
-            placeholderTextColor='#aaa'
+            placeholderTextColor="#aaa"
             onChangeText={password => this.setState({ password })}
             value={this.state.password}
-            />
-          <TextInput style={styles.inputContainer}
+          />
+          <TextInput
+            style={styles.inputContainer}
             placeholder="First Name"
             placeholderTextColor="#aaa"
             onChangeText={firstName => this.setState({ firstName })}
             value={this.state.firstName}
           />
-          <TextInput style={styles.inputContainer}
+          <TextInput
+            style={styles.inputContainer}
             placeholder="Last name"
-            placeholderTextColor='#aaa'
+            placeholderTextColor="#aaa"
             onChangeText={lastName => this.setState({ lastName })}
             value={this.state.lastName}
           />
-            <TouchableOpacity style={styles.button} onPress={this.handlePress}>
+          <TouchableOpacity style={styles.button} onPress={this.handlePress}>
             <Text style={styles.buttonText}>Sign up with email </Text>
           </TouchableOpacity>
-
         </View>
       </View>
-    )}
+    );
   }
+}
 
-  const mapStateToProps = (state) => ({
-    user: state.user.user
-  });
+const mapStateToProps = state => ({
+  user: state.user.user
+});
 
-  const mapDispatchToProps = (dispatch) => ({
-    setUser(user) {
-      return dispatch(setUser(user));
-    }
-  })
+const mapDispatchToProps = dispatch => ({
+  setUserAndDevice: user => dispatch(setUserAndDevice(user))
+});
 
-  export default connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Signup);
