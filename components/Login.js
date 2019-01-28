@@ -65,7 +65,20 @@ class Login extends React.Component {
         .auth()
         .signInWithEmailAndPassword(email.trim(), password);
       if (data) {
-        this.props.setUserAndDevice(data.user);
+        const currUser = await database.ref(`/Users/${data.user.uid}`);
+        let thisUser;
+        await currUser.once('value', async snapshot => {
+          thisUser = await snapshot.val();
+        });
+        const thisUserData = {
+          email: thisUser.email,
+          firstName: thisUser.first_name,
+          lastName: thisUser.last_name,
+          pictureUrl: thisUser.profile_picture,
+          uid: data.user.uid
+        };
+
+        this.props.setUserAndDevice(thisUserData);
         this.props.navigation.navigate('Create an Event');
       }
       this.setState({ email: '', password: '' });

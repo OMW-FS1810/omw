@@ -4,7 +4,14 @@ import { Constants } from 'expo';
 const deviceId = Constants.installationId;
 
 const initialState = {
-  user: {}
+  user: {
+    uid: null,
+    email: '',
+    firstName: '',
+    lastName: '',
+    pictureUrl: '',
+    deviceId: null
+  }
 };
 
 const SET_USER = 'SET_USER';
@@ -16,10 +23,11 @@ export const setUser = user => ({
 
 export const setUserAndDevice = user => async dispatch => {
   try {
-    await database.ref(`/users/${user.uid}`).update({
+    console.log('user', user);
+    await database.ref(`/Users/${user.uid}`).update({
       deviceId
     });
-    const currDevices = await database.ref(`/users/`);
+    const currDevices = await database.ref(`/Users/`);
     currDevices
       .orderByChild('deviceId')
       .equalTo(deviceId)
@@ -28,7 +36,7 @@ export const setUserAndDevice = user => async dispatch => {
         const oldUser = Object.keys(allUsers).filter(
           thisUser => thisUser !== user.uid
         )[0];
-        await database.ref(`/users/${oldUser}`).update({
+        await database.ref(`/Users/${oldUser}`).update({
           deviceId: null
         });
       });
