@@ -29,8 +29,7 @@ class CreateEvent extends Component {
   handlePress = () => {
     this.props.navigation.navigate('Invite');
     // I commented out the below function call for testing because it's currently throwing an error from the redux store
-    //this.props.populateDeets(this.state);
-    console.log(this.state);
+    this.props.populateDeets(this.state);
     this.setState({
       name: '',
       date: '',
