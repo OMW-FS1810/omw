@@ -19,26 +19,22 @@ import {
 } from '../screens';
 
 //DRAWER STACK
-const DrawerStack = createDrawerNavigator({
-  Auth: { screen: Auth },
-  'Create an Event': { screen: CreateEvent },
-  'Event Map': { screen: EventMap },
-  Invite: { screen: Invite },
-  Profile: { screen: Profile},
-  UserProfile: { screen: UserProfile }
-});
-
-//LOGGED IN DRAWER STACK
-const DrawerNavigation = createStackNavigator(
+const DrawerStack = createDrawerNavigator(
   {
-    DrawerStack: { screen: DrawerStack }
+    Auth: { screen: Auth },
+    'Create an Event': { screen: CreateEvent },
+    'Event Map': { screen: EventMap },
+    Invite: { screen: Invite },
+    Profile: { screen: Profile },
+    UserProfile: { screen: UserProfile }
   },
   {
     headerMode: 'float',
+    drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
       headerStyle: { backgroundColor: '#384D66' },
       title: 'Logged in!',
-      headerLeft: (
+      headerRight: (
         <Button
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
           title="MENU"
@@ -47,6 +43,11 @@ const DrawerNavigation = createStackNavigator(
     })
   }
 );
+
+//LOGGED IN DRAWER STACK
+// const DrawerNavigation = createStackNavigator({
+//   DrawerStack: { screen: DrawerStack }
+// });
 
 //CREATE EVENT STACK
 const CreateEventStack = createStackNavigator({
@@ -77,7 +78,7 @@ const LoginStack = createStackNavigator(
 const PrimaryNav = createStackNavigator(
   {
     loginStack: { screen: LoginStack },
-    DrawerStack: { screen: DrawerNavigation },
+    DrawerStack: { screen: DrawerStack },
     createEventStack: { screen: CreateEventStack }
   },
   {
