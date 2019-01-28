@@ -43,6 +43,7 @@ class CreateEvent extends Component {
   };
 
   render() {
+    // console.log('user..', this.props.user);
     return (
       <View style={styles.container}>
         <View style={styles.titleView}>
@@ -226,6 +227,7 @@ let styles = StyleSheet.create({
 
 const mapState = state => ({
   eventDeets: state.event.pendingCreateEventDeets
+  // user: state.auth.user
 });
 
 const mapDispatch = dispatch => ({

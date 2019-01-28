@@ -33,6 +33,9 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     console.error(err);
   }
 };
+export const fetchAllEvents = userId => async dispatch => {
+  
+}
 
 // DEFAULT STATE
 const defaultEvent = {
