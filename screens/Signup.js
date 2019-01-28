@@ -44,12 +44,7 @@ let styles = StyleSheet.create({
   }
 });
 
-<<<<<<< HEAD:screens/SignupScreen.js
-class SignupScreen extends React.Component {
-=======
 class Signup extends React.Component {
-
->>>>>>> 24f6c309b287a15301c1fccb5fa0b980def9d071:screens/Signup.js
   state = {
     email: '',
     password: '',
@@ -82,6 +77,7 @@ class Signup extends React.Component {
           lastName,
           uid: data.user.uid
         };
+
         this.props.setUserAndDevice(thisUser);
         this.props.navigation.navigate('Create an Event');
       }
@@ -143,11 +139,7 @@ const mapDispatchToProps = dispatch => ({
   setUserAndDevice: user => dispatch(setUserAndDevice(user))
 });
 
-<<<<<<< HEAD:screens/SignupScreen.js
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SignupScreen);
-=======
-  export default connect(mapStateToProps, mapDispatchToProps)(Signup);
->>>>>>> 24f6c309b287a15301c1fccb5fa0b980def9d071:screens/Signup.js
+)(Signup);
