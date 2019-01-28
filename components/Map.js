@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
 import { MapView, Constants } from 'expo';
 // import { Marker } from 'react-native-maps';
 import { connect } from 'react-redux';
-import { mapStyle } from './mapStyle';
+import { mapStyle } from './styles/mapStyle';
 //vectir icons '@expo/vector-icons'
 import { convertTimestamp } from '../helpers/convertTimestamp';
 
