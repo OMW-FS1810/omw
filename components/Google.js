@@ -117,7 +117,6 @@ class Google extends React.Component {
           // ...
         });
       } else {
-        // console.log('User already signed-in Firebase.');
       }
     });
   };
