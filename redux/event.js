@@ -19,10 +19,9 @@ export const populateEventEmails = emails => ({
 const clearPendingInfo = () => ({
   type: CLEAR_PENDING_INFO
 });
-const requestEvents = (hostEvents, invitedEvents) => ({
+const requestEvents = events => ({
   type: REQUEST_EVENTS,
-  hostEvents,
-  invitedEvents
+  events
 });
 
 // THUNK CREATORS
@@ -39,19 +38,20 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
 };
 export const fetchAllEvents = userId => async dispatch => {
   try {
-    let hostEvents = [];
+    // let hostEvents = [];
     // find all events where this user is the host
-    const eventRef = database.ref('/Events/');
-    await eventRef
-      .orderByChild('host')
-      .equalTo(userId)
-      .on('value', event => {
-        hostEvents.push(event);
-      });
+    // await eventRef
+    //   .orderByChild('host')
+    //   .equalTo(userId)
+    //   .on('value', event => {
+    //     hostEvents.push(event);
+    //   });
     // find all events where this user is invited
+
     // first grab the email address since invites are based on email address
+    const eventRef = database.ref('/Events/');
+    const emailRef = database.ref(`/Users/${userId}`);
     let email;
-    let emailRef = database.ref(`/Users/${userId}`);
     await emailRef.once('value', person => {
       email = person.val().email;
     });
@@ -64,8 +64,9 @@ export const fetchAllEvents = userId => async dispatch => {
         }
       });
     });
+    //! try .once('value') and loop over each event - for in
     setTimeout(() => {
-      dispatch(requestEvents(hostEvents, invitedEvents));
+      dispatch(requestEvents(invitedEvents));
     }, 100);
   } catch (err) {
     console.error(err);
@@ -75,7 +76,7 @@ export const fetchAllEvents = userId => async dispatch => {
 // DEFAULT STATE
 const defaultEvent = {
   allEvents: {},
-  currentEvent: {},
+  selectedEvent: {},
   pendingCreateEventDeets: {},
   pendingCreateEventInvites: []
 };
@@ -105,10 +106,7 @@ const eventReducer = (state = defaultEvent, action) => {
     case REQUEST_EVENTS: {
       return {
         ...state,
-        allEvents: {
-          ...action.hostEvents,
-          ...action.invitedEvents
-        }
+        allEvents: action.events
       };
     }
     default:
