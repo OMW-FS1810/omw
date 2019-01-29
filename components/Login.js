@@ -81,7 +81,7 @@ class Login extends React.Component {
         this.props.setUserAndDevice(thisUserData);
         this.props.navigation.navigate('Create an Event');
       }
-      this.setState({ email: '', password: '' });
+      // this.setState({ email: '', password: '' });
     } catch (error) {
       this.setState({ error: error.message });
     }

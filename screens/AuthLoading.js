@@ -4,7 +4,7 @@ import {
   AsyncStorage,
   StatusBar,
   StyleSheet,
-  View,
+  View
 } from 'react-native';
 
 class AuthLoading extends React.Component {
@@ -16,7 +16,6 @@ class AuthLoading extends React.Component {
   // Fetch the token from storage then navigate to our appropriate place
   _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem('user');
-
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
     this.props.navigation.navigate(userToken ? 'App' : 'Auth');
@@ -41,4 +40,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AuthLoading
+export default AuthLoading;

@@ -8,7 +8,7 @@ import {
 } from 'react-navigation';
 import { Text } from 'react-native';
 import { Icon } from 'react-native-elements';
-import {color} from '../styles/theme'
+import { color } from '../styles/theme';
 
 import {
   Signup,
@@ -41,7 +41,7 @@ const DrawerStack = createDrawerNavigator(
       headerRight: (
         <Icon
           name="menu"
-          color= {color.blue}
+          color={color.blue}
           containerStyle={{ paddingRight: 10 }}
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
         />
@@ -74,7 +74,7 @@ export default createAppContainer(
       App: { screen: DrawerNavigation }
     },
     {
-      initialRouteName: 'AuthLoading'
+      initialRouteName: 'LoginStack'
     }
   )
 );
