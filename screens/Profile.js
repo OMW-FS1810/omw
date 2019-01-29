@@ -1,12 +1,16 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, AsyncStorage } from 'react-native';
-import { database } from '../config/firebase';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Text
+} from 'react-native';
+import { auth, database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
 // import { Button } from 'react-native-paper'
-import * as firebase from 'firebase';
-import { Login, Google, Facebook } from '../components';
 
 const deviceId = Constants.installationId;
 
@@ -18,6 +22,15 @@ let styles = StyleSheet.create({
   },
   content: {
     alignItems: 'center'
+  },
+  inputContainer: {
+    width: 300,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#aaa',
+    marginVertical: 10
   },
   button: {
     width: 300,
@@ -34,16 +47,25 @@ let styles = StyleSheet.create({
   }
 });
 
-class Auth extends React.Component {
-  static navigationOptions={
-    title: 'OMW'
-  }
+class Profile extends React.Component {
+  state = {
+    email: '',
+    password: '',
+    error: ''
+  };
 
-  componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user != null) {
+  handlePress = async () => {
+    const { email, password } = this.state;
+    try {
+      const data = await auth.signInWithEmailAndPassword(
+        email.trim(),
+        password
+      );
+      if (data) {
+        this.props.setUser(data.user);
+        this.associateUserWithDevice(data.user);
+        this.props.navigation.navigate('Create an Event');
       }
-<<<<<<< HEAD
       this.setState({ email: '', password: '' });
     } catch (error) {
       this.setState({ error: error.message });
@@ -56,7 +78,6 @@ class Auth extends React.Component {
         email: user.email
       });
       const currDevices = await database.ref(`/Devices/`);
-      console.log(user.uid);
       currDevices
         .orderByChild('userId')
         .equalTo(user.uid)
@@ -65,7 +86,6 @@ class Auth extends React.Component {
           const oldDevice = Object.keys(allDevices).filter(
             device => device !== deviceId
           )[0];
-          console.log('all', allDevices, 'old', oldDevice);
           await database.ref(`/Devices/${oldDevice}`).remove();
         });
     } catch (error) {
@@ -73,40 +93,16 @@ class Auth extends React.Component {
     }
   };
 
-  googlePress = async () => {
-    console.log('Do I get here?')
-    try {
-      const data = await auth.signInWithPopup(provider)
-      if (data) {
-        console.log('Success!!!!')
-
-        // this.props.setUser(data.user);
-        // this.props.navigation.navigate('Create an Event');
-
-      }
-      // this.setState({email: '', password: ''});
-    } catch(error) {
-      console.log('Do I get here?')
-      this.setState({error: error.message})
-
-    }
-  }
-
   // placeNameChangeHandler = val => {
   //   this.setState({
   //     placeName: val
   //   })
   // }
-=======
-    });
-  }
->>>>>>> master
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-<<<<<<< HEAD
           <Text> {this.state.error} </Text>
           <TextInput
             style={styles.inputContainer}
@@ -127,17 +123,12 @@ class Auth extends React.Component {
           <TouchableOpacity style={styles.button} onPress={this.handlePress}>
             <Text style={styles.buttonText}>Sign in</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={this.googlePress}>
-            <Text style={styles.buttonText}>Sign up with Google</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Sign up withGoogle</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Sign up with Facebook</Text>
           </TouchableOpacity>
-=======
-          <Login navigation={this.props.navigation} onPress={this._signInAsync}/>
-          <Google navigation={this.props.navigation} />
-          <Facebook navigation={this.props.navigation} />
->>>>>>> master
           <TouchableOpacity
             style={styles.button}
             onPress={() => this.props.navigation.navigate('signup')}
@@ -147,11 +138,6 @@ class Auth extends React.Component {
         </View>
       </View>
     );
-  }
-
-  _signInAsync = async() =>{
-    await AsyncStorage.setItem('userToken', 'password')
-    this.props.navigate('App')
   }
 }
 
@@ -166,4 +152,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Auth);
+)(Profile);
