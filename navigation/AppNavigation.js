@@ -74,7 +74,7 @@ export default createAppContainer(
       App: { screen: DrawerNavigation }
     },
     {
-      initialRouteName: 'AuthLoading'
+      initialRouteName: 'LoginStack'
     }
   )
 );
