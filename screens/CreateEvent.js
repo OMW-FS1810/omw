@@ -29,20 +29,20 @@ class CreateEvent extends Component {
 
   handlePress = () => {
     // FOR TESTING V
-    // this.props.fetch(this.props.user.uid);
+    this.props.fetch(this.props.user.uid);
 
-    this.props.navigation.navigate('Invite');
-    this.props.populateDeets(this.state);
-    this.setState({
-      name: '',
-      date: '',
-      time: '',
-      location: {
-        locationName: '',
-        locationAddress: '',
-        locationGeocode: {}
-      }
-    });
+    // this.props.navigation.navigate('Invite');
+    // this.props.populateDeets(this.state);
+    // this.setState({
+    //   name: '',
+    //   date: '',
+    //   time: '',
+    //   location: {
+    //     locationName: '',
+    //     locationAddress: '',
+    //     locationGeocode: {}
+    //   }
+    // });
   };
 
   render() {
@@ -165,12 +165,12 @@ class CreateEvent extends Component {
           <Button
             onPress={this.handlePress}
             type="contained"
-            disabled={
-              !this.state.date ||
-              !this.state.name ||
-              !this.state.time ||
-              !this.state.location
-            }
+            // disabled={
+            //   !this.state.date ||
+            //   !this.state.name ||
+            //   !this.state.time ||
+            //   !this.state.location
+            // }
           >
             <Text style={styles.butonText}>next</Text>
           </Button>
