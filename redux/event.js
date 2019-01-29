@@ -19,9 +19,10 @@ export const populateEventEmails = emails => ({
 const clearPendingInfo = () => ({
   type: CLEAR_PENDING_INFO
 });
-const requestEvents = events => ({
+const requestEvents = (hostEvents, invitedEvents) => ({
   type: REQUEST_EVENTS,
-  events
+  hostEvents,
+  invitedEvents
 });
 
 // THUNK CREATORS
@@ -39,7 +40,6 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
 export const fetchAllEvents = userId => async dispatch => {
   try {
     let hostEvents = [];
-    let invitedEvents = [];
     // find all events where this user is the host
     const eventRef = database.ref('/Events/');
     await eventRef
@@ -55,18 +55,18 @@ export const fetchAllEvents = userId => async dispatch => {
     await emailRef.once('value', person => {
       email = person.val().email;
     });
-    console.log('before .on()');
     // then query all events where this email is in invites
-    await eventRef.on('child_added', snapshot => {
-      snapshot.val().invites.map(value => {
+    let invitedEvents = [];
+    eventRef.on('child_added', async snapshot => {
+      await snapshot.val().invites.map(value => {
         if (value === email) {
-          invitedEvents.push(snapshot);
+          invitedEvents.push(snapshot.val());
         }
       });
-      console.log('THE END OF .on()', invitedEvents);
     });
-    console.log('THE END OF try block INVITED EVENTS', invitedEvents);
-    // console.log('THE END OF try block HOST EVENTs', hostEvents);
+    setTimeout(() => {
+      dispatch(requestEvents(hostEvents, invitedEvents));
+    }, 100);
   } catch (err) {
     console.error(err);
   }
@@ -74,7 +74,7 @@ export const fetchAllEvents = userId => async dispatch => {
 
 // DEFAULT STATE
 const defaultEvent = {
-  allEvents: [],
+  allEvents: {},
   currentEvent: {},
   pendingCreateEventDeets: {},
   pendingCreateEventInvites: []
@@ -100,6 +100,15 @@ const eventReducer = (state = defaultEvent, action) => {
         ...state,
         pendingCreateEventDeets: {},
         pendingCreateEventInvites: []
+      };
+    }
+    case REQUEST_EVENTS: {
+      return {
+        ...state,
+        allEvents: {
+          ...action.hostEvents,
+          ...action.invitedEvents
+        }
       };
     }
     default:

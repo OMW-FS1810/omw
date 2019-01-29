@@ -48,25 +48,22 @@ let styles = StyleSheet.create({
   }
 });
 
-
 class Login extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: 'adam@email.com',
+      password: '123456',
       error: ''
     };
   }
 
-
   handlePress = async () => {
     const { email, password } = this.state;
     try {
-      const data = await firebase.auth().signInWithEmailAndPassword(
-        email.trim(),
-        password
-      );
+      const data = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email.trim(), password);
       if (data) {
         this.props.setUser(data.user);
         this.associateUserWithDevice(data.user);
@@ -101,32 +98,28 @@ class Login extends React.Component {
 
   render() {
     return (
-
-        <View style={styles.content}>
-          <Text> {this.state.error} </Text>
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            onChangeText={email => this.setState({ email })}
-            value={this.state.email}
-          />
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Password"
-            secureTextEntry={true}
-            placeholderTextColor="#aaa"
-            onChangeText={password => this.setState({ password })}
-            value={this.state.password}
-          />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.handlePress}>
-            <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
-        </View>
-
+      <View style={styles.content}>
+        <Text> {this.state.error} </Text>
+        <TextInput
+          style={styles.inputContainer}
+          placeholder="Email"
+          placeholderTextColor="#aaa"
+          keyboardType="email-address"
+          onChangeText={email => this.setState({ email })}
+          value={this.state.email}
+        />
+        <TextInput
+          style={styles.inputContainer}
+          placeholder="Password"
+          secureTextEntry={true}
+          placeholderTextColor="#aaa"
+          onChangeText={password => this.setState({ password })}
+          value={this.state.password}
+        />
+        <TouchableOpacity style={styles.button} onPress={this.handlePress}>
+          <Text style={styles.buttonText}>Sign in</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
