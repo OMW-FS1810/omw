@@ -151,7 +151,7 @@ class Google extends React.Component {
           uid: thisUidFormatted
         };
         this.props.setUserAndDevice(thisUser);
-        this.props.navigation.navigate('Create an Event');
+        this.props.navigation.navigate('App');
         return result.accessToken;
       } else {
         return { cancelled: true };

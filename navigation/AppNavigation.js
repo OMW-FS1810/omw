@@ -33,10 +33,10 @@ const DrawerStack = createDrawerNavigator(
     Settings: { screen: Settings }
   },
   {
-    headerMode: 'float',
+    // headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: color.whiteGrey },
+      headerStyle: { backgroundColor: 'transparent' },
       // title: 'Logged in!',
       headerRight: (
         <Icon
@@ -47,7 +47,8 @@ const DrawerStack = createDrawerNavigator(
         />
       )
     })
-  }
+  },
+  { headerMode: 'none' }
 );
 
 const DrawerNavigation = createStackNavigator({
