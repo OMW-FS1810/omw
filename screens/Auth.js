@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  AsyncStorage
+} from 'react-native';
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
@@ -35,40 +41,25 @@ let styles = StyleSheet.create({
 });
 
 class Auth extends React.Component {
-  componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user != null) {
-      }
-    });
-  }
-
-  associateUserWithDevice = async user => {
-    try {
-      await database.ref(`/Devices/${deviceId}`).update({
-        userId: user.uid,
-        email: user.email
-      });
-      const currDevices = await database.ref(`/Devices/`);
-      currDevices
-        .orderByChild('userId')
-        .equalTo(user.uid)
-        .once('value', async snapshot => {
-          const allDevices = snapshot.val();
-          const oldDevice = Object.keys(allDevices).filter(
-            device => device !== deviceId
-          )[0];
-          await database.ref(`/Devices/${oldDevice}`).remove();
-        });
-    } catch (error) {
-      console.error(error);
-    }
+  static navigationOptions = {
+    title: 'OMW'
   };
+
+  componentDidMount() {
+    // firebase.auth().onAuthStateChanged(user => {
+    //   if (user != null) {
+    //   }
+    // });
+  }
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-          <Login navigation={this.props.navigation} />
+          <Login
+            navigation={this.props.navigation}
+            onPress={this._signInAsync}
+          />
           <Google navigation={this.props.navigation} />
           <Facebook navigation={this.props.navigation} />
           <TouchableOpacity
@@ -81,6 +72,11 @@ class Auth extends React.Component {
       </View>
     );
   }
+
+  _signInAsync = async () => {
+    await AsyncStorage.setItem('userToken', 'password');
+    this.props.navigate('App');
+  };
 }
 
 const mapStateToProps = state => ({});

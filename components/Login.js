@@ -7,7 +7,7 @@ import {
   Text
 } from 'react-native';
 import { database } from '../config/firebase';
-import { setUser } from '../redux/store';
+import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
 // import { Button } from 'react-native-paper'
@@ -65,34 +65,25 @@ class Login extends React.Component {
         .auth()
         .signInWithEmailAndPassword(email.trim(), password);
       if (data) {
-        this.props.setUser(data.user);
-        this.associateUserWithDevice(data.user);
+        const currUser = await database.ref(`/Users/${data.user.uid}`);
+        let thisUser;
+        await currUser.once('value', async snapshot => {
+          thisUser = await snapshot.val();
+        });
+        const thisUserData = {
+          email: thisUser.email,
+          firstName: thisUser.first_name,
+          lastName: thisUser.last_name,
+          pictureUrl: thisUser.profile_picture,
+          uid: data.user.uid
+        };
+
+        this.props.setUserAndDevice(thisUserData);
         this.props.navigation.navigate('Create an Event');
       }
-      this.setState({ email: '', password: '' });
+      // this.setState({ email: '', password: '' });
     } catch (error) {
       this.setState({ error: error.message });
-    }
-  };
-  associateUserWithDevice = async user => {
-    try {
-      await database.ref(`/Devices/${deviceId}`).update({
-        userId: user.uid,
-        email: user.email
-      });
-      const currDevices = await database.ref(`/Devices/`);
-      currDevices
-        .orderByChild('userId')
-        .equalTo(user.uid)
-        .once('value', async snapshot => {
-          const allDevices = snapshot.val();
-          const oldDevice = Object.keys(allDevices).filter(
-            device => device !== deviceId
-          )[0];
-          await database.ref(`/Devices/${oldDevice}`).remove();
-        });
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -127,8 +118,8 @@ class Login extends React.Component {
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
-  setUser(user) {
-    return dispatch(setUser(user));
+  setUserAndDevice(user) {
+    return dispatch(setUserAndDevice(user));
   }
 });
 

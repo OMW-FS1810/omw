@@ -7,7 +7,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { database } from '../config/firebase';
-import { setUser } from '../redux/store';
+import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 
@@ -44,7 +44,7 @@ let styles = StyleSheet.create({
   }
 });
 
-class SignupScreen extends React.Component {
+class Signup extends React.Component {
   state = {
     email: '',
     password: '',
@@ -60,8 +60,6 @@ class SignupScreen extends React.Component {
         .auth()
         .createUserWithEmailAndPassword(email.trim(), password);
       if (data) {
-        this.props.setUser(data.user);
-
         await firebase
           .database()
           .ref('/Users/' + data.user.uid)
@@ -73,6 +71,14 @@ class SignupScreen extends React.Component {
             last_name: lastName,
             created_at: Date.now()
           });
+        const thisUser = {
+          email,
+          firstName,
+          lastName,
+          uid: data.user.uid
+        };
+
+        this.props.setUserAndDevice(thisUser);
         this.props.navigation.navigate('Create an Event');
       }
       this.setState({ email: '', password: '' });
@@ -130,12 +136,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setUser(user) {
-    return dispatch(setUser(user));
-  }
+  setUserAndDevice: user => dispatch(setUserAndDevice(user))
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SignupScreen);
+)(Signup);
