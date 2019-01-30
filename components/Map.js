@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
 //vectir icons '@expo/vector-icons'
 import { convertTimestamp } from '../helpers/convertTimestamp';
+import AllEventsMap from './AllEventsMap';
 
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = height / 4;
@@ -170,12 +171,8 @@ export default class Map extends React.Component {
               description={`${event.location.locationName} ${event.date} ${
                 event.time
               }`}
-              //dragging is disabled
-              // draggable={true}
-              // onDragEnd={e =>
-              //   this.setState({ coordinate: e.nativeEvent.coordinate })
-              // }
             />
+            {user.email ? <AllEventsMap user={user} /> : null}
           </MapView>
           <Callout style={styles.callout}>
             <TouchableOpacity onPress={setBackgroundLocation}>
