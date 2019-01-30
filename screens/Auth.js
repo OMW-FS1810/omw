@@ -9,10 +9,11 @@ import {
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
-import { Constants } from 'expo';
+import { Constants, MailComposer } from 'expo';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
 import { Login, Google, Facebook } from '../components';
+import Communications from 'react-native-communications';
 
 const deviceId = Constants.installationId;
 
