@@ -43,14 +43,12 @@ let styles = StyleSheet.create({
   }
 });
 
-
 class Facebook extends React.Component {
-
   componentDidMount() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if(user != null){
+    firebase.auth().onAuthStateChanged(user => {
+      if (user != null) {
       }
-    })
+    });
   }
 
   signInWithFacebookAsync = async () => {
@@ -66,7 +64,9 @@ class Facebook extends React.Component {
       //   `Hi ${(await response.json()).name}!`,
       const credential = firebase.auth.FacebookAuthProvider.credential(token);
 
-      const user = await firebase.auth().signInAndRetrieveDataWithCredential(credential);
+      const user = await firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(credential);
       if (user.additionalUserInfo.isNewUser) {
         firebase
           .database()
@@ -91,20 +91,19 @@ class Facebook extends React.Component {
           this.props.setUserAndDevice(user);
         this.props.navigation.navigate('App');
       }
-
-
     }
-  }
+  };
 
   render() {
     return (
-        <View style={styles.content}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.signInWithFacebookAsync}>
-            <Text style={styles.buttonText}>Sign up with Facebook</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.content}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={this.signInWithFacebookAsync}
+        >
+          <Text style={styles.buttonText}>Sign up with Facebook</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }

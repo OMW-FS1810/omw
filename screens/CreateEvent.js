@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { TextInput, Button, Surface } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { populateEventDeets } from '../redux/event';
+import { populateEventDeets, fetchAllEvents } from '../redux/event';
 import { GOOGLE_API } from '../secrets';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
@@ -17,18 +17,21 @@ class CreateEvent extends Component {
       locationName: '',
       locationAddress: '',
       locationGeocode: {}
-    }
+    },
+    host: ''
   };
 
-  // componentDidMount() {
-  //   if (this.props.eventDeets.name) {
-  //     this.setState({ ...this.props.eventDeets });
-  //   }
-  // }
+  componentDidMount() {
+    if (this.props.user) {
+      this.setState({ host: this.props.user.uid });
+    }
+  }
 
   handlePress = () => {
+    // FOR TESTING V
+    // this.props.fetch(this.props.user.uid);
+
     this.props.navigation.navigate('Invite');
-    // I commented out the below function call for testing because it's currently throwing an error from the redux store
     this.props.populateDeets(this.state);
     this.setState({
       name: '',
@@ -45,7 +48,6 @@ class CreateEvent extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {console.log('on create event page user', this.props.user)}
         <View style={styles.titleView}>
           <Text style={styles.title}>Create an event!</Text>
         </View>
@@ -227,11 +229,12 @@ let styles = StyleSheet.create({
 
 const mapState = state => ({
   eventDeets: state.event.pendingCreateEventDeets,
-  user: state.user
+  user: state.user.user
 });
 
 const mapDispatch = dispatch => ({
-  populateDeets: event => dispatch(populateEventDeets(event))
+  populateDeets: event => dispatch(populateEventDeets(event)),
+  fetch: userId => dispatch(fetchAllEvents(userId))
 });
 
 export default connect(
