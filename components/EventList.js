@@ -9,7 +9,6 @@ class EventList extends Component {
   }
 
   render() {
-    console.log('event list?', this.props.allEvents);
     return (
       <View Style={styles.container}>
         <Text>hello from event list</Text>
