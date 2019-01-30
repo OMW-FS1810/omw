@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -20,26 +21,80 @@ const CARD_WIDTH = CARD_HEIGHT - 50;
 
 class AllEventsMap extends React.Component {
   state = {
-    user: {},
-    markers: []
+    user: {}
   };
+
   renderEventMarker = () => {
-    // console.log('event info for adam 🔥', this.props.allEvents);
-    // if (this.props.allEvents.length) {
-    //   const allEvents = this.props.allEvents;
-    //   allEvents.map(event => {
-    //     this.setState({
-    //       markers: [
-    //         ...this.state.markers,
-    //         this.state.markers.push({
-    //           coordinate: {
-    //             // latitude:
-    //           }
-    //         })
-    //       ]
-    //     });
-    //   });
-    // }
+    console.log('hi');
+    if (this.props.allEvents.length) {
+      const allEvents = this.props.allEvents;
+      allEvents.map(async eventData => {
+        for (let uid in eventData) {
+          const event = eventData[uid];
+          const latitude = event.location.locationGeocode.lat;
+          const longitude = event.location.locationGeocode.lng;
+          const title = event.name;
+          const time = event.time;
+          const date = event.date;
+          const description = event.location.locationName;
+          const id = uid;
+
+          console.log('latitude', latitude);
+          console.log('longitude', longitude);
+          console.log('title', title);
+          console.log('time', time);
+          console.log('date', date);
+          console.log('description', description);
+          console.log('id', id);
+
+          console.log('event info for adam 🔥', event);
+          return (
+            <MapView.Marker key={id} coordinate={{ latitude, longitude }}>
+              <Animated.View style={styles.markerWrap}>
+                <Animated.View style={styles.ring} />
+                <View style={styles.marker} />
+              </Animated.View>
+            </MapView.Marker>
+          );
+        }
+      });
+    }
+  };
+
+  renderEventCard = () => {
+    if (this.props.allEvents.length) {
+      const allEvents = this.props.allEvents;
+      allEvents.map(async eventData => {
+        for (let uid in eventData) {
+          const event = eventData[uid];
+          const latitude = event.location.locationGeocode.lat;
+          const longitude = event.location.locationGeocode.lng;
+          const title = event.name;
+          const time = event.time;
+          const date = event.date;
+          const description = event.location.locationName;
+          const id = uid;
+          return (
+            <View key={id} styles={styles.card}>
+              <View styles={styles.textContent}>
+                <Text numberOfLines={1} style={styles.cardtitle}>
+                  {title}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {description}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {date}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {time}
+                </Text>
+              </View>
+            </View>
+          );
+        }
+      });
+    }
   };
 
   componentDidMount() {
@@ -53,10 +108,45 @@ class AllEventsMap extends React.Component {
 
   render() {
     const { region } = this.props;
-    this.renderEventMarker();
+    // this.renderEventMarker();
     return (
       <View style={styles.container}>
-        <MapView ref={map => (this.map = map)} initialRegion={region} />
+        <MapView
+          style={styles.map}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          showsMyLocationButton={true}
+          showsCompass={true}
+          showsScale={true}
+          region={region}
+          onRegionChangeComplete={e => updateMapRegion(e)}
+          provider={MapView.PROVIDER_GOOGLE}
+          customMapStyle={mapStyle}
+        >
+          {this.renderEventMarker()}
+        </MapView>
+        <Animated.ScrollView
+          horizontal
+          scrollEventThrottle={1}
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={CARD_WIDTH}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    x: this.animation
+                  }
+                }
+              }
+            ],
+            { useNativeDriver: true }
+          )}
+          style={styles.scrollView}
+          contentContainerStyle={styles.endPadding}
+        >
+          {this.renderEventCard()}
+        </Animated.ScrollView>
       </View>
     );
   }
