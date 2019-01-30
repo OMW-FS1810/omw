@@ -24,7 +24,6 @@ export const setUser = user => ({
 
 export const setUserAndDevice = user => async dispatch => {
   try {
-    console.log('user', user);
     await database.ref(`/Users/${user.uid}`).update({
       deviceId
     });

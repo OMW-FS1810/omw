@@ -31,7 +31,7 @@ class CreateEvent extends Component {
     // FOR TESTING V
     // this.props.fetch(this.props.user.uid);
 
-    this.props.navigation.navigate('Invite');
+    this.props.navigation.navigate('inviteScreen');
     this.props.populateDeets(this.state);
     this.setState({
       name: '',
