@@ -61,14 +61,15 @@ class Auth extends React.Component {
             navigation={this.props.navigation}
             onPress={this._signInAsync}
           />
-          <Google navigation={this.props.navigation} />
-          <Facebook navigation={this.props.navigation} />
+
+          {/* <Facebook navigation={this.props.navigation} /> */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => this.props.navigation.navigate('signupScreen')}
           >
             <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
+          <Google navigation={this.props.navigation} />
         </View>
       </View>
     );

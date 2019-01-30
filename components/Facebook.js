@@ -99,7 +99,7 @@ class Facebook extends React.Component {
           style={styles.button}
           onPress={this.signInWithFacebookAsync}
         >
-          <Text style={styles.buttonText}>Sign up with Facebook</Text>
+          <Text style={styles.buttonText}>Sign in with Facebook</Text>
         </TouchableOpacity>
       </View>
     );

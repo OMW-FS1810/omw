@@ -171,7 +171,7 @@ class Google extends React.Component {
           style={styles.button}
           onPress={this.signInWithGoogleAsync}
         >
-          <Text style={styles.buttonText}>Sign up with Google</Text>
+          <Text style={styles.buttonText}>Sign in with Google</Text>
         </TouchableOpacity>
       </View>
     );
