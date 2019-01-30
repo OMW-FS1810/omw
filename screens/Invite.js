@@ -12,8 +12,11 @@ class Invite extends Component {
   };
 
   handleCreateEvent = () => {
+    let emailsToInvite = this.state.emails;
+    // add the user (host) to the emails to invite
+    emailsToInvite = [...emailsToInvite, this.props.user.email];
     this.props.populateEmails(this.state.emails);
-    this.props.createTheEvent(this.props.eventDeets, this.state.emails);
+    this.props.createTheEvent(this.props.eventDeets, emailsToInvite);
     this.setState({
       emails: [],
       input: ''
@@ -103,7 +106,8 @@ let styles = StyleSheet.create({
 });
 
 const mapState = state => ({
-  eventDeets: state.event.pendingCreateEventDeets
+  eventDeets: state.event.pendingCreateEventDeets,
+  user: state.user.user
 });
 
 const mapDispatch = dispatch => ({

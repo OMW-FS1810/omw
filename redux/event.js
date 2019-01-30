@@ -1,3 +1,5 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-loop-func */
 import { database } from '../config/firebase';
 import store from './store';
 
@@ -5,6 +7,7 @@ import store from './store';
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
 const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
+const REQUEST_EVENTS = 'FETCH_EVENTS';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -18,11 +21,13 @@ export const populateEventEmails = emails => ({
 const clearPendingInfo = () => ({
   type: CLEAR_PENDING_INFO
 });
+const requestEvents = events => ({
+  type: REQUEST_EVENTS,
+  events
+});
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
-  const { name, date, time, location } = eventDeets;
-
   try {
     const data = await database.ref('Events/').push({
       ...eventDeets,
@@ -33,11 +38,49 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     console.error(err);
   }
 };
+export const fetchAllEvents = userId => async dispatch => {
+  try {
+    // let hostEvents = [];
+    // find all events where this user is the host
+    // await eventRef
+    //   .orderByChild('host')
+    //   .equalTo(userId)
+    //   .on('value', event => {
+    //     hostEvents.push(event);
+    //   });
+    // find all events where this user is invited
+
+    // first grab the email address since invites are based on email address
+    const eventRef = database.ref('/Events/');
+    const emailRef = database.ref(`/Users/${userId}`);
+    let email;
+    await emailRef.once('value', person => {
+      email = person.val().email;
+    });
+    // then query all events where this email is in invites
+    let invitedEvents = [];
+    eventRef.once('value', snapshot => {
+      let snappy = snapshot.val();
+      for (let uid in snappy) {
+        snappy[uid].invites.map(value => {
+          if (value === email) {
+            invitedEvents.push({ [uid]: snappy[uid] });
+          }
+        });
+      }
+    });
+    setTimeout(() => {
+      dispatch(requestEvents(invitedEvents));
+    }, 100);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 // DEFAULT STATE
 const defaultEvent = {
-  allEvents: [],
-  currentEvent: {},
+  allEvents: {},
+  selectedEvent: {},
   pendingCreateEventDeets: {},
   pendingCreateEventInvites: []
 };
@@ -62,6 +105,12 @@ const eventReducer = (state = defaultEvent, action) => {
         ...state,
         pendingCreateEventDeets: {},
         pendingCreateEventInvites: []
+      };
+    }
+    case REQUEST_EVENTS: {
+      return {
+        ...state,
+        allEvents: action.events
       };
     }
     default:
