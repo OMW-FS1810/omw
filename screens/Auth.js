@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, AsyncStorage } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  AsyncStorage
+} from 'react-native';
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
@@ -35,11 +41,20 @@ let styles = StyleSheet.create({
 });
 
 class Auth extends React.Component {
-  static navigationOptions={
+  static navigationOptions = {
     title: 'OMW'
+  };
+
+  state = {
+    err: ''
+  }
+
+  setError = error => {
+    this.setState({err: error})
   }
 
   componentDidMount() {
+<<<<<<< HEAD
     firebase.auth().onAuthStateChanged(user => {
       if (user != null) {
       }
@@ -99,6 +114,12 @@ class Auth extends React.Component {
   // }
 =======
     });
+=======
+    // firebase.auth().onAuthStateChanged(user => {
+    //   if (user != null) {
+    //   }
+    // });
+>>>>>>> master
   }
 >>>>>>> master
 
@@ -106,6 +127,7 @@ class Auth extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
+<<<<<<< HEAD
 <<<<<<< HEAD
           <Text> {this.state.error} </Text>
           <TextInput
@@ -138,9 +160,23 @@ class Auth extends React.Component {
           <Google navigation={this.props.navigation} />
           <Facebook navigation={this.props.navigation} />
 >>>>>>> master
+=======
+        <Text>{this.state.err}</Text>
+          <Login
+            navigation={this.props.navigation}
+            setError={this.setError}
+            onPress={this._signInAsync}
+          />
+          <Google navigation={this.props.navigation}
+          setError={this.setError}
+          />
+          <Facebook navigation={this.props.navigation}
+          setError={this.setError}
+          />
+>>>>>>> master
           <TouchableOpacity
             style={styles.button}
-            onPress={() => this.props.navigation.navigate('signup')}
+            onPress={() => this.props.navigation.navigate('signupScreen')}
           >
             <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
@@ -149,10 +185,10 @@ class Auth extends React.Component {
     );
   }
 
-  _signInAsync = async() =>{
-    await AsyncStorage.setItem('userToken', 'password')
-    this.props.navigate('App')
-  }
+  _signInAsync = async () => {
+    await AsyncStorage.setItem('userToken', 'password');
+    this.props.navigate('App');
+  };
 }
 
 const mapStateToProps = state => ({});

@@ -54,7 +54,6 @@ class Login extends React.Component {
     this.state = {
       email: '',
       password: '',
-      error: ''
     };
   }
 
@@ -81,9 +80,9 @@ class Login extends React.Component {
         this.props.setUserAndDevice(thisUserData);
         this.props.navigation.navigate('Create an Event');
       }
-      this.setState({ email: '', password: '' });
+      // this.setState({ email: '', password: '' });
     } catch (error) {
-      this.setState({ error: error.message });
+      this.props.setError(error.message);
     }
   };
 
