@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { setUser } from '../redux/store';
+import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
@@ -76,8 +76,9 @@ class Facebook extends React.Component {
             first_name: user.additionalUserInfo.profile.first_name,
             last_name: user.additionalUserInfo.profile.last_name,
             created_at: Date.now()
-          })
-          .then(function(snapshot) {});
+          });
+        this.props.setUserAndDevice(user);
+        this.props.navigation.navigate('App');
       } else {
         firebase
           .database()
@@ -85,6 +86,8 @@ class Facebook extends React.Component {
           .update({
             last_logged_in: Date.now()
           });
+        this.props.setUserAndDevice(user);
+        this.props.navigation.navigate('App');
       }
     }
   };
