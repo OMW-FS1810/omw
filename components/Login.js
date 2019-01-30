@@ -54,7 +54,6 @@ class Login extends React.Component {
     this.state = {
       email: '',
       password: '',
-      error: ''
     };
   }
 
@@ -83,7 +82,7 @@ class Login extends React.Component {
       }
       // this.setState({ email: '', password: '' });
     } catch (error) {
-      this.setState({ error: error.message });
+      this.props.setError(error.message);
     }
   };
 

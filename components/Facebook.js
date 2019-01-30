@@ -1,6 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { setUser } from '../redux/store';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text
+} from 'react-native';
+import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
@@ -47,12 +52,9 @@ class Facebook extends React.Component {
   }
 
   signInWithFacebookAsync = async () => {
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
-      '1189665244533421',
-      {
-        permissions: ['public_profile']
-      }
-    );
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1189665244533421', {
+        permissions: ['public_profile', ],
+      });
     if (type === 'success') {
       // Get the user's name using Facebook's Graph API
       // const response = await fetch(
@@ -77,14 +79,17 @@ class Facebook extends React.Component {
             last_name: user.additionalUserInfo.profile.last_name,
             created_at: Date.now()
           })
-          .then(function(snapshot) {});
+          this.props.setUserAndDevice(user);
+        this.props.navigation.navigate('App');
       } else {
         firebase
           .database()
           .ref('/Users/' + user.user.uid)
           .update({
             last_logged_in: Date.now()
-          });
+          })
+          this.props.setUserAndDevice(user);
+        this.props.navigation.navigate('App');
       }
     }
   };
@@ -106,9 +111,7 @@ class Facebook extends React.Component {
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
-  setUser(user) {
-    return dispatch(setUser(user));
-  }
+  setUserAndDevice: user => dispatch(setUserAndDevice(user))
 });
 
 export default connect(

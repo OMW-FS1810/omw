@@ -36,6 +36,7 @@ export const setUserAndDevice = user => async dispatch => {
         const oldUser = Object.keys(allUsers).filter(
           thisUser => thisUser !== user.uid
         )[0];
+        // console.log('old user: ', oldUser);
         await database.ref(`/Users/${oldUser}`).update({
           deviceId: null
         });

@@ -1,151 +1,124 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
-  View,
   StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Text
+  Text,
+  View,
+  Image,
+  TouchableOpacity
 } from 'react-native';
-import { auth, database } from '../config/firebase';
-import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
-import { Constants } from 'expo';
+import { setUserAndDevice } from '../redux/store';
 // import { Button } from 'react-native-paper'
 
-const deviceId = Constants.installationId;
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'blue'
-  },
-  content: {
-    alignItems: 'center'
-  },
-  inputContainer: {
-    width: 300,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: '#aaa',
-    marginVertical: 10
-  },
-  button: {
-    width: 300,
-    backgroundColor: '#1c313a',
-    borderRadius: 25,
-    marginVertical: 10,
-    paddingVertical: 13
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#aaa',
-    textAlign: 'center'
-  }
-});
-
-class Profile extends React.Component {
-  state = {
-    email: '',
-    password: '',
-    error: ''
-  };
-
-  handlePress = async () => {
-    const { email, password } = this.state;
-    try {
-      const data = await auth.signInWithEmailAndPassword(
-        email.trim(),
-        password
-      );
-      if (data) {
-        this.props.setUser(data.user);
-        this.associateUserWithDevice(data.user);
-        this.props.navigation.navigate('Create an Event');
-      }
-      this.setState({ email: '', password: '' });
-    } catch (error) {
-      this.setState({ error: error.message });
-    }
-  };
-  associateUserWithDevice = async user => {
-    try {
-      await database.ref(`/Devices/${deviceId}`).update({
-        userId: user.uid,
-        email: user.email
-      });
-      const currDevices = await database.ref(`/Devices/`);
-      currDevices
-        .orderByChild('userId')
-        .equalTo(user.uid)
-        .once('value', async snapshot => {
-          const allDevices = snapshot.val();
-          const oldDevice = Object.keys(allDevices).filter(
-            device => device !== deviceId
-          )[0];
-          await database.ref(`/Devices/${oldDevice}`).remove();
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // placeNameChangeHandler = val => {
-  //   this.setState({
-  //     placeName: val
-  //   })
-  // }
+class Profile extends Component {
 
   render() {
+    // console.log('User in profile screen: ', this.props);
     return (
       <View style={styles.container}>
-        <View style={styles.content}>
-          <Text> {this.state.error} </Text>
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            onChangeText={email => this.setState({ email })}
-            value={this.state.email}
-          />
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Password"
-            secureTextEntry={true}
-            placeholderTextColor="#aaa"
-            onChangeText={password => this.setState({ password })}
-            value={this.state.password}
-          />
-          <TouchableOpacity style={styles.button} onPress={this.handlePress}>
-            <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up withGoogle</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Sign up with Facebook</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => this.props.navigation.navigate('signup')}
-          >
-            <Text style={styles.buttonText}>Sign up with email</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+                <Image style={styles.avatar}
+                  source={{uri: `${this.props.user.pictureUrl}`}}/>
+
+                <Text style={styles.name}>{this.props.user.firstName} {this.props.user.lastName} </Text>
+                <Text style={styles.userInfo}>{this.props.user.email} </Text>
+            </View>
+          </View>
+
+          <View style={styles.body}>
+            <View style={styles.item}>
+              <View style={styles.iconContent}>
+                <Image style={styles.icon} source={{uri: 'https://png.icons8.com/home/win8/50/ffffff'}}/>
+              </View>
+              <TouchableOpacity style={styles.infoContent}
+               color='#ffffff'
+                onPress={()=> this.props.navigation.navigate('Event Map')}>
+                <Text>Home</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.item}>
+              <View style={styles.iconContent}>
+                <Image style={styles.icon} source={{uri: 'https://png.icons8.com/events/win8/50/ffffff'}}/>
+              </View>
+              <TouchableOpacity style={styles.infoContent}
+                onPress={()=> this.props.navigation.navigate('Create an Event')}>
+                <Text>Events</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
       </View>
     );
   }
 }
 
-const mapStateToProps = state => ({});
+const styles = StyleSheet.create({
+  header:{
+    backgroundColor: "#DCDCDC",
+  },
+  headerContent:{
+    padding:30,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 130,
+    height: 130,
+    borderRadius: 63,
+    borderWidth: 4,
+    borderColor: "white",
+    marginBottom:10,
+  },
+  name:{
+    fontSize:22,
+    color:"#000000",
+    fontWeight:'600',
+  },
+  userInfo:{
+    fontSize:16,
+    color:"#778899",
+    fontWeight:'600',
+  },
+  body:{
+    backgroundColor: "#778899",
+    height:500,
+    alignItems:'center',
+  },
+  item:{
+    flexDirection : 'row',
+  },
+  infoContent:{
+    flex:1,
+    alignItems:'flex-start',
+    paddingLeft:5,
+    paddingTop: 10
+  },
+  iconContent:{
+    flex:1,
+    alignItems:'flex-end',
+    paddingRight:5
+  },
+  icon:{
+    width:30,
+    height:30,
+    marginTop:20,
+  },
+  info:{
+    fontSize:18,
+    marginTop:20,
+    color: "#FFFFFF",
+    width:30,
+    height:30
+  }
+});
+
+const mapStateToProps = state => ({
+  user: state.user.user
+});
 
 const mapDispatchToProps = dispatch => ({
-  setUser(user) {
-    return dispatch(setUser(user));
+  setUserAndDevice(user) {
+    return dispatch(setUserAndDevice(user));
   }
 });
 
