@@ -13,7 +13,7 @@ import { setUserAndDevice } from '../redux/store';
 class Profile extends Component {
 
   render() {
-    console.log('User in profile screen: ', this.props);
+    // console.log('User in profile screen: ', this.props);
     return (
       <View style={styles.container}>
           <View style={styles.header}>

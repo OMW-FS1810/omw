@@ -24,7 +24,6 @@ export const setUser = user => ({
 
 export const setUserAndDevice = user => async dispatch => {
   try {
-    console.log('user in redux store', user);
     await database.ref(`/Users/${user.uid}`).update({
       deviceId
     });
@@ -37,7 +36,7 @@ export const setUserAndDevice = user => async dispatch => {
         const oldUser = Object.keys(allUsers).filter(
           thisUser => thisUser !== user.uid
         )[0];
-        console.log('old user: ', oldUser);
+        // console.log('old user: ', oldUser);
         await database.ref(`/Users/${oldUser}`).update({
           deviceId: null
         });
