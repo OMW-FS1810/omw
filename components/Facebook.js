@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text
-} from 'react-native';
-import { setUserAndDevice } from '../redux/store';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
@@ -43,20 +38,21 @@ let styles = StyleSheet.create({
   }
 });
 
-
 class Facebook extends React.Component {
-
   componentDidMount() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if(user != null){
+    firebase.auth().onAuthStateChanged(user => {
+      if (user != null) {
       }
-    })
+    });
   }
 
   signInWithFacebookAsync = async () => {
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1189665244533421', {
-        permissions: ['public_profile', ],
-      });
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
+      '1189665244533421',
+      {
+        permissions: ['public_profile']
+      }
+    );
     if (type === 'success') {
       // Get the user's name using Facebook's Graph API
       // const response = await fetch(
@@ -66,7 +62,9 @@ class Facebook extends React.Component {
       //   `Hi ${(await response.json()).name}!`,
       const credential = firebase.auth.FacebookAuthProvider.credential(token);
 
-      const user = await firebase.auth().signInAndRetrieveDataWithCredential(credential);
+      const user = await firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(credential);
       if (user.additionalUserInfo.isNewUser) {
         firebase
           .database()
@@ -79,32 +77,28 @@ class Facebook extends React.Component {
             last_name: user.additionalUserInfo.profile.last_name,
             created_at: Date.now()
           })
-          this.props.setUserAndDevice(user);
-        this.props.navigation.navigate('App');
+          .then(function(snapshot) {});
       } else {
         firebase
           .database()
           .ref('/Users/' + user.user.uid)
           .update({
             last_logged_in: Date.now()
-          })
-          this.props.setUserAndDevice(user);
-        this.props.navigation.navigate('App');
+          });
       }
-
-
     }
-  }
+  };
 
   render() {
     return (
-        <View style={styles.content}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.signInWithFacebookAsync}>
-            <Text style={styles.buttonText}>Sign up with Facebook</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.content}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={this.signInWithFacebookAsync}
+        >
+          <Text style={styles.buttonText}>Sign up with Facebook</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
