@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -7,8 +7,8 @@ import {
   ScrollView,
   Animated,
   Image,
-  Dimensions,
-} from "react-native";
+  Dimensions
+} from 'react-native';
 import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
@@ -20,125 +20,123 @@ const CARD_WIDTH = CARD_HEIGHT - 50;
 
 class AllEventsMap extends React.Component {
   state = {
+    user: {},
     markers: []
-  }
+  };
   renderEventMarker = () => {
+    // console.log('event info for adam 🔥', this.props.allEvents);
+    // if (this.props.allEvents.length) {
+    //   const allEvents = this.props.allEvents;
+    //   allEvents.map(event => {
+    //     this.setState({
+    //       markers: [
+    //         ...this.state.markers,
+    //         this.state.markers.push({
+    //           coordinate: {
+    //             // latitude:
+    //           }
+    //         })
+    //       ]
+    //     });
+    //   });
+    // }
+  };
 
-  }
-
-
-  async componentDidMount() {
-    await this.props.fetchEvents(this.props.user.email);
+  componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
-    console.log('what is this ❓', this.props.allEvents)
-    if (this.props.allEvents.length) {
-      console.log('also got here')
-      const allEvents = this.props.allEvents
-      allEvents.map(event => {
-        console.log('event info for adam 🔥', event)
-      // this.setState({
-      //   markers: [
-      //     ...this.state.markers,
-      //     this.state.markers.push({
-      //       coordinate: {
-      //         latitude:
-      //       }
-      //     })
-      //   ]
-      // })
-      })
-    }
+    if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
+
+    // this.props.fetchEvents(this.props.user.email);
+    // console.log('fetch called');
   }
 
-  render(){
-    const {region} = this.props
-    return(
+  render() {
+    const { region } = this.props;
+    this.renderEventMarker();
+    return (
       <View style={styles.container}>
-        <MapView ref={map => this.map = map} initialRegion={region}>
-        {/* {this.renderEventMarker()} */}
-        </MapView>
-
+        <MapView ref={map => (this.map = map)} initialRegion={region} />
       </View>
-    )
+    );
   }
 }
 
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollView: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 30,
     left: 0,
     right: 0,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   endPadding: {
-    paddingRight: width - CARD_WIDTH,
+    paddingRight: width - CARD_WIDTH
   },
   card: {
     padding: 10,
     elevation: 2,
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
     marginHorizontal: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowRadius: 5,
     shadowOpacity: 0.3,
     shadowOffset: { x: 2, y: -2 },
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
-    overflow: "hidden",
+    overflow: 'hidden'
   },
   cardImage: {
     flex: 3,
-    width: "100%",
-    height: "100%",
-    alignSelf: "center",
+    width: '100%',
+    height: '100%',
+    alignSelf: 'center'
   },
   textContent: {
-    flex: 1,
+    flex: 1
   },
   cardtitle: {
     fontSize: 12,
     marginTop: 5,
-    fontWeight: "bold",
+    fontWeight: 'bold'
   },
   cardDescription: {
     fontSize: 12,
-    color: "#444",
+    color: '#444'
   },
   markerWrap: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   marker: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(130,4,150, 0.9)",
+    backgroundColor: 'rgba(130,4,150, 0.9)'
   },
   ring: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "rgba(130,4,150, 0.3)",
-    position: "absolute",
+    backgroundColor: 'rgba(130,4,150, 0.3)',
+    position: 'absolute',
     borderWidth: 1,
-    borderColor: "rgba(130,4,150, 0.5)",
-  },
+    borderColor: 'rgba(130,4,150, 0.5)'
+  }
 });
 
-
 const mapState = state => ({
-  user: state.user.user,
-  allEvents: state.event.allEvents,
+  allEvents: state.event.allEvents
 });
 
 const mapDispatch = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email))
 });
 
-export default connect(mapState, mapDispatch)(AllEventsMap)
+export default connect(
+  mapState,
+  mapDispatch
+)(AllEventsMap);

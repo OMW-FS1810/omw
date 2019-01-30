@@ -170,8 +170,7 @@ class EventMap extends React.Component {
           backgroundLocation={backgroundLocation}
           setBackgroundLocation={this.setBackgroundLocation}
         />
-        <AllEventsMap/>
-
+        {user.user.email ? <AllEventsMap user={user.user} /> : null}
       </>
     );
   }

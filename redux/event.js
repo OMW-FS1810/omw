@@ -62,11 +62,11 @@ export const fetchAllEvents = email => async dispatch => {
     eventRef.once('value', snapshot => {
       let snappy = snapshot.val();
       for (let uid in snappy) {
+        // console.log('💩', snappy[uid].invites);
         // console.log('from events store 🛒', snappy)
         snappy[uid].invites.map(value => {
           if (value === email) {
             invitedEvents.push({ [uid]: snappy[uid] });
-            console.log('YAY', invitedEvents)
           }
         });
       }

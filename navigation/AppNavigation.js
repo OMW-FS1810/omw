@@ -27,7 +27,7 @@ const DrawerStack = createDrawerNavigator(
   {
     'Event Map': { screen: EventMap },
     'Create an Event': { screen: CreateEvent },
-    Invite: { screen: Invite },
+    // Invite: { screen: Invite },
     Profile: { screen: Profile },
     UserProfile: { screen: UserProfile },
     Settings: { screen: Settings }
@@ -51,15 +51,15 @@ const DrawerStack = createDrawerNavigator(
   { headerMode: 'none' }
 );
 
+//CREATE EVENT STACK
+const CreateEventStack = createStackNavigator({
+  createEventScreen: { screen: CreateEvent },
+  inviteScreen: { screen: Invite }
+});
+
 const DrawerNavigation = createStackNavigator({
   DrawerStack: { screen: DrawerStack }
 });
-
-//CREATE EVENT STACK
-// const CreateEventStack = createStackNavigator({
-//   createEventScreen: { screen: CreateEvent },
-//   inviteScreen: { screen: Invite }
-// });
 
 //LOGIN STACK
 const LoginStack = createStackNavigator({
@@ -72,7 +72,8 @@ export default createAppContainer(
     {
       AuthLoading: { screen: AuthLoading },
       LoginStack: { screen: LoginStack },
-      App: { screen: DrawerNavigation }
+      App: { screen: DrawerNavigation },
+      CreateEvent: { screen: CreateEventStack }
     },
     {
       initialRouteName: 'LoginStack'
