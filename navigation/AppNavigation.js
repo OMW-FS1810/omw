@@ -17,7 +17,6 @@ import {
   Auth,
   Invite,
   Profile,
-  UserProfile,
   Settings,
   AuthLoading
 } from '../screens';
@@ -29,14 +28,13 @@ const DrawerStack = createDrawerNavigator(
     'Create an Event': { screen: CreateEvent },
     Invite: { screen: Invite },
     Profile: { screen: Profile },
-    UserProfile: { screen: UserProfile },
     Settings: { screen: Settings }
   },
   {
-    headerMode: 'float',
+    // headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: color.whiteGrey },
+      headerStyle: { backgroundColor: 'transparent' },
       // title: 'Logged in!',
       headerRight: (
         <Icon
@@ -47,7 +45,8 @@ const DrawerStack = createDrawerNavigator(
         />
       )
     })
-  }
+  },
+  { headerMode: 'none' }
 );
 
 const DrawerNavigation = createStackNavigator({
