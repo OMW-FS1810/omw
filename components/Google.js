@@ -118,6 +118,7 @@ class Google extends React.Component {
               var credential = error.credential;
               // ...
             });
+        } else {
         }
       });
   };
@@ -133,25 +134,28 @@ class Google extends React.Component {
 
       if (result.type === 'success') {
         await this.onSignIn(result);
+        // console.log(result);
         const currUser = await database.ref('/Users/');
         let thisUid;
         await currUser
           .orderByChild('email')
           .equalTo(result.user.email)
-          .once('value', async snapshot => {
-            thisUid = snapshot.val();
+          .on('value', async snapshot => {
+            thisUid = await snapshot.val();
+            if (thisUid) {
+              const thisUidFormatted = await Object.keys(thisUid)[0];
+              const thisUser = {
+                email: result.user.email,
+                firstName: result.user.givenName,
+                lastName: result.user.familyName,
+                pictureUrl: result.user.photoUrl,
+                uid: thisUidFormatted
+              };
+              this.props.setUserAndDevice(thisUser);
+              this.props.navigation.navigate('App');
+              return result.accessToken;
+            }
           });
-        const thisUidFormatted = await Object.keys(thisUid)[0];
-        const thisUser = {
-          email: result.user.email,
-          firstName: result.user.givenName,
-          lastName: result.user.familyName,
-          pictureUrl: result.user.photoUrl,
-          uid: thisUidFormatted
-        };
-        this.props.setUserAndDevice(thisUser);
-        this.props.navigation.navigate('App');
-        return result.accessToken;
       } else {
         return { cancelled: true };
       }
@@ -184,4 +188,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(Google);
-
