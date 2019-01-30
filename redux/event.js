@@ -1,3 +1,5 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-loop-func */
 import { database } from '../config/firebase';
 import store from './store';
 
@@ -57,14 +59,16 @@ export const fetchAllEvents = userId => async dispatch => {
     });
     // then query all events where this email is in invites
     let invitedEvents = [];
-    eventRef.on('child_added', async snapshot => {
-      await snapshot.val().invites.map(value => {
-        if (value === email) {
-          invitedEvents.push(snapshot.val());
-        }
-      });
+    eventRef.once('value', snapshot => {
+      let snappy = snapshot.val();
+      for (let uid in snappy) {
+        snappy[uid].invites.map(value => {
+          if (value === email) {
+            invitedEvents.push({ [uid]: snappy[uid] });
+          }
+        });
+      }
     });
-    //! try .once('value') and loop over each event - for in
     setTimeout(() => {
       dispatch(requestEvents(invitedEvents));
     }, 100);
