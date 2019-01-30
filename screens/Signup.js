@@ -79,7 +79,7 @@ class Signup extends React.Component {
         };
 
         this.props.setUserAndDevice(thisUser);
-        this.props.navigation.navigate('Create an Event');
+        this.props.navigation.navigate('App');
       }
       this.setState({ email: '', password: '' });
     } catch (error) {
