@@ -75,7 +75,7 @@ export default createAppContainer(
       App: { screen: DrawerNavigation }
     },
     {
-      initialRouteName: 'LoginStack'
+      initialRouteName: 'App'
     }
   )
 );
