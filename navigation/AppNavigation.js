@@ -17,7 +17,6 @@ import {
   Auth,
   Invite,
   Profile,
-  UserProfile,
   Settings,
   AuthLoading
 } from '../screens';
@@ -29,7 +28,6 @@ const DrawerStack = createDrawerNavigator(
     'Create an Event': { screen: CreateEvent },
     Invite: { screen: Invite },
     Profile: { screen: Profile },
-    UserProfile: { screen: UserProfile },
     Settings: { screen: Settings }
   },
   {

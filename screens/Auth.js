@@ -45,6 +45,14 @@ class Auth extends React.Component {
     title: 'OMW'
   };
 
+  state = {
+    err: ''
+  }
+
+  setError = error => {
+    this.setState({err: error})
+  }
+
   componentDidMount() {
     // firebase.auth().onAuthStateChanged(user => {
     //   if (user != null) {
@@ -56,12 +64,18 @@ class Auth extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
+        <Text>{this.state.err}</Text>
           <Login
             navigation={this.props.navigation}
+            setError={this.setError}
             onPress={this._signInAsync}
           />
-          <Google navigation={this.props.navigation} />
-          <Facebook navigation={this.props.navigation} />
+          <Google navigation={this.props.navigation}
+          setError={this.setError}
+          />
+          <Facebook navigation={this.props.navigation}
+          setError={this.setError}
+          />
           <TouchableOpacity
             style={styles.button}
             onPress={() => this.props.navigation.navigate('signupScreen')}
