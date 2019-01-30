@@ -28,11 +28,40 @@ class AllEventsMap extends React.Component {
 
 
   async componentDidMount() {
-    await this.props.fetchEvents(this.props.user.uid);
+    await this.props.fetchEvents(this.props.user.email);
     this.index = 0;
     this.animation = new Animated.Value(0);
+    console.log('what is this ❓', this.props.allEvents)
+    if (this.props.allEvents.length) {
+      console.log('also got here')
+      const allEvents = this.props.allEvents
+      allEvents.map(event => {
+        console.log('event info for adam 🔥', event)
+      // this.setState({
+      //   markers: [
+      //     ...this.state.markers,
+      //     this.state.markers.push({
+      //       coordinate: {
+      //         latitude:
+      //       }
+      //     })
+      //   ]
+      // })
+      })
+    }
   }
 
+  render(){
+    const {region} = this.props
+    return(
+      <View style={styles.container}>
+        <MapView ref={map => this.map = map} initialRegion={region}>
+        {/* {this.renderEventMarker()} */}
+        </MapView>
+
+      </View>
+    )
+  }
 }
 
 
@@ -109,7 +138,7 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  fetchEvents: userId => dispatch(fetchAllEvents(userId))
+  fetchEvents: email => dispatch(fetchAllEvents(email))
 });
 
 export default connect(mapState, mapDispatch)(AllEventsMap)
