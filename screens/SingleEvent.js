@@ -14,7 +14,6 @@ var boxHeight = height / boxCount;
 
 class SingleEvent extends Component {
   render() {
-    console.log('email in events page', this.props)
     return (
         <View style={styles.container}>
             <View style={[styles.box, styles.box1]} />
