@@ -26,20 +26,9 @@ class AllEventsMap extends React.Component {
   };
 
   renderEventMarker = () => {
-    // console.log('hi');
-
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
-      // return (
-      //   <MapView.Marker
-      //     key={Math.random() * 100}
-      //     coordinate={{
-      //       latitude: 41.89526600000001,
-      //       longitude: -87.63903499999999
-      //     }}
-      //   />
-      // );
-      allEvents.map(eventData => {
+      return allEvents.map(eventData => {
         console.log('event info for adam 🔥', eventData);
         for (let uid in eventData) {
           const event = eventData[uid];
@@ -51,25 +40,20 @@ class AllEventsMap extends React.Component {
           const description = event.location.locationName;
           const id = uid;
 
-          // console.log('latitude', latitude);
-          // console.log('longitude', longitude);
-          // console.log('title', title);
-          // console.log('time', time);
-          // console.log('date', date);
-          // console.log('description', description);
-          // console.log('id', id);
-          // 👋 hi
+          console.log(event);
+          console.log(latitude);
+          console.log(id);
 
           return (
-            <MapView.Marker
-              coordinate={{ latitude: 45.524698, longitude: -122.6655507 }}
-            />
-            // <MapView.Marker key={id} coordinate={{ latitude, longitude }}>
-            //   {/* <Animated.View style={styles.markerWrap}>
-            //     <Animated.View style={styles.ring} />
-            //     <View style={styles.marker} />
-            //   </Animated.View> */}
-            // </MapView.Marker>
+            <MapView.Marker>
+              key={id}
+              title={title}
+              coordinate={{ latitude, longitude }}
+              <Animated.View style={styles.markerWrap}>
+                <Animated.View style={styles.ring} />
+                <View style={styles.marker} />
+              </Animated.View>
+            </MapView.Marker>
           );
         }
       });
@@ -143,7 +127,7 @@ class AllEventsMap extends React.Component {
         >
           {this.renderEventMarker()}
         </MapView>
-        {/* <Animated.ScrollView
+        <Animated.ScrollView
           horizontal
           scrollEventThrottle={1}
           showsHorizontalScrollIndicator={false}
@@ -164,7 +148,7 @@ class AllEventsMap extends React.Component {
           contentContainerStyle={styles.endPadding}
         >
           {this.renderEventCard()}
-        </Animated.ScrollView> */}
+        </Animated.ScrollView>
       </View>
     );
   }
