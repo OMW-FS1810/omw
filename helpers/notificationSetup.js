@@ -41,6 +41,14 @@ export const sendPushNotification = (token, title, body, sender) => {
       },
       method: 'POST'
     });
+    //add message to db
+    database.ref('/Messages/').push({
+      sender,
+      recipient: token,
+      title,
+      body,
+      read: false
+    });
   } catch (err) {
     console.error(err);
   }
