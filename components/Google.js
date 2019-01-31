@@ -144,7 +144,6 @@ class Google extends React.Component {
       if (result.type === 'success') {
         this.setState({ loading: true });
         await this.onSignIn(result);
-        // console.log(result);
         const currUser = await database.ref('/Users/');
         let thisUid;
         await currUser
@@ -153,12 +152,14 @@ class Google extends React.Component {
           .on('value', async snapshot => {
             thisUid = await snapshot.val();
             if (thisUid) {
-              const thisUidFormatted = await Object.keys(thisUid)[0];
+
+              const thisUidFormatted = Object.keys(thisUid)[0];
+              const user = Object.values(thisUid)[0];
               const thisUser = {
-                email: result.user.email,
-                firstName: result.user.givenName,
-                lastName: result.user.familyName,
-                pictureUrl: result.user.photoUrl,
+                email: user.email,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                pictureUrl: user.profile_picture,
                 uid: thisUidFormatted
               };
               this.props.setUserAndDevice(thisUser);
