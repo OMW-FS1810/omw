@@ -8,7 +8,11 @@ import {
   ScrollView,
   Animated,
   Dimensions,
+<<<<<<< HEAD
   Button
+=======
+  TouchableOpacity
+>>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
 } from 'react-native';
 import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
@@ -71,7 +75,8 @@ class AllEventsMap extends React.Component {
   renderEventCard = () => {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
-      let event, title, date, description, time, id;
+      let event, title, date, description, time, id, eventDetails;
+
       return allEvents.map(eventData => {
         for (let uid in eventData) {
           event = eventData[uid];
@@ -80,26 +85,39 @@ class AllEventsMap extends React.Component {
           date = event.date;
           description = event.location.locationName;
           id = uid;
+          eventDetails = {
+            event: eventData[uid],
+            title: event.name,
+            time: event.time,
+            date: event.date,
+            description: event.location.locationName,
+          }
         }
 
+        // Touchable opacity on this card that will navigate the user to
+        // the single event page and also pass along that event information
         return (
-          <View key={id} style={styles.card}>
-            <View style={styles.textContent}>
-              <Text numberOfLines={1} style={styles.cardtitle}>
-                {title}
-              </Text>
-              <Text numberOfLines={1} style={styles.cardDescription}>
-                {description}
-              </Text>
-              <Text numberOfLines={1} style={styles.cardDescription}>
-                {date}
-              </Text>
-              <Text numberOfLines={1} style={styles.cardDescription}>
-                {time}
-              </Text>
+          <TouchableOpacity key={id} onPress={() => this.props.navigation.navigate('SingleEvent',
+                  { eventDetails }
+            )}>
+            <View style={styles.card}>
+              <View style={styles.textContent}>
+                <Text numberOfLines={1} style={styles.cardtitle}>
+                  {title}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {description}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {date}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {time}
+                </Text>
+              </View>
             </View>
-          </View>
-        );
+          </TouchableOpacity>
+        )
       });
     }
   };
@@ -156,6 +174,7 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
+
     const {
       user,
       backgroundLocation,

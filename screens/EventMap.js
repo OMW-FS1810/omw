@@ -157,6 +157,7 @@ class EventMap extends React.Component {
     }
   }
   render() {
+<<<<<<< HEAD
     const {
       region,
       eventMembers,
@@ -187,6 +188,20 @@ class EventMap extends React.Component {
     // return region &&
     //   this.state.selectedEvent ? console.log('SELECTED! 💩') /* <SingleEventsMap /> CHANGE THIS */ : (
     // );
+=======
+    const { region, eventMembers, event, backgroundLocation } = this.state;
+    const { user, navigation } = this.props;
+    return (
+      region && (
+        <AllEventsMap
+          user={user.user}
+          region={region}
+          updateMapRegion={this.updateMapRegion}
+          navigation={navigation}
+        />
+      )
+    );
+>>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
   }
 }
 
