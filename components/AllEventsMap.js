@@ -39,10 +39,6 @@ class AllEventsMap extends React.Component {
           const description = event.location.locationName;
           const id = uid;
 
-          // console.log(event);
-          // console.log(latitude);
-          // console.log(id);
-
           return (
             <MapView.Marker
               key={id}
@@ -155,6 +151,7 @@ class AllEventsMap extends React.Component {
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
