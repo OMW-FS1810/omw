@@ -33,9 +33,10 @@ export default class Notify extends React.Component {
           onDismiss={() => this.setState({ visible: false })}
           duration="10000"
           action={{
-            label: 'Done',
+            label: 'Open',
             onPress: () => {
               // Do something
+              this.props.navigation.navigate('Notifications');
             }
           }}
         >

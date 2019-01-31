@@ -161,13 +161,12 @@ class EventMap extends React.Component {
     const { user } = this.props;
     return (
       region && (
-
-          <AllEventsMap
-            user={user.user}
-            region={region}
-            updateMapRegion={this.updateMapRegion}
-          />
-
+        <AllEventsMap
+          user={user.user}
+          region={region}
+          updateMapRegion={this.updateMapRegion}
+          navigation={this.props.navigation}
+        />
       )
     );
   }

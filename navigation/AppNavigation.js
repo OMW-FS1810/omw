@@ -19,7 +19,8 @@ import {
   Profile,
   Settings,
   AuthLoading,
-  SingleEvent
+  SingleEvent,
+  Notifications
 } from '../screens';
 
 //DRAWER STACK
@@ -30,7 +31,8 @@ const DrawerStack = createDrawerNavigator(
     // Invite: { screen: Invite },
     Profile: { screen: Profile },
     Settings: { screen: Settings },
-    SingleEvent: { screen: SingleEvent }
+    SingleEvent: { screen: SingleEvent },
+    Notifications: { screen: Notifications }
   },
   {
     // headerMode: 'float',
