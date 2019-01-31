@@ -1,3 +1,5 @@
+//WE are not currently using fb login
+
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { setUserAndDevice } from '../redux/store';

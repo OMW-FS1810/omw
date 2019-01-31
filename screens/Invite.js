@@ -21,6 +21,8 @@ class Invite extends Component {
       emails: [],
       input: ''
     });
+    // is this where we want to go?
+    this.props.navigation.navigate('Event Map');
   };
 
   handleAddToInviteList = () => {

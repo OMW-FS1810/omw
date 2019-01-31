@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ActivityIndicator
+} from 'react-native';
 import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
@@ -60,6 +66,9 @@ const isUserEqual = (googleUser, firebaseUser) => {
 };
 
 class Google extends React.Component {
+  state = {
+    loading: false
+  };
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user != null) {
@@ -133,6 +142,7 @@ class Google extends React.Component {
       });
 
       if (result.type === 'success') {
+        this.setState({ loading: true });
         await this.onSignIn(result);
         // console.log(result);
         const currUser = await database.ref('/Users/');
@@ -152,6 +162,7 @@ class Google extends React.Component {
                 uid: thisUidFormatted
               };
               this.props.setUserAndDevice(thisUser);
+              this.setState({ loading: false });
               this.props.navigation.navigate('App');
               return result.accessToken;
             }
@@ -173,6 +184,12 @@ class Google extends React.Component {
         >
           <Text style={styles.buttonText}>Sign in with Google</Text>
         </TouchableOpacity>
+        <ActivityIndicator
+          animating={this.state.loading}
+          color="white"
+          size="large"
+          style={{ margin: 15 }}
+        />
       </View>
     );
   }

@@ -1,7 +1,8 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-loop-func */
 import { database } from '../config/firebase';
-import store from './store';
+import { sendInvites } from '../helpers/invitations';
+import { store } from './store';
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
@@ -29,11 +30,23 @@ const requestEvents = events => ({
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
   try {
-    const data = await database.ref('Events/').push({
-      ...eventDeets,
-      invites: eventInvites
-    });
-    dispatch(clearPendingInfo);
+    //first we send the invitations
+    const hostEmail = store.getState().user.user.email;
+    const invitesNotUser = eventInvites.filter(invite => invite !== hostEmail);
+    const mailedInvites = await sendInvites(
+      invitesNotUser,
+      eventDeets,
+      hostEmail
+    );
+    //when the invites are sent we create the DB record and end the create event process
+    if (mailedInvites.status === 'sent') {
+      const data = await database.ref('Events/').push({
+        ...eventDeets,
+        invites: eventInvites
+      });
+      dispatch(clearPendingInfo);
+    }
+    // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);
   }

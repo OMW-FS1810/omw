@@ -1,10 +1,6 @@
-//NOTE: DEPRECATED This isn't currently connected to anything. It's a placeholder for when/if we add notification features.
-
 import { Permissions, Notifications } from 'expo';
 
-const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
-
-async function registerForPushNotificationsAsync() {
+export const registerForPushNotificationsAsync = async () => {
   const { status: existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -26,21 +22,21 @@ async function registerForPushNotificationsAsync() {
 
   // Get the token that uniquely identifies this device
   let token = await Notifications.getExpoPushTokenAsync();
+  //WE WANT TO PUT THIS IN THE DB
+  return token;
+};
 
-  // POST the token to your backend server from where you can retrieve it to send push notifications.
-  return fetch(PUSH_ENDPOINT, {
-    method: 'POST',
+export const sendPushNotification = (token, title, body) => {
+  return fetch('https://exp.host/--/api/v2/push/send', {
+    body: JSON.stringify({
+      to: token,
+      title: title,
+      body: body,
+      data: { message: `${title} - ${body}` }
+    }),
     headers: {
-      Accept: 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      token: {
-        value: token
-      },
-      user: {
-        username: ''
-      }
-    })
+    method: 'POST'
   });
-}
+};
