@@ -157,20 +157,42 @@ class EventMap extends React.Component {
     }
   }
   render() {
-    const { region, eventMembers, event, backgroundLocation } = this.state;
+    const {
+      region,
+      eventMembers,
+      event,
+      backgroundLocation,
+      selectedEvent
+    } = this.state;
     const { user } = this.props;
-    return (
-      region && (
-        <AllEventsMap
-          user={user.user}
-          region={region}
-          updateMapRegion={this.updateMapRegion}
-        />
-      )
-    );
+
+    if (region) {
+      if (selectedEvent) {
+        console.log('🗺️');
+        return null;
+      } else {
+        console.log('🐸');
+        return (
+          <AllEventsMap
+            user={user.user}
+            region={region}
+            updateMapRegion={this.updateMapRegion}
+          />
+        );
+      }
+    } else {
+      console.log('💁‍');
+      return null;
+    }
+    // return region &&
+    //   this.state.selectedEvent ? console.log('SELECTED! 💩') /* <SingleEventsMap /> CHANGE THIS */ : (
+    // );
   }
 }
 
-const mapStateToProps = ({ user }) => ({ user });
+const mapStateToProps = state => ({
+  user: state.user,
+  selectedEvent: state.event.selectedEvent
+});
 
 export default connect(mapStateToProps)(EventMap);

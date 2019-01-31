@@ -7,6 +7,7 @@ const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
 const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
+const REMOVE_SELECTED_EVENT = 'REMOVE_SELECTED_EVENT';
 const ADD_EVENT_TO_LIST = 'ADD_EVENT_TO_LIST';
 
 // ACTION CREATORS
@@ -122,6 +123,12 @@ const eventReducer = (state = defaultEvent, action) => {
       return {
         ...state,
         allEvents: [...state.allEvents, action.event]
+      };
+    }
+    case REMOVE_SELECTED_EVENT: {
+      return {
+        ...state,
+        selectedEvent: {}
       };
     }
     default:

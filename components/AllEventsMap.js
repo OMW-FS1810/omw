@@ -7,12 +7,13 @@ import {
   View,
   ScrollView,
   Animated,
-  Dimensions
+  Dimensions,
+  Button
 } from 'react-native';
 import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
-import { fetchAllEvents } from '../redux/event';
+import { fetchAllEvents, setSelectedEvent } from '../redux/event';
 
 const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = height / 4;
@@ -25,6 +26,9 @@ class AllEventsMap extends React.Component {
   };
 
   renderEventMarker = () => {
+    /*
+      THIS IS LEFT HERE INCASE WE GET REEEAL AMBITIOUS 🔥
+    */
     // if (this.props.allEvents.length) {
     //   const allEvents = this.props.allEvents;
     //   return allEvents.map(eventData => {
@@ -144,6 +148,11 @@ class AllEventsMap extends React.Component {
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
     this.setState({ region });
+  };
+
+  handlePress = uid => {
+    console.log('🔥 🚒');
+    this.props.selectEvent(uid);
   };
 
   render() {
@@ -340,7 +349,8 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  fetchEvents: email => dispatch(fetchAllEvents(email))
+  fetchEvents: email => dispatch(fetchAllEvents(email)),
+  selectEvent: uid => dispatch(setSelectedEvent(uid))
 });
 
 export default connect(
