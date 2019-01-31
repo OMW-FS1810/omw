@@ -165,11 +165,7 @@ class EventMap extends React.Component {
           user={user.user}
           region={region}
           updateMapRegion={this.updateMapRegion}
-<<<<<<< HEAD
           navigation={this.props.navigation}
-=======
-          navigation={navigation}
->>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
         />
       )
     );

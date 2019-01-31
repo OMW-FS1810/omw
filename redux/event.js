@@ -1,22 +1,15 @@
 /* eslint-disable guard-for-in */
 import { database } from '../config/firebase';
-<<<<<<< HEAD
 import { sendInvites } from '../helpers/invitations';
 import { store } from './store';
-=======
->>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
 const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
-<<<<<<< HEAD
-const SET_SINGLE_EVENT = 'SET_SINGLE_EVENT';
-=======
 const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
 const ADD_EVENT_TO_LIST = 'ADD_EVENT_TO_LIST';
->>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -46,34 +39,27 @@ const addEventToList = event => ({
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
   try {
-<<<<<<< HEAD
     //first we send the invitations
     const host = store.getState().user.user;
     const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
     const mailedInvites = await sendInvites(invitesNotUser, eventDeets, host);
     //when the invites are sent we create the DB record and end the create event process
     if (mailedInvites.status === 'sent') {
-      const data = await database.ref('Events/').push({
+      //STORE UPDATES ONLY ON INVITATION SUCCESS
+      let newEvent;
+      const eventRef = await database.ref('Events/').push({
         ...eventDeets,
         invites: eventInvites
       });
+      await eventRef.once('value', snapshot => {
+        newEvent = snapshot.val();
+      });
+      const newUID = String(eventRef).slice(-19);
       dispatch(clearPendingInfo);
+      dispatch(addEventToList(newEvent));
+      dispatch(setSelectedEvent(newUID));
     }
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
-=======
-    let newEvent;
-    const eventRef = await database.ref('Events/').push({
-      ...eventDeets,
-      invites: eventInvites
-    });
-    await eventRef.once('value', snapshot => {
-      newEvent = snapshot.val();
-    });
-    const newUID = String(eventRef).slice(-19);
-    dispatch(clearPendingInfo);
-    dispatch(addEventToList(newEvent));
-    dispatch(setSelectedEvent(newUID));
->>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
   } catch (err) {
     console.error(err);
   }
@@ -101,18 +87,6 @@ export const fetchAllEvents = email => async dispatch => {
   }
 };
 
-<<<<<<< HEAD
-export const fetchSingleEvent = email => async dispatch => {
-  try {
-    const eventRef = database.ref(`/Events/${email.uid}`);
-    dispatch(setSingleEvent(eventRef));
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-=======
->>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
 // DEFAULT STATE
 const defaultEvent = {
   allEvents: {},
@@ -149,11 +123,6 @@ const eventReducer = (state = defaultEvent, action) => {
         allEvents: action.events
       };
     }
-<<<<<<< HEAD
-    case SET_SINGLE_EVENT: {
-      const newEventState = { ...state, selectedEvent: action.event };
-      return newEventState;
-=======
     case SET_SELECTED_EVENT: {
       return {
         ...state,
@@ -165,7 +134,6 @@ const eventReducer = (state = defaultEvent, action) => {
         ...state,
         allEvents: [...state.allEvents, action.event]
       };
->>>>>>> 7fc50e8fe7546be16906e090b96f27c8dad63b66
     }
     default:
       return state;
