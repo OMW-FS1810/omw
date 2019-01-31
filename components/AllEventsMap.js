@@ -105,6 +105,33 @@ class AllEventsMap extends React.Component {
     this.animation = new Animated.Value(0);
     if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
     await this.setState({ region: this.props.region });
+
+    //animate region changes
+    // this.animation.addListener(({ value }) => {
+    //   let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+    //   if (index >= this.props.allEvents.length) {
+    //     index = this.props.allEvents.length - 1;
+    //   }
+    //   if (index <= 0) {
+    //     index = 0;
+    //   }
+
+    //   clearTimeout(this.regionTimeout);
+    //   this.regionTimeout = setTimeout(() => {
+    //     if (this.index !== index) {
+    //       this.index = index;
+    //       const { coordinate } = this.props.allEvents[index];
+    //       this.map.animateToRegion(
+    //         {
+    //           ...coordinate,
+    //           latitudeDelta: this.state.region.latitudeDelta,
+    //           longitudeDelta: this.state.region.longitudeDelta
+    //         },
+    //         350
+    //       );
+    //     }
+    //   }, 10);
+    // });
   }
 
   //this updates the map region when the user interacts with the map
@@ -113,15 +140,20 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
-    const { user, backgroundLocation, setBackgroundLocation, allEvents } = this.props;
+    const {
+      user,
+      backgroundLocation,
+      setBackgroundLocation,
+      allEvents
+    } = this.props;
     const { region } = this.state;
     let interpolations;
     if (allEvents.length) {
       interpolations = allEvents.map((event, index) => {
         const inputRange = [
-          (index - 1) * CARD_HEIGHT,
-          index * CARD_HEIGHT,
-          (index + 1) * CARD_HEIGHT
+          (index - 1) * CARD_WIDTH,
+          index * CARD_WIDTH,
+          (index + 1) * CARD_WIDTH
         ];
         const scale = this.animation.interpolate({
           inputRange,
@@ -140,6 +172,7 @@ class AllEventsMap extends React.Component {
     return (
       <View style={styles.container}>
         <MapView
+          ref={map => (this.map = map)}
           style={styles.map}
           showsUserLocation={true}
           followsUserLocation={true}
@@ -180,8 +213,8 @@ class AllEventsMap extends React.Component {
                       title={title}
                       coordinate={{ latitude, longitude }}
                     >
-                      <Animated.View style={styles.markerWrap}>
-                        <Animated.View style={styles.ring} />
+                      <Animated.View style={[styles.markerWrap, opacityStyle]}>
+                        <Animated.View style={[styles.ring, scaleStyle]} />
                         <View style={styles.marker} />
                       </Animated.View>
                     </MapView.Marker>
@@ -217,23 +250,16 @@ class AllEventsMap extends React.Component {
   }
 }
 
-
-
-
-
-
-
-
-
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'flex-end',
-    alignItems: 'center'
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    // justifyContent: 'flex-end',
+    // alignItems: 'center'
+    flex: 1
   },
   map: {
     position: 'absolute',
