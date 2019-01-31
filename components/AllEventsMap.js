@@ -66,7 +66,6 @@ class AllEventsMap extends React.Component {
   };
 
   renderEventCard = () => {
-    console.log('events props: ', this.props)
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
       let event, title, date, description, time, id, eventDetails;
