@@ -4,8 +4,6 @@ import {
   View,
   Text
 } from 'react-native';
-import { setSingleEvent } from '../redux/store';
-import { connect } from 'react-redux';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,21 +33,26 @@ const styles = StyleSheet.create({
 });
 
 class SingleEvent extends Component {
+
   render() {
-    console.log('email in events page', this.props)
+    const {navigation} = this.props;
+    const event = navigation.getParam('eventDetails', {}) // 2nd argument is a default value if not exists
+    // console.log('event:', event);
     return (
         <View style={styles.container}>
             <View style={styles.box1}>
-              <Text>Event</Text>
+              <Text>{event.title}</Text>
             </View>
             <View style={styles.box2}>
-              <Text>Details</Text>
+              <Text>{event.description}</Text>
             </View>
             <View style={styles.box3}>
-              <Text>Location</Text>
+              <Text>{event.event.location.locationName}</Text>
             </View>
             <View style={styles.box4}>
-              <Text>Invitees</Text>
+              {event.event.invites.map(invitee => (
+                <Text key={invitee}> {invitee} </Text>
+              ))}
             </View>
             <View style={styles.box5}>
               <Text>Names</Text>
@@ -60,16 +63,4 @@ class SingleEvent extends Component {
 }
 
 
-
-const mapStateToProps = state => ({
-  email: state.event
-});
-
-const mapDispatchToProps = dispatch => ({
-  singleEvent: event => dispatch(setSingleEvent(event))
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SingleEvent);
+export default SingleEvent;
