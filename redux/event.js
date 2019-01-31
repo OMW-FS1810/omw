@@ -26,9 +26,9 @@ const requestEvents = events => ({
   type: REQUEST_EVENTS,
   events
 });
-const setSingleEvent = event => ({
+const setSingleEvent = uid => ({
   type: SET_SINGLE_EVENT,
-  event
+  uid
 })
 
 // THUNK CREATORS
@@ -84,9 +84,9 @@ export const fetchAllEvents = email => async dispatch => {
   }
 };
 
-export const fetchSingleEvent = email => async dispatch => {
+export const fetchSingleEvent = uid => async dispatch => {
   try{
-    const eventRef = database.ref(`/Events/${email.uid}`);
+    const eventRef = await database.ref(`/Events/`);
     dispatch(setSingleEvent(eventRef))
   }catch(err){
     console.error(err)

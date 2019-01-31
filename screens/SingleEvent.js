@@ -62,7 +62,7 @@ class SingleEvent extends Component {
 
 
 const mapStateToProps = state => ({
-  email: state.email
+  email: state.event
 });
 
 const mapDispatchToProps = dispatch => ({

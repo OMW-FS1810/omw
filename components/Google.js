@@ -134,7 +134,6 @@ class Google extends React.Component {
 
       if (result.type === 'success') {
         await this.onSignIn(result);
-        // console.log(result);
         const currUser = await database.ref('/Users/');
         let thisUid;
         await currUser
@@ -145,7 +144,6 @@ class Google extends React.Component {
             if (thisUid) {
 
               const thisUidFormatted = Object.keys(thisUid)[0];
-              console.log('User: ', Object.values(thisUid)[0]);
               const user = Object.values(thisUid)[0];
               const thisUser = {
                 email: user.email,
