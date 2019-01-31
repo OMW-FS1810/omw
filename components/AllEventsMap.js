@@ -21,14 +21,26 @@ const CARD_WIDTH = CARD_HEIGHT - 50;
 
 class AllEventsMap extends React.Component {
   state = {
-    user: {}
+    user: {},
+    region: null
   };
 
   renderEventMarker = () => {
-    console.log('hi');
+    // console.log('hi');
+
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
-      allEvents.map(async eventData => {
+      // return (
+      //   <MapView.Marker
+      //     key={Math.random() * 100}
+      //     coordinate={{
+      //       latitude: 41.89526600000001,
+      //       longitude: -87.63903499999999
+      //     }}
+      //   />
+      // );
+      allEvents.map(eventData => {
+        console.log('event info for adam 🔥', eventData);
         for (let uid in eventData) {
           const event = eventData[uid];
           const latitude = event.location.locationGeocode.lat;
@@ -39,22 +51,25 @@ class AllEventsMap extends React.Component {
           const description = event.location.locationName;
           const id = uid;
 
-          console.log('latitude', latitude);
-          console.log('longitude', longitude);
-          console.log('title', title);
-          console.log('time', time);
-          console.log('date', date);
-          console.log('description', description);
-          console.log('id', id);
+          // console.log('latitude', latitude);
+          // console.log('longitude', longitude);
+          // console.log('title', title);
+          // console.log('time', time);
+          // console.log('date', date);
+          // console.log('description', description);
+          // console.log('id', id);
+          // 👋 hi
 
-          console.log('event info for adam 🔥', event);
           return (
-            <MapView.Marker key={id} coordinate={{ latitude, longitude }}>
-              <Animated.View style={styles.markerWrap}>
-                <Animated.View style={styles.ring} />
-                <View style={styles.marker} />
-              </Animated.View>
-            </MapView.Marker>
+            <MapView.Marker
+              coordinate={{ latitude: 45.524698, longitude: -122.6655507 }}
+            />
+            // <MapView.Marker key={id} coordinate={{ latitude, longitude }}>
+            //   {/* <Animated.View style={styles.markerWrap}>
+            //     <Animated.View style={styles.ring} />
+            //     <View style={styles.marker} />
+            //   </Animated.View> */}
+            // </MapView.Marker>
           );
         }
       });
@@ -97,18 +112,21 @@ class AllEventsMap extends React.Component {
     }
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
     if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
-
-    // this.props.fetchEvents(this.props.user.email);
-    // console.log('fetch called');
+    await this.setState({ region: this.props.region });
   }
 
+  //this updates the map region when the user interacts with the map
+  updateMapRegion = region => {
+    this.setState({ region });
+  };
+
   render() {
-    const { region } = this.props;
-    // this.renderEventMarker();
+    const { user, backgroundLocation, setBackgroundLocation } = this.props;
+    const { region } = this.state;
     return (
       <View style={styles.container}>
         <MapView
@@ -119,13 +137,13 @@ class AllEventsMap extends React.Component {
           showsCompass={true}
           showsScale={true}
           region={region}
-          onRegionChangeComplete={e => updateMapRegion(e)}
+          onRegionChangeComplete={e => this.updateMapRegion(e)}
           provider={MapView.PROVIDER_GOOGLE}
           customMapStyle={mapStyle}
         >
           {this.renderEventMarker()}
         </MapView>
-        <Animated.ScrollView
+        {/* <Animated.ScrollView
           horizontal
           scrollEventThrottle={1}
           showsHorizontalScrollIndicator={false}
@@ -146,7 +164,7 @@ class AllEventsMap extends React.Component {
           contentContainerStyle={styles.endPadding}
         >
           {this.renderEventCard()}
-        </Animated.ScrollView>
+        </Animated.ScrollView> */}
       </View>
     );
   }
@@ -154,7 +172,20 @@ class AllEventsMap extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  map: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   scrollView: {
     position: 'absolute',
