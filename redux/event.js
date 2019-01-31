@@ -1,14 +1,13 @@
 /* eslint-disable guard-for-in */
-/* eslint-disable no-loop-func */
 import { database } from '../config/firebase';
-import store from './store';
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
 const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
-const SET_SINGLE_EVENT = 'SET_SINGLE_EVENT'
+const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
+const ADD_EVENT_TO_LIST = 'ADD_EVENT_TO_LIST';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -26,19 +25,30 @@ const requestEvents = events => ({
   type: REQUEST_EVENTS,
   events
 });
-const setSingleEvent = uid => ({
-  type: SET_SINGLE_EVENT,
+export const setSelectedEvent = uid => ({
+  type: SET_SELECTED_EVENT,
   uid
-})
+});
+const addEventToList = event => ({
+  type: ADD_EVENT_TO_LIST,
+  event
+});
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
   try {
-    const data = await database.ref('Events/').push({
+    let newEvent;
+    const eventRef = await database.ref('Events/').push({
       ...eventDeets,
       invites: eventInvites
     });
+    await eventRef.once('value', snapshot => {
+      newEvent = snapshot.val();
+    });
+    const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
+    dispatch(addEventToList(newEvent));
+    dispatch(setSelectedEvent(newUID));
   } catch (err) {
     console.error(err);
   }
@@ -52,7 +62,7 @@ export const fetchAllEvents = email => async dispatch => {
       let snappy = snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {
-          if (value === email) {
+          if (value.toLowerCase() === email.toLowerCase()) {
             invitedEvents.push({ [uid]: snappy[uid] });
           }
         });
@@ -65,15 +75,6 @@ export const fetchAllEvents = email => async dispatch => {
     console.error(err);
   }
 };
-
-export const fetchSingleEvent = uid => async dispatch => {
-  try{
-    const eventRef = await database.ref(`/Events/`);
-    dispatch(setSingleEvent(eventRef))
-  }catch(err){
-    console.error(err)
-  }
-}
 
 // DEFAULT STATE
 const defaultEvent = {
@@ -111,9 +112,17 @@ const eventReducer = (state = defaultEvent, action) => {
         allEvents: action.events
       };
     }
-    case SET_SINGLE_EVENT: {
-      const newEventState = {...state, selectedEvent: action.event}
-      return newEventState;
+    case SET_SELECTED_EVENT: {
+      return {
+        ...state,
+        selectedEvent: state.allEvents.filter(x => x[action.uid])[0]
+      };
+    }
+    case ADD_EVENT_TO_LIST: {
+      return {
+        ...state,
+        allEvents: [...state.allEvents, action.event]
+      };
     }
     default:
       return state;
