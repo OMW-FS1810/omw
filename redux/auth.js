@@ -48,7 +48,7 @@ export const setUserAndDevice = user => async dispatch => {
       });
 
     //set the user in the store
-    dispatch(setUser(user));
+    dispatch(setUser({ ...user, deviceId, token }));
   } catch (error) {
     console.error(error);
   }

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { Location, Permissions, TaskManager, Constants } from 'expo';
-import { Map, EventList } from '../components';
+import { Map, EventList, Snackbar } from '../components';
 import { database } from '../config/firebase';
 import { connect } from 'react-redux';
 import { store } from '../redux/store';
@@ -171,6 +171,7 @@ class EventMap extends React.Component {
           setBackgroundLocation={this.setBackgroundLocation}
         />
         {user.user.email ? <AllEventsMap user={user.user} /> : null}
+        <Snackbar />
       </>
     );
   }

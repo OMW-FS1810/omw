@@ -1,4 +1,5 @@
 import { Permissions, Notifications } from 'expo';
+import { database } from '../config/firebase';
 
 export const registerForPushNotificationsAsync = async () => {
   const { status: existingStatus } = await Permissions.getAsync(
@@ -22,21 +23,25 @@ export const registerForPushNotificationsAsync = async () => {
 
   // Get the token that uniquely identifies this device
   let token = await Notifications.getExpoPushTokenAsync();
-  //WE WANT TO PUT THIS IN THE DB
   return token;
 };
 
-export const sendPushNotification = (token, title, body) => {
-  return fetch('https://exp.host/--/api/v2/push/send', {
-    body: JSON.stringify({
-      to: token,
-      title: title,
-      body: body,
-      data: { message: `${title} - ${body}` }
-    }),
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'POST'
-  });
+export const sendPushNotification = (token, title, body, sender) => {
+  try {
+    fetch('https://exp.host/--/api/v2/push/send', {
+      body: JSON.stringify({
+        to: token,
+        sound: 'default',
+        title: title,
+        body: body,
+        data: { message: `${title} - ${body}` }
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
+  } catch (err) {
+    console.error(err);
+  }
 };

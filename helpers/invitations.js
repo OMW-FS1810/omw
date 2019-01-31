@@ -1,24 +1,58 @@
 import React from 'react';
 import { Contacts, MailComposer } from 'expo';
 import { database } from '../config/firebase';
+import { sendPushNotification } from './notificationSetup';
 
 //NOTE: the app url link will be changed when the project is published -- in dev it will need to be the developer's own tunnel
 const appUrl = 'exp://ez-94f.apoyando.omw.exp.direct:80';
 
-export const sendInvites = async (inviteesArr, eventDetails, hostEmail) => {
+export const sendInvites = async (inviteesArr, eventDetails, host) => {
   // need to invite unregistered users, notify registered users, and notify host
   const currUsers = database.ref('/Users/');
   const allUsers = await currUsers
     .orderByChild('email')
-    .once('value', snapshot => {
-      //below, we actually want notification ID
-      const userArr = Object.values(snapshot.val()).map(user => ({
-        email: user.email,
-        deviceId: user.deviceId
-      }));
+    .once('value', async snapshot => {
+      const userObj = snapshot.val();
+      //rearrange users by email
+      const userByEmail = {};
+      for (let key in userObj) {
+        let thisEmail = userObj[key]['email'].toLowerCase();
+        userByEmail[thisEmail] = userObj[key];
+      }
+      //sort invitees into emails and messages
+      let emailInvites = [];
+      let messageInvites = [];
+      inviteesArr.forEach(invitee => {
+        let thisInvitee = invitee.toLowerCase();
+        if (thisInvitee in userByEmail) {
+          if (userByEmail[thisInvitee].token) {
+            messageInvites.push(userByEmail[thisInvitee].token);
+          }
+        } else {
+          emailInvites.push(invitee);
+        }
+      });
+      console.log('emails', emailInvites, 'messages', messageInvites);
+      //send push notifications
+      messageInvites.forEach(token => {
+        if (token)
+          sendPushNotification(
+            token,
+            eventDetails.name,
+            `${host.email} has invited you to an event at ${
+              eventDetails.location.locationName
+            } on ${eventDetails.date} at ${eventDetails.time}`,
+            host.token
+          );
+      });
+      //send emails
+
+      if (messageInvites.length > 0) {
+        await composeMail(messageInvites, eventDetails, host.email);
+      }
     });
 
-  return { status: 'none' };
+  return { status: 'sent' };
 };
 
 export const composeMail = (inviteesArr, eventDetails, hostEmail) => {

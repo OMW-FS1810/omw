@@ -9,7 +9,7 @@ const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
 const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
-const SET_SINGLE_EVENT = 'SET_SINGLE_EVENT'
+const SET_SINGLE_EVENT = 'SET_SINGLE_EVENT';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -30,19 +30,15 @@ const requestEvents = events => ({
 const setSingleEvent = event => ({
   type: SET_SINGLE_EVENT,
   event
-})
+});
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
   try {
     //first we send the invitations
-    const hostEmail = store.getState().user.user.email;
-    const invitesNotUser = eventInvites.filter(invite => invite !== hostEmail);
-    const mailedInvites = await sendInvites(
-      invitesNotUser,
-      eventDeets,
-      hostEmail
-    );
+    const host = store.getState().user.user;
+    const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
+    const mailedInvites = await sendInvites(invitesNotUser, eventDeets, host);
     //when the invites are sent we create the DB record and end the create event process
     if (mailedInvites.status === 'sent') {
       const data = await database.ref('Events/').push({
@@ -98,13 +94,13 @@ export const fetchAllEvents = email => async dispatch => {
 };
 
 export const fetchSingleEvent = email => async dispatch => {
-  try{
+  try {
     const eventRef = database.ref(`/Events/${email.uid}`);
-    dispatch(setSingleEvent(eventRef))
-  }catch(err){
-    console.error(err)
+    dispatch(setSingleEvent(eventRef));
+  } catch (err) {
+    console.error(err);
   }
-}
+};
 
 // DEFAULT STATE
 const defaultEvent = {
@@ -143,7 +139,7 @@ const eventReducer = (state = defaultEvent, action) => {
       };
     }
     case SET_SINGLE_EVENT: {
-      const newEventState = {...state, selectedEvent: action.event}
+      const newEventState = { ...state, selectedEvent: action.event };
       return newEventState;
     }
     default:
