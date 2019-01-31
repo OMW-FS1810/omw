@@ -125,7 +125,6 @@ class Profile extends Component {
 
   render() {
     const {isEditing, err, editSuccess} = this.state;
-    console.log('Profile props:', this.props.user);
     return ( <View style={styles.container}>
          <Button title="Sign out" onPress={this.signOutUser}>
           Sign out
