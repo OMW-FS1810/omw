@@ -5,13 +5,15 @@ import {
   View,
   Image,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import { setUserAndDevice, setUser } from '../redux/store';
 import { Button } from 'react-native-paper'
 import { database } from '../config/firebase';
 import * as firebase from 'firebase';
+import { ImagePicker, Permissions } from 'expo';
 
 const styles = StyleSheet.create({
   header: {
@@ -69,6 +71,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     width: 30,
     height: 30
+  },
+  input: {
+    // backgroundColor: '#C8D7E3',
+    borderColor: 'black',
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 5,
+    width: '50%'
   }
 });
 
@@ -123,31 +133,72 @@ class Profile extends Component {
     // Logout in our store (set user to {})
   }
 
+  selectPicture = async () => {
+    await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    let result = await ImagePicker.launchImageLibraryAsync();
+    //let result = await ImagePicker.launchImageLibraryAsync();
+
+    if (!result.cancelled) {
+      this.uploadImage(result.uri, "test-image")
+        .then(() => {
+          Alert.alert("Success");
+        })
+        .catch((error) => {
+          Alert.alert(error);
+        });
+    }
+  }
+
+  takePicture = async () => {
+    await Permissions.askAsync(Permissions.CAMERA)
+    let result = await ImagePicker.launchCameraAsync();
+    //let result = await ImagePicker.launchImageLibraryAsync();
+
+    if (!result.cancelled) {
+      this.uploadImage(result.uri, "test-image-2")
+        .then(() => {
+          Alert.alert("Success");
+        })
+        .catch((error) => {
+          Alert.alert(error);
+        });
+    }
+  }
+
+  uploadImage = async (uri, imageName) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    var ref = firebase.storage().ref().child("images/" + imageName);
+    return ref.put(blob);
+  }
+
   render() {
     const {isEditing, err, editSuccess} = this.state;
-    return ( <View style={styles.container}>
-         <Button title="Sign out" onPress={this.signOutUser}>
-          Sign out
-          </Button>
-        {editSuccess ? <Text> {editSuccess} </Text> : null}
-        {err ? <Text> {err} </Text> : null}
-        {!isEditing && <Button title="Edit" onPress={this.toggleEdit}>
-            Edit
-          </Button>}
-        {isEditing && <Button title="Edit" onPress={this.editInfo}>
-            Save
-          </Button>}
-
+    // console.log('Profile props:', this.props.user);
+    return (
+      <View style={styles.container}>
         {isEditing ? <View style={styles.header}>
-            <View style={styles.headerContent}>
-              <Image style={styles.avatar} source={{ uri: `${this.props.user.pictureUrl}` }} />
-
-              <TextInput style={styles.name} onChangeText={editFirstName => this.setState(
+        <View style={styles.headerContent}>
+          <Image style={styles.avatar} source={{ uri: `${this.props.user.pictureUrl}` }} />
+            <Button title="Choose image..." onPress={this.selectPicture}>Picture Library </Button>
+            <Button title="Choose image..." onPress={this.takePicture}>Take Picture </Button>
+              <TextInput
+                style={styles.input}
+                onChangeText={editFirstName => this.setState(
                     { editFirstName }
-                  )} autoCapitalize="sentences" autoComplete="name" placeholder={this.props.user.firstName} />
-              <TextInput style={styles.name} onChangeText={editLastName => this.setState(
+                  )}
+                autoCapitalize="sentences"
+                autoComplete="name"
+                placeholder={this.props.user.firstName} />
+              <TextInput
+                style={styles.input}
+                onChangeText={editLastName => this.setState(
                     { editLastName }
-                  )} autoCapitalize="sentences" autoComplete="name" placeholder={this.props.user.lastName} />
+                  )}
+                autoCapitalize="sentences"
+                autoComplete="name"
+                placeholder={this.props.user.lastName} />
             </View>
           </View> : <View style={styles.header}>
             <View style={styles.headerContent}>
@@ -176,9 +227,18 @@ class Profile extends Component {
               <Text>Events</Text>
             </TouchableOpacity>
           </View>
+          <Button title="Sign out" onPress={this.signOutUser}>
+          Sign out
+          </Button>
+            {editSuccess ? <Text> {editSuccess} </Text> : null}
+            {err ? <Text> {err} </Text> : null}
+            {!isEditing && <Button title="Edit" onPress={this.toggleEdit}>
+            Edit
+          </Button>}
+            {isEditing && <Button title="Edit" onPress={this.editInfo}>
+            Save
+          </Button>}
         </View>
-
-
       </View>
     )
   }
