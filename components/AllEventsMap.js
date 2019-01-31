@@ -100,11 +100,11 @@ class AllEventsMap extends React.Component {
     }
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
     if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
-    await this.setState({ region: this.props.region });
+    this.setState({ region: this.props.region });
 
     //animate region changes
     // this.animation.addListener(({ value }) => {
@@ -191,9 +191,6 @@ class AllEventsMap extends React.Component {
                   const latitude = event.location.locationGeocode.lat;
                   const longitude = event.location.locationGeocode.lng;
                   const title = event.name;
-                  const time = event.time;
-                  const date = event.date;
-                  const description = event.location.locationName;
                   const id = uid;
 
                   const scaleStyle = {
@@ -203,6 +200,7 @@ class AllEventsMap extends React.Component {
                       }
                     ]
                   };
+
                   const opacityStyle = {
                     opacity: interpolations[index].opacity
                   };
@@ -320,8 +318,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(130,4,150, 0.9)'
   },
   ring: {
-    width: 24,
-    height: 24,
+    width: 50,
+    height: 50,
     borderRadius: 12,
     backgroundColor: 'rgba(130,4,150, 0.3)',
     position: 'absolute',
