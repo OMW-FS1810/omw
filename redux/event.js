@@ -8,6 +8,7 @@ const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
 const POPULATE_EVENT_INVITES = 'POPULATE_EVENT_INVITES';
 const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
+const SET_SINGLE_EVENT = 'SET_SINGLE_EVENT'
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -25,6 +26,10 @@ const requestEvents = events => ({
   type: REQUEST_EVENTS,
   events
 });
+const setSingleEvent = event => ({
+  type: SET_SINGLE_EVENT,
+  event
+})
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
@@ -79,6 +84,15 @@ export const fetchAllEvents = email => async dispatch => {
   }
 };
 
+export const fetchSingleEvent = email => async dispatch => {
+  try{
+    const eventRef = database.ref(`/Events/${email.uid}`);
+    dispatch(setSingleEvent(eventRef))
+  }catch(err){
+    console.error(err)
+  }
+}
+
 // DEFAULT STATE
 const defaultEvent = {
   allEvents: {},
@@ -114,6 +128,10 @@ const eventReducer = (state = defaultEvent, action) => {
         ...state,
         allEvents: action.events
       };
+    }
+    case SET_SINGLE_EVENT: {
+      const newEventState = {...state, selectedEvent: action.event}
+      return newEventState;
     }
     default:
       return state;
