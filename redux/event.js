@@ -45,30 +45,12 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
 };
 export const fetchAllEvents = email => async dispatch => {
   try {
-    // let hostEvents = [];
-    // find all events where this user is the host
-    // await eventRef
-    //   .orderByChild('host')
-    //   .equalTo(userId)
-    //   .on('value', event => {
-    //     hostEvents.push(event);
-    //   });
-    // find all events where this user is invited
-
-    // first grab the email address since invites are based on email address
+    // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
-    // const emailRef = database.ref(`/Users/${userId}`);
-    // let email;
-    // await emailRef.once('value', person => {
-    //   email = person.val().email;
-    // });
-    // then query all events where this email is in invites
     let invitedEvents = [];
     eventRef.once('value', snapshot => {
       let snappy = snapshot.val();
       for (let uid in snappy) {
-        // console.log('💩', snappy[uid].invites);
-        // console.log('from events store 🛒', snappy)
         snappy[uid].invites.map(value => {
           if (value === email) {
             invitedEvents.push({ [uid]: snappy[uid] });

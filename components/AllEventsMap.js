@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -6,7 +7,6 @@ import {
   View,
   ScrollView,
   Animated,
-  Image,
   Dimensions
 } from 'react-native';
 import { MapView, Constants } from 'expo';
@@ -15,48 +15,234 @@ import { mapStyle } from './styles/mapStyle';
 import { fetchAllEvents } from '../redux/event';
 
 const { width, height } = Dimensions.get('window');
-const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT - 50;
+const CARD_WIDTH = height / 4;
+const CARD_HEIGHT = CARD_WIDTH - 50;
 
 class AllEventsMap extends React.Component {
   state = {
     user: {},
-    markers: []
+    region: null
   };
+
   renderEventMarker = () => {
-    // console.log('event info for adam 🔥', this.props.allEvents);
     // if (this.props.allEvents.length) {
     //   const allEvents = this.props.allEvents;
-    //   allEvents.map(event => {
-    //     this.setState({
-    //       markers: [
-    //         ...this.state.markers,
-    //         this.state.markers.push({
-    //           coordinate: {
-    //             // latitude:
+    //   return allEvents.map(eventData => {
+    //     for (let uid in eventData) {
+    //       const event = eventData[uid];
+    //       const latitude = event.location.locationGeocode.lat;
+    //       const longitude = event.location.locationGeocode.lng;
+    //       const title = event.name;
+    //       const time = event.time;
+    //       const date = event.date;
+    //       const description = event.location.locationName;
+    //       const id = uid;
+    //       const scaleStyle = {
+    //         transform: [
+    //           {
+    //             scale: interpolations[index].scale
     //           }
-    //         })
-    //       ]
-    //     });
+    //         ]
+    //       };
+    //       const opacityStyle = {
+    //         opacity: interpolations[index].opacity
+    //       };
+    //       return (
+    //         <MapView.Marker
+    //           key={id}
+    //           title={title}
+    //           coordinate={{ latitude, longitude }}
+    //         >
+    //           <Animated.View style={styles.markerWrap}>
+    //             <Animated.View style={styles.ring} />
+    //             <View style={styles.marker} />
+    //           </Animated.View>
+    //         </MapView.Marker>
+    //       );
+    //     }
     //   });
     // }
+  };
+
+  renderEventCard = () => {
+    if (this.props.allEvents.length) {
+      const allEvents = this.props.allEvents;
+      let event, title, date, description, time, id;
+      return allEvents.map(eventData => {
+        for (let uid in eventData) {
+          event = eventData[uid];
+          title = event.name;
+          time = event.time;
+          date = event.date;
+          description = event.location.locationName;
+          id = uid;
+        }
+
+        return (
+          <View key={id} style={styles.card}>
+            <View style={styles.textContent}>
+              <Text numberOfLines={1} style={styles.cardtitle}>
+                {title}
+              </Text>
+              <Text numberOfLines={1} style={styles.cardDescription}>
+                {description}
+              </Text>
+              <Text numberOfLines={1} style={styles.cardDescription}>
+                {date}
+              </Text>
+              <Text numberOfLines={1} style={styles.cardDescription}>
+                {time}
+              </Text>
+            </View>
+          </View>
+        );
+      });
+    }
   };
 
   componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
     if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
+    this.setState({ region: this.props.region });
 
-    // this.props.fetchEvents(this.props.user.email);
-    // console.log('fetch called');
+    //animate region changes
+    // this.animation.addListener(({ value }) => {
+    //   let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+    //   if (index >= this.props.allEvents.length) {
+    //     index = this.props.allEvents.length - 1;
+    //   }
+    //   if (index <= 0) {
+    //     index = 0;
+    //   }
+
+    //   clearTimeout(this.regionTimeout);
+    //   this.regionTimeout = setTimeout(() => {
+    //     if (this.index !== index) {
+    //       this.index = index;
+    //       const { coordinate } = this.props.allEvents[index];
+    //       this.map.animateToRegion(
+    //         {
+    //           ...coordinate,
+    //           latitudeDelta: this.state.region.latitudeDelta,
+    //           longitudeDelta: this.state.region.longitudeDelta
+    //         },
+    //         350
+    //       );
+    //     }
+    //   }, 10);
+    // });
   }
 
+  //this updates the map region when the user interacts with the map
+  updateMapRegion = region => {
+    this.setState({ region });
+  };
+
   render() {
-    const { region } = this.props;
-    this.renderEventMarker();
+    const {
+      user,
+      backgroundLocation,
+      setBackgroundLocation,
+      allEvents
+    } = this.props;
+    const { region } = this.state;
+    let interpolations;
+    if (allEvents.length) {
+      interpolations = allEvents.map((event, index) => {
+        const inputRange = [
+          (index - 1) * CARD_WIDTH,
+          index * CARD_WIDTH,
+          (index + 1) * CARD_WIDTH
+        ];
+        const scale = this.animation.interpolate({
+          inputRange,
+          outputRange: [1, 2.5, 1],
+          extrapolate: 'clamp'
+        });
+        const opacity = this.animation.interpolate({
+          inputRange,
+          outputRange: [0.35, 1, 0.35],
+          extrapolate: 'clamp'
+        });
+        return { scale, opacity };
+      });
+    }
+
     return (
       <View style={styles.container}>
-        <MapView ref={map => (this.map = map)} initialRegion={region} />
+        <MapView
+          ref={map => (this.map = map)}
+          style={styles.map}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          showsMyLocationButton={true}
+          showsCompass={true}
+          showsScale={true}
+          region={region}
+          onRegionChangeComplete={e => this.updateMapRegion(e)}
+          provider={MapView.PROVIDER_GOOGLE}
+          customMapStyle={mapStyle}
+        >
+          {this.props.allEvents.length
+            ? this.props.allEvents.map((eventData, index) => {
+                for (let uid in eventData) {
+                  const event = eventData[uid];
+                  const latitude = event.location.locationGeocode.lat;
+                  const longitude = event.location.locationGeocode.lng;
+                  const title = event.name;
+                  const id = uid;
+
+                  const scaleStyle = {
+                    transform: [
+                      {
+                        scale: interpolations[index].scale
+                      }
+                    ]
+                  };
+
+                  const opacityStyle = {
+                    opacity: interpolations[index].opacity
+                  };
+
+                  return (
+                    <MapView.Marker
+                      key={id}
+                      title={title}
+                      coordinate={{ latitude, longitude }}
+                    >
+                      <Animated.View style={[styles.markerWrap, opacityStyle]}>
+                        <Animated.View style={[styles.ring, scaleStyle]} />
+                        <View style={styles.marker} />
+                      </Animated.View>
+                    </MapView.Marker>
+                  );
+                }
+              })
+            : null}
+        </MapView>
+        <Animated.ScrollView
+          horizontal
+          scrollEventThrottle={1}
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={CARD_WIDTH}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    x: this.animation
+                  }
+                }
+              }
+            ],
+            { useNativeDriver: true }
+          )}
+          style={styles.scrollView}
+          contentContainerStyle={styles.endPadding}
+        >
+          {this.renderEventCard()}
+        </Animated.ScrollView>
       </View>
     );
   }
@@ -64,7 +250,21 @@ class AllEventsMap extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
+    // justifyContent: 'flex-end',
+    // alignItems: 'center'
     flex: 1
+  },
+  map: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   scrollView: {
     position: 'absolute',
@@ -118,8 +318,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(130,4,150, 0.9)'
   },
   ring: {
-    width: 24,
-    height: 24,
+    width: 50,
+    height: 50,
     borderRadius: 12,
     backgroundColor: 'rgba(130,4,150, 0.3)',
     position: 'absolute',
