@@ -7,7 +7,6 @@ import {
   View,
   ScrollView,
   Animated,
-  Image,
   Dimensions
 } from 'react-native';
 import { MapView, Constants } from 'expo';
@@ -29,7 +28,7 @@ class AllEventsMap extends React.Component {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
       return allEvents.map(eventData => {
-        console.log('event info for adam 🔥', eventData);
+        // console.log('event info for adam 🔥', eventData);
         for (let uid in eventData) {
           const event = eventData[uid];
           const latitude = event.location.locationGeocode.lat;
@@ -40,15 +39,16 @@ class AllEventsMap extends React.Component {
           const description = event.location.locationName;
           const id = uid;
 
-          console.log(event);
-          console.log(latitude);
-          console.log(id);
+          // console.log(event);
+          // console.log(latitude);
+          // console.log(id);
 
           return (
-            <MapView.Marker>
+            <MapView.Marker
               key={id}
               title={title}
               coordinate={{ latitude, longitude }}
+            >
               <Animated.View style={styles.markerWrap}>
                 <Animated.View style={styles.ring} />
                 <View style={styles.marker} />
@@ -63,21 +63,24 @@ class AllEventsMap extends React.Component {
   renderEventCard = () => {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
-      allEvents.map(async eventData => {
+      let event, title, date, description, time, id;
+      return allEvents.map(eventData => {
         for (let uid in eventData) {
-          const event = eventData[uid];
-          const latitude = event.location.locationGeocode.lat;
-          const longitude = event.location.locationGeocode.lng;
-          const title = event.name;
-          const time = event.time;
-          const date = event.date;
-          const description = event.location.locationName;
-          const id = uid;
-          return (
-            <View key={id} styles={styles.card}>
-              <View styles={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>
-                  {title}
+          event = eventData[uid];
+          // latitude = event.location.locationGeocode.lat;
+          // longitude = event.location.locationGeocode.lng;
+          title = event.name;
+          time = event.time;
+          date = event.date;
+          description = event.location.locationName;
+          id = uid;
+        }
+
+      return (
+        <View key={id} style={styles.card}>
+          <View style={styles.textContent}>
+            {/* <Text numberOfLines={1} style={styles.cardtitle}>
+                  {event}
                 </Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
                   {description}
@@ -87,12 +90,12 @@ class AllEventsMap extends React.Component {
                 </Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
                   {time}
-                </Text>
-              </View>
-            </View>
-          );
+                </Text> */}
+          </View>
+        </View>
+      );
         }
-      });
+      );
     }
   };
 
@@ -153,6 +156,12 @@ class AllEventsMap extends React.Component {
     );
   }
 }
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
