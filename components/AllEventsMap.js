@@ -15,8 +15,8 @@ import { mapStyle } from './styles/mapStyle';
 import { fetchAllEvents } from '../redux/event';
 
 const { width, height } = Dimensions.get('window');
-const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT - 50;
+const CARD_WIDTH = height / 4;
+const CARD_HEIGHT = CARD_WIDTH - 50;
 
 class AllEventsMap extends React.Component {
   state = {
@@ -76,26 +76,25 @@ class AllEventsMap extends React.Component {
           id = uid;
         }
 
-      return (
-        <View key={id} style={styles.card}>
-          <View style={styles.textContent}>
-            {/* <Text numberOfLines={1} style={styles.cardtitle}>
-                  {event}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {description}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {date}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {time}
-                </Text> */}
+        return (
+          <View key={id} style={styles.card}>
+            <View style={styles.textContent}>
+              <Text numberOfLines={1} style={styles.cardtitle}>
+                {title}
+              </Text>
+              <Text numberOfLines={1} style={styles.cardDescription}>
+                {description}
+              </Text>
+              <Text numberOfLines={1} style={styles.cardDescription}>
+                {date}
+              </Text>
+              <Text numberOfLines={1} style={styles.cardDescription}>
+                {time}
+              </Text>
+            </View>
           </View>
-        </View>
-      );
-        }
-      );
+        );
+      });
     }
   };
 
@@ -156,12 +155,6 @@ class AllEventsMap extends React.Component {
     );
   }
 }
-
-
-
-
-
-
 
 const styles = StyleSheet.create({
   container: {
