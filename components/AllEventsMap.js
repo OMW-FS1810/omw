@@ -25,35 +25,43 @@ class AllEventsMap extends React.Component {
   };
 
   renderEventMarker = () => {
-    if (this.props.allEvents.length) {
-      const allEvents = this.props.allEvents;
-      return allEvents.map(eventData => {
-        // console.log('event info for adam 🔥', eventData);
-        for (let uid in eventData) {
-          const event = eventData[uid];
-          const latitude = event.location.locationGeocode.lat;
-          const longitude = event.location.locationGeocode.lng;
-          const title = event.name;
-          const time = event.time;
-          const date = event.date;
-          const description = event.location.locationName;
-          const id = uid;
-
-          return (
-            <MapView.Marker
-              key={id}
-              title={title}
-              coordinate={{ latitude, longitude }}
-            >
-              <Animated.View style={styles.markerWrap}>
-                <Animated.View style={styles.ring} />
-                <View style={styles.marker} />
-              </Animated.View>
-            </MapView.Marker>
-          );
-        }
-      });
-    }
+    // if (this.props.allEvents.length) {
+    //   const allEvents = this.props.allEvents;
+    //   return allEvents.map(eventData => {
+    //     for (let uid in eventData) {
+    //       const event = eventData[uid];
+    //       const latitude = event.location.locationGeocode.lat;
+    //       const longitude = event.location.locationGeocode.lng;
+    //       const title = event.name;
+    //       const time = event.time;
+    //       const date = event.date;
+    //       const description = event.location.locationName;
+    //       const id = uid;
+    //       const scaleStyle = {
+    //         transform: [
+    //           {
+    //             scale: interpolations[index].scale
+    //           }
+    //         ]
+    //       };
+    //       const opacityStyle = {
+    //         opacity: interpolations[index].opacity
+    //       };
+    //       return (
+    //         <MapView.Marker
+    //           key={id}
+    //           title={title}
+    //           coordinate={{ latitude, longitude }}
+    //         >
+    //           <Animated.View style={styles.markerWrap}>
+    //             <Animated.View style={styles.ring} />
+    //             <View style={styles.marker} />
+    //           </Animated.View>
+    //         </MapView.Marker>
+    //       );
+    //     }
+    //   });
+    // }
   };
 
   renderEventCard = () => {
@@ -63,8 +71,6 @@ class AllEventsMap extends React.Component {
       return allEvents.map(eventData => {
         for (let uid in eventData) {
           event = eventData[uid];
-          // latitude = event.location.locationGeocode.lat;
-          // longitude = event.location.locationGeocode.lng;
           title = event.name;
           time = event.time;
           date = event.date;
@@ -107,8 +113,30 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
-    const { user, backgroundLocation, setBackgroundLocation } = this.props;
+    const { user, backgroundLocation, setBackgroundLocation, allEvents } = this.props;
     const { region } = this.state;
+    let interpolations;
+    if (allEvents.length) {
+      interpolations = allEvents.map((event, index) => {
+        const inputRange = [
+          (index - 1) * CARD_HEIGHT,
+          index * CARD_HEIGHT,
+          (index + 1) * CARD_HEIGHT
+        ];
+        const scale = this.animation.interpolate({
+          inputRange,
+          outputRange: [1, 2.5, 1],
+          extrapolate: 'clamp'
+        });
+        const opacity = this.animation.interpolate({
+          inputRange,
+          outputRange: [0.35, 1, 0.35],
+          extrapolate: 'clamp'
+        });
+        return { scale, opacity };
+      });
+    }
+
     return (
       <View style={styles.container}>
         <MapView
@@ -123,7 +151,44 @@ class AllEventsMap extends React.Component {
           provider={MapView.PROVIDER_GOOGLE}
           customMapStyle={mapStyle}
         >
-          {this.renderEventMarker()}
+          {this.props.allEvents.length
+            ? this.props.allEvents.map((eventData, index) => {
+                for (let uid in eventData) {
+                  const event = eventData[uid];
+                  const latitude = event.location.locationGeocode.lat;
+                  const longitude = event.location.locationGeocode.lng;
+                  const title = event.name;
+                  const time = event.time;
+                  const date = event.date;
+                  const description = event.location.locationName;
+                  const id = uid;
+
+                  const scaleStyle = {
+                    transform: [
+                      {
+                        scale: interpolations[index].scale
+                      }
+                    ]
+                  };
+                  const opacityStyle = {
+                    opacity: interpolations[index].opacity
+                  };
+
+                  return (
+                    <MapView.Marker
+                      key={id}
+                      title={title}
+                      coordinate={{ latitude, longitude }}
+                    >
+                      <Animated.View style={styles.markerWrap}>
+                        <Animated.View style={styles.ring} />
+                        <View style={styles.marker} />
+                      </Animated.View>
+                    </MapView.Marker>
+                  );
+                }
+              })
+            : null}
         </MapView>
         <Animated.ScrollView
           horizontal
@@ -151,6 +216,13 @@ class AllEventsMap extends React.Component {
     );
   }
 }
+
+
+
+
+
+
+
 
 
 const styles = StyleSheet.create({
