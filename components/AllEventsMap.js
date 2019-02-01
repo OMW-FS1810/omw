@@ -13,7 +13,7 @@ import {
 import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
-import { fetchAllEvents } from '../redux/event';
+import { fetchAllEvents, setSelectedEvent } from '../redux/event';
 import { Snackbar } from './';
 
 const { width, height } = Dimensions.get('window');
@@ -79,23 +79,19 @@ class AllEventsMap extends React.Component {
           date = event.date;
           description = event.location.locationName;
           id = uid;
-          eventDetails = {
-            event: eventData[uid],
-            title: event.name,
-            time: event.time,
-            date: event.date,
-            description: event.location.locationName
-          };
         }
 
         // Touchable opacity on this card that will navigate the user to
         // the single event page and also pass along that event information
+        const thisId = Object.keys(eventData)[0];
         return (
           <TouchableOpacity
-            key={id}
-            onPress={() =>
-              this.props.navigation.navigate('SingleEvent', { eventDetails })
-            }
+            key={thisId}
+            onPress={() => {
+              console.log('details in map', eventData);
+              this.props.selectEvent(eventData);
+              this.props.navigation.navigate('SingleEvent', { eventDetails });
+            }}
           >
             <View style={styles.card}>
               <View style={styles.textContent}>
@@ -118,12 +114,8 @@ class AllEventsMap extends React.Component {
       });
     }
   };
-  // runAnimation = () => {
-  //   this.animation = new Animated.Value(0);
-  // };
   componentDidMount() {
     this.index = 0;
-    // this.runAnimation();
     if (this.props.user.email) {
       this.props.fetchEvents(this.props.user.email);
     }
@@ -213,7 +205,6 @@ class AllEventsMap extends React.Component {
             ? this.props.allEvents.map((eventData, index) => {
                 for (let uid in eventData) {
                   const event = eventData[uid];
-                  console.log(event);
                   const latitude = event.location.locationGeocode.lat;
                   const longitude = event.location.locationGeocode.lng;
                   const title = event.name;
@@ -361,7 +352,8 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  fetchEvents: email => dispatch(fetchAllEvents(email))
+  fetchEvents: email => dispatch(fetchAllEvents(email)),
+  selectEvent: uid => dispatch(setSelectedEvent(uid))
 });
 
 export default connect(

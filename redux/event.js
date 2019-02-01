@@ -27,9 +27,9 @@ const requestEvents = events => ({
   type: REQUEST_EVENTS,
   events
 });
-export const setSelectedEvent = uid => ({
+export const setSelectedEvent = event => ({
   type: SET_SELECTED_EVENT,
-  uid
+  event
 });
 const addEventToList = event => ({
   type: ADD_EVENT_TO_LIST,
@@ -39,14 +39,6 @@ const addEventToList = event => ({
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
   try {
-    //first we send the invitations
-    const host = store.getState().user.user;
-    const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
-    // const mailedInvites =
-    sendInvites(invitesNotUser, eventDeets, host);
-    //when the invites are sent we create the DB record and end the create event process
-    // if (mailedInvites.status === 'sent') {
-    //STORE UPDATES ONLY ON INVITATION SUCCESS - DISABLED
     let newEvent;
     const eventRef = await database.ref('Events/').push({
       ...eventDeets,
@@ -54,12 +46,17 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     });
     await eventRef.once('value', snapshot => {
       newEvent = snapshot.val();
-      const newUID = String(eventRef).slice(-19);
-      dispatch(clearPendingInfo);
-      dispatch(addEventToList(newEvent));
-      dispatch(setSelectedEvent(newUID));
     });
-
+    const newUID = String(eventRef).slice(-19);
+    dispatch(clearPendingInfo);
+    await dispatch(addEventToList({ [newUID]: newEvent }));
+    console.log('newEvent in thunk', newEvent);
+    dispatch(setSelectedEvent({ [newUID]: newEvent }));
+    //first we send the invitations
+    const host = store.getState().user.user;
+    const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
+    // const mailedInvites =
+    sendInvites(invitesNotUser, eventDeets, host);
     // }
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
@@ -129,7 +126,8 @@ const eventReducer = (state = defaultEvent, action) => {
     case SET_SELECTED_EVENT: {
       return {
         ...state,
-        selectedEvent: state.allEvents.filter(x => x[action.uid])[0]
+        selectedEvent: action.event
+        // state.allEvents.filter(x => x[action.uid])[0]
       };
     }
     case ADD_EVENT_TO_LIST: {

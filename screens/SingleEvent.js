@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text
-} from 'react-native';
+import { connect } from 'react-redux';
+import { StyleSheet, View, Text } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,34 +30,46 @@ const styles = StyleSheet.create({
 });
 
 class SingleEvent extends Component {
-
   render() {
-    const {navigation} = this.props;
-    const event = navigation.getParam('eventDetails', {}) // 2nd argument is a default value if not exists
-    // console.log('event:', event);
-    return (
-        <View style={styles.container}>
+    const { navigation } = this.props;
+    let event = false;
+    if (this.props.selectedEvent) {
+      event = Object.values(this.props.selectedEvent)[0];
+      console.log(event);
+
+      return (
+        { event } && (
+          <View style={styles.container}>
             <View style={styles.box1}>
-              <Text>{event.title}</Text>
+              <Text>{event.name}</Text>
             </View>
             <View style={styles.box2}>
-              <Text>{event.description}</Text>
+              <Text>
+                {event.date} {event.time}
+              </Text>
             </View>
             <View style={styles.box3}>
-              <Text>{event.event.location.locationName}</Text>
+              <Text>{event.location.locationName}</Text>
             </View>
             <View style={styles.box4}>
-              {event.event.invites.map(invitee => (
+              {event.invites.map(invitee => (
                 <Text key={invitee}> {invitee} </Text>
               ))}
             </View>
             <View style={styles.box5}>
               <Text>Names</Text>
             </View>
-        </View>
-    );
+          </View>
+        )
+      );
+    } else {
+      return null;
+    }
   }
 }
 
+const mapStateToProps = ({ event }) => ({
+  selectedEvent: event.selectedEvent
+});
 
-export default SingleEvent;
+export default connect(mapStateToProps)(SingleEvent);
