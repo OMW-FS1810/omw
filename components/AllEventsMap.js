@@ -124,6 +124,7 @@ class AllEventsMap extends React.Component {
     // animate region changes
     this.props.animation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+      console.log(index);
       if (index >= this.props.allEvents.length) {
         index = this.props.allEvents.length - 1;
       }

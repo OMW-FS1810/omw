@@ -148,21 +148,25 @@ class Map extends React.Component {
   locateMembers = members => {
     //rearrange users by email
 
-    const membersByEmail = {};
-    // eslint-disable-next-line guard-for-in
-    for (let key in members) {
-      if (members[key].email) {
-        let thisEmail = members[key].email.toLowerCase();
-        membersByEmail[thisEmail] = members[key];
-      }
-    }
-    const thisEvent = this.state.event;
+    // const membersByEmail = {};
+    // // eslint-disable-next-line guard-for-in
+    // for (let key in members) {
+    //   if (members[key].email) {
+    //     let thisEmail = members[key].email.toLowerCase();
+    //     membersByEmail[thisEmail] = members[key];
+    //   }
+    // }
+    if (Object.keys(this.state.event).length) {
+      let {membersByEmail} = this.props
+      const thisEvent = this.state.event;
 
     const eventMembers = [];
     thisEvent.invites.forEach(invite => {
       eventMembers.push([invite, membersByEmail[invite.toLowerCase()]]);
     });
     this.setState({ eventMembers });
+    }
+
   };
   async componentDidMount() {
     this.index = 0;

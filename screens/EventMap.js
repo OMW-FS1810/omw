@@ -42,38 +42,7 @@ class EventMap extends React.Component {
     super();
     this.state = {
       region: null,
-      //Eventually state will be tied to the redux store...
-      /*
-      event: {
-        name: '',
-        date: '',
-        time: '',
-        location: {
-          locationName: '',
-          locationAddress: '',
-          locationGeocode: {
-            latitude: '',
-            longitude: ''
-          }
-        }
-      },
-      eventMembers: [],
-      backgroundLocation: false,
-      errorMessage: ''
-      */
-
-      // --> THIS IS TESTING HARDCODED EVENT DATA...
-      event: {
-        name: 'Party on the Roof',
-        date: '2-15-2019',
-        time: '7:00 PM',
-        location: {
-          locationName: 'Willis Tower',
-          locationAddress: '',
-          locationGeocode: { latitude: 41.8789, longitude: -87.6358 }
-        }
-      },
-      eventMembers: [],
+      membersByEmail: null,
       backgroundLocation: false,
       errorMessage: ''
     };
@@ -132,14 +101,17 @@ class EventMap extends React.Component {
     }
   };
   locateMembers = members => {
-    //turns the object into an array
-    const eventMembers = Object.keys(members)
-      // filters this device out of the group of members (disabled)
-      // .filter(member => member !== myId)
-      .map(device => {
-        return [device, members[device]];
-      });
-    this.setState({ eventMembers });
+    //rearrange users by email
+
+    const membersByEmail = {};
+    // eslint-disable-next-line guard-for-in
+    for (let key in members) {
+      if (members[key].email) {
+        let thisEmail = members[key].email.toLowerCase();
+        membersByEmail[thisEmail] = members[key];
+      }
+    }
+    this.setState({ membersByEmail });
   };
   async componentDidMount() {
     try {
@@ -164,8 +136,7 @@ class EventMap extends React.Component {
       region &&
       (Object.keys(this.props.event.selectedEvent).length ? (
         <SingleEventMap
-          region={region}
-          updateMapRegion={this.updateMapRegion}
+          membersByEmail={this.state.membersByEmail}
           navigation={this.props.navigation}
         />
       ) : (
