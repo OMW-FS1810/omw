@@ -1,10 +1,7 @@
-//NOTE: DEPRECATED This isn't currently connected to anything. It's a placeholder for when/if we add notification features.
-
 import { Permissions, Notifications } from 'expo';
+import { database } from '../config/firebase';
 
-const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
-
-async function registerForPushNotificationsAsync() {
+export const registerForPushNotificationsAsync = async () => {
   const { status: existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -26,21 +23,33 @@ async function registerForPushNotificationsAsync() {
 
   // Get the token that uniquely identifies this device
   let token = await Notifications.getExpoPushTokenAsync();
+  return token;
+};
 
-  // POST the token to your backend server from where you can retrieve it to send push notifications.
-  return fetch(PUSH_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      token: {
-        value: token
+export const sendPushNotification = (token, title, body, sender) => {
+  try {
+    fetch('https://exp.host/--/api/v2/push/send', {
+      body: JSON.stringify({
+        to: token,
+        sound: 'default',
+        title: title,
+        body: body,
+        data: { message: `${title} - ${body}` }
+      }),
+      headers: {
+        'Content-Type': 'application/json'
       },
-      user: {
-        username: ''
-      }
-    })
-  });
-}
+      method: 'POST'
+    });
+    //add message to db
+    database.ref('/Messages/').push({
+      sender,
+      recipient: token,
+      title,
+      body,
+      read: false
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};

@@ -13,7 +13,8 @@ import {
 import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
-import { fetchAllEvents } from '../redux/event';
+import { fetchAllEvents, setSelectedEvent } from '../redux/event';
+import { Snackbar } from './';
 
 const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = height / 4;
@@ -78,21 +79,20 @@ class AllEventsMap extends React.Component {
           date = event.date;
           description = event.location.locationName;
           id = uid;
-          eventDetails = {
-            event: eventData[uid],
-            title: event.name,
-            time: event.time,
-            date: event.date,
-            description: event.location.locationName,
-          }
         }
 
         // Touchable opacity on this card that will navigate the user to
         // the single event page and also pass along that event information
+        const thisId = Object.keys(eventData)[0];
         return (
-          <TouchableOpacity key={id} onPress={() => this.props.navigation.navigate('SingleEvent',
-                  { eventDetails }
-            )}>
+          <TouchableOpacity
+            key={thisId}
+            onPress={() => {
+              console.log('details in map', eventData);
+              this.props.selectEvent(eventData);
+              this.props.navigation.navigate('SingleEvent', { eventDetails });
+            }}
+          >
             <View style={styles.card}>
               <View style={styles.textContent}>
                 <Text numberOfLines={1} style={styles.cardtitle}>
@@ -110,15 +110,16 @@ class AllEventsMap extends React.Component {
               </View>
             </View>
           </TouchableOpacity>
-        )
+        );
       });
     }
   };
-
   componentDidMount() {
     this.index = 0;
-    this.animation = new Animated.Value(0);
-    if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
+    if (this.props.user.email) {
+      this.props.fetchEvents(this.props.user.email);
+    }
+
     this.setState({ region: this.props.region });
 
     //animate region changes
@@ -155,7 +156,6 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
-
     const {
       user,
       backgroundLocation,
@@ -171,12 +171,12 @@ class AllEventsMap extends React.Component {
           index * CARD_WIDTH,
           (index + 1) * CARD_WIDTH
         ];
-        const scale = this.animation.interpolate({
+        const scale = this.props.animation.interpolate({
           inputRange,
           outputRange: [1, 2.5, 1],
           extrapolate: 'clamp'
         });
-        const opacity = this.animation.interpolate({
+        const opacity = this.props.animation.interpolate({
           inputRange,
           outputRange: [0.35, 1, 0.35],
           extrapolate: 'clamp'
@@ -187,6 +187,7 @@ class AllEventsMap extends React.Component {
 
     return (
       <View style={styles.container}>
+        <Snackbar navigation={this.props.navigation} />
         <MapView
           ref={map => (this.map = map)}
           style={styles.map}
@@ -247,7 +248,7 @@ class AllEventsMap extends React.Component {
               {
                 nativeEvent: {
                   contentOffset: {
-                    x: this.animation
+                    x: this.props.animation
                   }
                 }
               }
@@ -345,11 +346,14 @@ const styles = StyleSheet.create({
 });
 
 const mapState = state => ({
-  allEvents: state.event.allEvents
+  allEvents: state.event.allEvents,
+  user: state.user.user,
+  animation: state.animate.allEventsAnimate
 });
 
 const mapDispatch = dispatch => ({
-  fetchEvents: email => dispatch(fetchAllEvents(email))
+  fetchEvents: email => dispatch(fetchAllEvents(email)),
+  selectEvent: uid => dispatch(setSelectedEvent(uid))
 });
 
 export default connect(

@@ -1,10 +1,7 @@
+//WE are not currently using fb login
+
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text
-} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
@@ -52,9 +49,12 @@ class Facebook extends React.Component {
   }
 
   signInWithFacebookAsync = async () => {
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1189665244533421', {
-        permissions: ['public_profile', ],
-      });
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
+      '1189665244533421',
+      {
+        permissions: ['public_profile']
+      }
+    );
     if (type === 'success') {
       // Get the user's name using Facebook's Graph API
       // const response = await fetch(
@@ -78,8 +78,8 @@ class Facebook extends React.Component {
             first_name: user.additionalUserInfo.profile.first_name,
             last_name: user.additionalUserInfo.profile.last_name,
             created_at: Date.now()
-          })
-          this.props.setUserAndDevice(user);
+          });
+        this.props.setUserAndDevice(user);
         this.props.navigation.navigate('App');
       } else {
         firebase
@@ -87,8 +87,8 @@ class Facebook extends React.Component {
           .ref('/Users/' + user.user.uid)
           .update({
             last_logged_in: Date.now()
-          })
-          this.props.setUserAndDevice(user);
+          });
+        this.props.setUserAndDevice(user);
         this.props.navigation.navigate('App');
       }
     }
@@ -101,7 +101,7 @@ class Facebook extends React.Component {
           style={styles.button}
           onPress={this.signInWithFacebookAsync}
         >
-          <Text style={styles.buttonText}>Sign up with Facebook</Text>
+          <Text style={styles.buttonText}>Sign in with Facebook</Text>
         </TouchableOpacity>
       </View>
     );
