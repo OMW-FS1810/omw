@@ -115,7 +115,11 @@ const deviceId = Constants.installationId;
 class Map extends React.Component {
   state = {
     eventMembers: [],
-    event: {}
+    event: {},
+    region: null
+  };
+  updateMapRegion = region => {
+    this.setState({ region });
   };
   renderMemberMarkers = () => {
     return this.state.eventMembers.map(member => {
@@ -125,7 +129,7 @@ class Map extends React.Component {
 
         return (
           //only return members who are not this device -- give device ID as description -- it's no longer keyed by user id!!
-          member[0] !== deviceId &&
+          // member[0] !== deviceId &&
           member[1].coords && (
             <Marker
               key={member[0]}
@@ -164,10 +168,17 @@ class Map extends React.Component {
     this.index = 0;
     this.animation = new Animated.Value(0);
     const userLocationsDB = database.ref(`/Devices/`);
-
+    const thisEvent = Object.values(this.props.selectedEvent)[0];
     await userLocationsDB.on('value', snapshot => {
       return this.locateMembers(snapshot.val());
     });
+    const region = {
+      latitude: thisEvent.location.locationGeocode.lat,
+      longitude: thisEvent.location.locationGeocode.lng,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.043
+    };
+    this.setState({ region });
   }
 
   render() {
@@ -175,17 +186,12 @@ class Map extends React.Component {
     if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
       console.log(event);
-      const {
-        region,
-        updateMapRegion,
-        user,
-        backgroundLocation,
-        setBackgroundLocation
-      } = this.props;
-      const coordinate =  {
+      const { region } = this.state;
+      const { user, backgroundLocation, setBackgroundLocation } = this.props;
+      const coordinate = {
         latitude: event.location.locationGeocode.lat,
         longitude: event.location.locationGeocode.lng
-      }
+      };
       return (
         region && (
           <View style={styles.container}>
@@ -197,7 +203,7 @@ class Map extends React.Component {
               showsCompass={true}
               showsScale={true}
               region={region}
-              onRegionChangeComplete={e => updateMapRegion(e)}
+              onRegionChangeComplete={e => this.updateMapRegion(e)}
               provider={MapView.PROVIDER_GOOGLE}
               customMapStyle={mapStyle}
             >
@@ -211,7 +217,16 @@ class Map extends React.Component {
               />
             </MapView>
             <Callout style={styles.callout}>
-              <TouchableOpacity onPress={() => this.props.selectEvent({})}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    eventMembers: [],
+                    event: {},
+                    region: null
+                  });
+                  this.props.selectEvent({});
+                }}
+              >
                 <Text>See All Events</Text>
                 {/* onPress={setBackgroundLocation}> */}
                 {/* {backgroundLocation ? (

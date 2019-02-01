@@ -82,7 +82,7 @@ class AllEventsMap extends React.Component {
         }
 
         // Touchable opacity on this card that will navigate the user to
-        // the single event page and also pass along that event information
+        // the single event map and also pass along that event information
         const thisId = Object.keys(eventData)[0];
         return (
           <TouchableOpacity
