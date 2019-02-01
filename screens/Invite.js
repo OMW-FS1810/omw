@@ -4,6 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { populateEventEmails, createEvent } from '../redux/event';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 class Invite extends Component {
   state = {
@@ -11,17 +12,19 @@ class Invite extends Component {
     input: ''
   };
 
-  handleCreateEvent = () => {
+  handleCreateEvent = async () => {
     let emailsToInvite = this.state.emails;
     // add the user (host) to the emails to invite
     emailsToInvite = [...emailsToInvite, this.props.user.email];
-    this.props.populateEmails(this.state.emails);
-    this.props.createTheEvent(this.props.eventDeets, emailsToInvite);
-    this.setState({
+    await this.props.populateEmails(this.state.emails);
+    await this.props.createTheEvent(this.props.eventDeets, emailsToInvite);
+    await this.setState({
       emails: [],
       input: ''
     });
     // is this where we want to go?
+    // need to populate the new event in the store!
+
     this.props.navigation.navigate('Event Map');
   };
 

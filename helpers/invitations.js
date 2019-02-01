@@ -7,7 +7,6 @@ import { sendPushNotification } from './notificationSetup';
 const appUrl = 'exp://ez-94f.apoyando.omw.exp.direct:80';
 
 export const sendInvites = async (inviteesArr, eventDetails, host) => {
-  console.log(host);
   // need to invite unregistered users, notify registered users, and notify host
   const currUsers = database.ref('/Users/');
   const allUsers = await currUsers

@@ -14,11 +14,13 @@ import AppNavigation from '../navigation/AppNavigation';
 import eventReducer from './event';
 import navReducer from './nav';
 import authReducer from './auth';
+import animateReducer from './animate';
 
 const reducer = combineReducers({
   event: eventReducer,
   nav: navReducer,
-  user: authReducer
+  user: authReducer,
+  animate: animateReducer
 });
 
 const middleware = createReactNavigationReduxMiddleware(

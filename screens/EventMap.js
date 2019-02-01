@@ -7,6 +7,7 @@ import { database } from '../config/firebase';
 import { connect } from 'react-redux';
 import { store } from '../redux/store';
 import AllEventsMap from '../components/AllEventsMap';
+import { NavigationEvents } from 'react-navigation';
 
 let styles = StyleSheet.create({
   container: {
@@ -172,6 +173,6 @@ class EventMap extends React.Component {
   }
 }
 
-const mapStateToProps = ({ user }) => ({ user });
+const mapStateToProps = ({ user, nav }) => ({ user, nav });
 
 export default connect(mapStateToProps)(EventMap);

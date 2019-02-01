@@ -42,23 +42,25 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     //first we send the invitations
     const host = store.getState().user.user;
     const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
-    const mailedInvites = await sendInvites(invitesNotUser, eventDeets, host);
+    // const mailedInvites =
+    sendInvites(invitesNotUser, eventDeets, host);
     //when the invites are sent we create the DB record and end the create event process
-    if (mailedInvites.status === 'sent') {
-      //STORE UPDATES ONLY ON INVITATION SUCCESS
-      let newEvent;
-      const eventRef = await database.ref('Events/').push({
-        ...eventDeets,
-        invites: eventInvites
-      });
-      await eventRef.once('value', snapshot => {
-        newEvent = snapshot.val();
-      });
+    // if (mailedInvites.status === 'sent') {
+    //STORE UPDATES ONLY ON INVITATION SUCCESS - DISABLED
+    let newEvent;
+    const eventRef = await database.ref('Events/').push({
+      ...eventDeets,
+      invites: eventInvites
+    });
+    await eventRef.once('value', snapshot => {
+      newEvent = snapshot.val();
       const newUID = String(eventRef).slice(-19);
       dispatch(clearPendingInfo);
       dispatch(addEventToList(newEvent));
       dispatch(setSelectedEvent(newUID));
-    }
+    });
+
+    // }
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);

@@ -118,10 +118,12 @@ class AllEventsMap extends React.Component {
       });
     }
   };
-
+  // runAnimation = () => {
+  //   this.animation = new Animated.Value(0);
+  // };
   componentDidMount() {
     this.index = 0;
-    this.animation = new Animated.Value(0);
+    // this.runAnimation();
     if (this.props.user.email) {
       this.props.fetchEvents(this.props.user.email);
     }
@@ -162,7 +164,6 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
-    console.log(this.props.allEvents);
     const {
       user,
       backgroundLocation,
@@ -178,12 +179,12 @@ class AllEventsMap extends React.Component {
           index * CARD_WIDTH,
           (index + 1) * CARD_WIDTH
         ];
-        const scale = this.animation.interpolate({
+        const scale = this.props.animation.interpolate({
           inputRange,
           outputRange: [1, 2.5, 1],
           extrapolate: 'clamp'
         });
-        const opacity = this.animation.interpolate({
+        const opacity = this.props.animation.interpolate({
           inputRange,
           outputRange: [0.35, 1, 0.35],
           extrapolate: 'clamp'
@@ -212,6 +213,7 @@ class AllEventsMap extends React.Component {
             ? this.props.allEvents.map((eventData, index) => {
                 for (let uid in eventData) {
                   const event = eventData[uid];
+                  console.log(event);
                   const latitude = event.location.locationGeocode.lat;
                   const longitude = event.location.locationGeocode.lng;
                   const title = event.name;
@@ -255,7 +257,7 @@ class AllEventsMap extends React.Component {
               {
                 nativeEvent: {
                   contentOffset: {
-                    x: this.animation
+                    x: this.props.animation
                   }
                 }
               }
@@ -354,7 +356,8 @@ const styles = StyleSheet.create({
 
 const mapState = state => ({
   allEvents: state.event.allEvents,
-  user: state.user.user
+  user: state.user.user,
+  animation: state.animate.allEventsAnimate
 });
 
 const mapDispatch = dispatch => ({
