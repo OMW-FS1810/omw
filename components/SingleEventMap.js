@@ -156,7 +156,7 @@ class Map extends React.Component {
         membersByEmail[thisEmail] = members[key];
       }
     }
-    const thisEvent = Object.values(this.props.selectedEvent)[0];
+    const thisEvent = this.state.event;
 
     const eventMembers = [];
     thisEvent.invites.forEach(invite => {
@@ -168,7 +168,12 @@ class Map extends React.Component {
     this.index = 0;
     this.animation = new Animated.Value(0);
     const userLocationsDB = database.ref(`/Devices/`);
-    const thisEvent = Object.values(this.props.selectedEvent)[0];
+
+    await this.setState({
+      event: Object.values(this.props.selectedEvent)[0]
+    });
+
+    const thisEvent = this.state.event;
     await userLocationsDB.on('value', snapshot => {
       return this.locateMembers(snapshot.val());
     });
@@ -178,13 +183,15 @@ class Map extends React.Component {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.043
     };
-    this.setState({ region });
+    await this.setState({
+      region
+    });
   }
 
   render() {
     let event = false;
-    if (Object.keys(this.props.selectedEvent).length) {
-      event = Object.values(this.props.selectedEvent)[0];
+    if (Object.keys(this.state.event).length) {
+      event = this.state.event;
       console.log(event);
       const { region } = this.state;
       const { user, backgroundLocation, setBackgroundLocation } = this.props;
