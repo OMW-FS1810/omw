@@ -69,8 +69,8 @@ export const fetchAllEvents = email => async dispatch => {
     // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
     let invitedEvents = [];
-    eventRef.once('value', snapshot => {
-      let snappy = snapshot.val();
+    eventRef.once('value', async snapshot => {
+      let snappy = await snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {
           if (value.toLowerCase() === email.toLowerCase()) {
@@ -78,10 +78,11 @@ export const fetchAllEvents = email => async dispatch => {
           }
         });
       }
-    });
-    setTimeout(() => {
       dispatch(requestEvents(invitedEvents));
-    }, 100);
+    });
+    // setTimeout(() => {
+    //   dispatch(requestEvents(invitedEvents));
+    // }, 100);
   } catch (err) {
     console.error(err);
   }

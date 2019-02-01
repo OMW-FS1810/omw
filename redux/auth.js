@@ -25,6 +25,8 @@ export const setUser = user => ({
 
 export const setUserAndDevice = user => async dispatch => {
   try {
+    //set the user in the store
+    dispatch(setUser({ ...user, deviceId, token }));
     //get this device's notification token
     const token = await registerForPushNotificationsAsync();
     //associate this user with this device
@@ -46,9 +48,6 @@ export const setUserAndDevice = user => async dispatch => {
           deviceId: null
         });
       });
-
-    //set the user in the store
-    dispatch(setUser({ ...user, deviceId, token }));
   } catch (error) {
     console.error(error);
   }

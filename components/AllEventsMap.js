@@ -84,16 +84,19 @@ class AllEventsMap extends React.Component {
             title: event.name,
             time: event.time,
             date: event.date,
-            description: event.location.locationName,
-          }
+            description: event.location.locationName
+          };
         }
 
         // Touchable opacity on this card that will navigate the user to
         // the single event page and also pass along that event information
         return (
-          <TouchableOpacity key={id} onPress={() => this.props.navigation.navigate('SingleEvent',
-                  { eventDetails }
-            )}>
+          <TouchableOpacity
+            key={id}
+            onPress={() =>
+              this.props.navigation.navigate('SingleEvent', { eventDetails })
+            }
+          >
             <View style={styles.card}>
               <View style={styles.textContent}>
                 <Text numberOfLines={1} style={styles.cardtitle}>
@@ -111,7 +114,7 @@ class AllEventsMap extends React.Component {
               </View>
             </View>
           </TouchableOpacity>
-        )
+        );
       });
     }
   };
@@ -119,7 +122,10 @@ class AllEventsMap extends React.Component {
   componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
-    if (this.props.user.email) this.props.fetchEvents(this.props.user.email);
+    if (this.props.user.email) {
+      this.props.fetchEvents(this.props.user.email)
+    }
+
     this.setState({ region: this.props.region });
 
     //animate region changes
@@ -156,7 +162,7 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
-
+    // console.log(this.props);
     const {
       user,
       backgroundLocation,
@@ -188,7 +194,7 @@ class AllEventsMap extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Snackbar navigation={this.props.navigation}/>
+        {/* <Snackbar navigation={this.props.navigation}/> */}
         <MapView
           ref={map => (this.map = map)}
           style={styles.map}
@@ -261,7 +267,6 @@ class AllEventsMap extends React.Component {
         >
           {this.renderEventCard()}
         </Animated.ScrollView>
-
       </View>
     );
   }
@@ -348,7 +353,8 @@ const styles = StyleSheet.create({
 });
 
 const mapState = state => ({
-  allEvents: state.event.allEvents
+  allEvents: state.event.allEvents,
+  user: state.user.user
 });
 
 const mapDispatch = dispatch => ({
