@@ -4,8 +4,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  AsyncStorage
+  AsyncStorage,
+  Image
 } from 'react-native';
+import {
+  Button,
+  SocialIcon,
+  Divider,
+  ThemeConsumer
+} from 'react-native-elements';
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
@@ -15,14 +22,40 @@ import * as firebase from 'firebase';
 import { Login, Google, Facebook } from '../components';
 import Communications from 'react-native-communications';
 
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth } = theme;
 const deviceId = Constants.installationId;
 
 let styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'blue'
+    backgroundColor: color.whiteBlue
   },
+  topContainer: {
+    flex: 1,
+    paddingHorizontal: 15,
+    paddingBottom: padding * 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: color.darkBlue
+  },
+
+  image: {
+    height: 100,
+    width: 100,
+    backgroundColor: color.darkBlue,
+    marginBottom: padding,
+    // resizeMode: 'contain'
+  },
+  title: {
+    fontSize: fontSize.large + 2,
+    lineHeight: fontSize.large + 4,
+    fontFamily: fontFamily.bold,
+    color: color.whiteBlue,
+    letterSpacing: 1
+  },
+
   content: {
     alignItems: 'center'
   },
@@ -38,12 +71,35 @@ let styles = StyleSheet.create({
     fontWeight: '500',
     color: '#aaa',
     textAlign: 'center'
+  },
+  orContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    width: windowWidth
+  },
+
+  divider: {
+    backgroundColor: color.blue,
+    position: 'absolute',
+    top: 19,
+    left: 20,
+    right: 20
+  },
+
+  orText: {
+    backgroundColor: color.white,
+    fontSize: fontSize.regular,
+    fontFamily: fontFamily.medium,
+    color: color.indigoBlue,
+    paddingHorizontal: padding
   }
 });
 
 class Auth extends React.Component {
   static navigationOptions = {
-    title: 'OMW'
+    title: 'OMW',
+    header: null
   };
 
   componentDidMount() {
@@ -56,12 +112,19 @@ class Auth extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.topContainer}>
+          <Image style={styles.image} source={require('../assets/logo.png')} />
+          <Text style={styles.title}>ON MY WAY!</Text>
+        </View>
         <View style={styles.content}>
           <Login
             navigation={this.props.navigation}
             onPress={this._signInAsync}
           />
-
+          <View style={styles.orContainer}>
+            <Divider style={styles.divider} />
+            <Text style={styles.orText}>Or</Text>
+          </View>
           {/* <Facebook navigation={this.props.navigation} /> */}
           <TouchableOpacity
             style={styles.button}
