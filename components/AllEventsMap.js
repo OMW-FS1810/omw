@@ -122,32 +122,39 @@ class AllEventsMap extends React.Component {
 
     this.setState({ region: this.props.region });
 
-    //animate region changes
-    // this.animation.addListener(({ value }) => {
-    //   let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-    //   if (index >= this.props.allEvents.length) {
-    //     index = this.props.allEvents.length - 1;
-    //   }
-    //   if (index <= 0) {
-    //     index = 0;
-    //   }
+    // animate region changes
+    this.props.animation.addListener(({ value }) => {
+      let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+      if (index >= this.props.allEvents.length) {
+        index = this.props.allEvents.length - 1;
+      }
+      if (index <= 0) {
+        index = 0;
+      }
 
-    //   clearTimeout(this.regionTimeout);
-    //   this.regionTimeout = setTimeout(() => {
-    //     if (this.index !== index) {
-    //       this.index = index;
-    //       const { coordinate } = this.props.allEvents[index];
-    //       this.map.animateToRegion(
-    //         {
-    //           ...coordinate,
-    //           latitudeDelta: this.state.region.latitudeDelta,
-    //           longitudeDelta: this.state.region.longitudeDelta
-    //         },
-    //         350
-    //       );
-    //     }
-    //   }, 10);
-    // });
+      clearTimeout(this.regionTimeout);
+      this.regionTimeout = setTimeout(() => {
+        if (this.index !== index) {
+          this.index = index;
+          let latitude, longitude;
+          for (let uid in this.props.allEvents[index]) {
+            latitude = this.props.allEvents[index][uid].location.locationGeocode
+              .lat;
+            longitude = this.props.allEvents[index][uid].location
+              .locationGeocode.lng;
+          }
+          this.map.animateToRegion(
+            {
+              latitude,
+              longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.043
+            },
+            350
+          );
+        }
+      }, 10);
+    });
   }
 
   //this updates the map region when the user interacts with the map
