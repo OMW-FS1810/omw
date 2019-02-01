@@ -52,8 +52,8 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: ''
+      email: 'linjingt@gmail.com',
+      password: '111111'
     };
   }
 
@@ -92,6 +92,8 @@ class Login extends React.Component {
         <Text> {this.state.error} </Text>
         <TextInput
           style={styles.inputContainer}
+          autoCapitalize='none'
+          clearButtonMode='while-editing'
           placeholder="Email"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
@@ -100,6 +102,7 @@ class Login extends React.Component {
         />
         <TextInput
           style={styles.inputContainer}
+          autoCapitalize='none'
           placeholder="Password"
           secureTextEntry={true}
           placeholderTextColor="#aaa"
