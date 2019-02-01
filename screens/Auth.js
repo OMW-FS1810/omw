@@ -10,13 +10,12 @@ import {
 import {
   Button,
   SocialIcon,
-  Divider,
-  ThemeConsumer
+  Divider
 } from 'react-native-elements';
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
-import { Constants, MailComposer } from 'expo';
+import { Constants } from 'expo';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
 import { Login, Google, Facebook } from '../components';
@@ -42,11 +41,11 @@ let styles = StyleSheet.create({
   },
 
   image: {
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
     backgroundColor: color.darkBlue,
-    marginBottom: padding,
-    // resizeMode: 'contain'
+    marginBottom: 1,
+    resizeMode: 'contain'
   },
   title: {
     fontSize: fontSize.large + 2,
