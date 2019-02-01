@@ -1,7 +1,8 @@
 import React from 'react';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Provider as StoreProvider } from 'react-redux';
-import { Font, AppLoading } from 'expo';
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font'
 
 import { AppWithNavigationState, store } from './redux/store';
 import * as theme from './styles/theme';
@@ -9,14 +10,6 @@ import * as theme from './styles/theme';
 function cacheFonts(fonts) {
   return fonts.map(font => Font.loadAsync(font));
 }
-// const theme = {
-//   ...DefaultTheme,
-//   colors: {
-//     ...DefaultTheme.colors,
-//     primary: 'blue',
-//     accent: 'green'
-//   }
-// };
 
 export default class App extends React.Component {
   constructor() {
