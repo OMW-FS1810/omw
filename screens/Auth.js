@@ -9,10 +9,11 @@ import {
 import { database } from '../config/firebase';
 import { setUser } from '../redux/store';
 import { connect } from 'react-redux';
-import { Constants } from 'expo';
+import { Constants, MailComposer } from 'expo';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
 import { Login, Google, Facebook } from '../components';
+import Communications from 'react-native-communications';
 
 const deviceId = Constants.installationId;
 
@@ -60,14 +61,15 @@ class Auth extends React.Component {
             navigation={this.props.navigation}
             onPress={this._signInAsync}
           />
-          <Google navigation={this.props.navigation} />
-          <Facebook navigation={this.props.navigation} />
+
+          {/* <Facebook navigation={this.props.navigation} /> */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => this.props.navigation.navigate('signupScreen')}
           >
             <Text style={styles.buttonText}>Sign up with email</Text>
           </TouchableOpacity>
+          <Google navigation={this.props.navigation} />
         </View>
       </View>
     );

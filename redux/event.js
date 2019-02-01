@@ -1,5 +1,7 @@
 /* eslint-disable guard-for-in */
 import { database } from '../config/firebase';
+import { sendInvites } from '../helpers/invitations';
+import { store } from './store';
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
@@ -25,9 +27,9 @@ const requestEvents = events => ({
   type: REQUEST_EVENTS,
   events
 });
-export const setSelectedEvent = uid => ({
+export const setSelectedEvent = event => ({
   type: SET_SELECTED_EVENT,
-  uid
+  event
 });
 const addEventToList = event => ({
   type: ADD_EVENT_TO_LIST,
@@ -47,8 +49,15 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     });
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
-    dispatch(addEventToList(newEvent));
-    dispatch(setSelectedEvent(newUID));
+    await dispatch(addEventToList({ [newUID]: newEvent }));
+    dispatch(setSelectedEvent({ [newUID]: newEvent }));
+    //first we send the invitations
+    const host = store.getState().user.user;
+    const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
+    // const mailedInvites =
+    sendInvites(invitesNotUser, eventDeets, host);
+    // }
+    // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);
   }
@@ -58,8 +67,8 @@ export const fetchAllEvents = email => async dispatch => {
     // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
     let invitedEvents = [];
-    eventRef.once('value', snapshot => {
-      let snappy = snapshot.val();
+    eventRef.once('value', async snapshot => {
+      let snappy = await snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {
           if (value.toLowerCase() === email.toLowerCase()) {
@@ -67,10 +76,11 @@ export const fetchAllEvents = email => async dispatch => {
           }
         });
       }
-    });
-    setTimeout(() => {
       dispatch(requestEvents(invitedEvents));
-    }, 100);
+    });
+    // setTimeout(() => {
+    //   dispatch(requestEvents(invitedEvents));
+    // }, 100);
   } catch (err) {
     console.error(err);
   }
@@ -115,7 +125,8 @@ const eventReducer = (state = defaultEvent, action) => {
     case SET_SELECTED_EVENT: {
       return {
         ...state,
-        selectedEvent: state.allEvents.filter(x => x[action.uid])[0]
+        selectedEvent: action.event
+        // state.allEvents.filter(x => x[action.uid])[0]
       };
     }
     case ADD_EVENT_TO_LIST: {

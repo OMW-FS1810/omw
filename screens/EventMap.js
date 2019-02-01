@@ -2,11 +2,12 @@ import React from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { Location, Permissions, TaskManager, Constants } from 'expo';
-import { Map, EventList } from '../components';
+import { Map, EventList, Snackbar } from '../components';
 import { database } from '../config/firebase';
 import { connect } from 'react-redux';
 import { store } from '../redux/store';
 import AllEventsMap from '../components/AllEventsMap';
+import { NavigationEvents } from 'react-navigation';
 
 let styles = StyleSheet.create({
   container: {
@@ -162,16 +163,16 @@ class EventMap extends React.Component {
     return (
       region && (
         <AllEventsMap
-          user={user.user}
+          // user={user.user}
           region={region}
           updateMapRegion={this.updateMapRegion}
-          navigation={navigation}
+          navigation={this.props.navigation}
         />
       )
     );
   }
 }
 
-const mapStateToProps = ({ user }) => ({ user });
+const mapStateToProps = ({ user, nav }) => ({ user, nav });
 
 export default connect(mapStateToProps)(EventMap);

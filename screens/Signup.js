@@ -77,11 +77,10 @@ class Signup extends React.Component {
           lastName,
           uid: data.user.uid
         };
-
+        this.setState({ email: '', password: '' });
         this.props.setUserAndDevice(thisUser);
         this.props.navigation.navigate('App');
       }
-      this.setState({ email: '', password: '' });
     } catch (error) {
       this.setState({ error: error.message });
     }
