@@ -145,7 +145,7 @@ class Map extends React.Component {
       }
     });
   };
-  locateMembers = members => {
+  locateMembers = () => {
     //rearrange users by email
 
     // const membersByEmail = {};
@@ -157,30 +157,26 @@ class Map extends React.Component {
     //   }
     // }
     if (Object.keys(this.state.event).length) {
-      let {membersByEmail} = this.props
+      let { membersByEmail } = this.props;
       const thisEvent = this.state.event;
 
-    const eventMembers = [];
-    thisEvent.invites.forEach(invite => {
-      eventMembers.push([invite, membersByEmail[invite.toLowerCase()]]);
-    });
-    this.setState({ eventMembers });
+      const eventMembers = [];
+      thisEvent.invites.forEach(invite => {
+        eventMembers.push([invite, membersByEmail[invite.toLowerCase()]]);
+      });
+      this.setState({ eventMembers });
     }
-
   };
   async componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
-    const userLocationsDB = database.ref(`/Devices/`);
 
     await this.setState({
       event: Object.values(this.props.selectedEvent)[0]
     });
 
     const thisEvent = this.state.event;
-    await userLocationsDB.on('value', snapshot => {
-      return this.locateMembers(snapshot.val());
-    });
+
     const region = {
       latitude: thisEvent.location.locationGeocode.lat,
       longitude: thisEvent.location.locationGeocode.lng,
@@ -190,6 +186,7 @@ class Map extends React.Component {
     await this.setState({
       region
     });
+    this.locateMembers();
   }
 
   render() {
