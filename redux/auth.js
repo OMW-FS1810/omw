@@ -11,7 +11,8 @@ const initialState = {
     firstName: '',
     lastName: '',
     pictureUrl: '',
-    deviceId: null
+    deviceId: null,
+    token: null
   }
 };
 import { AsyncStorage } from 'react-native';
@@ -25,15 +26,18 @@ export const setUser = user => ({
 
 export const setUserAndDevice = user => async dispatch => {
   try {
-    //set the user in the store
-    dispatch(setUser({ ...user, deviceId, token }));
+    //set the user and device in the store
+    dispatch(setUser({ ...user, deviceId }));
     //get this device's notification token
     const token = await registerForPushNotificationsAsync();
-    //associate this user with this device
+    //first dispatch loads map, second starts messaging
+    dispatch(setUser({ ...user, token }));
+    //associate this user with this device in the db
     await database.ref(`/Users/${user.uid}`).update({
       deviceId,
       token
     });
+
     //remove old user associations for this device
     const currDevices = await database.ref(`/Users/`);
     currDevices
