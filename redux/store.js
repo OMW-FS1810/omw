@@ -15,12 +15,14 @@ import eventReducer from './event';
 import navReducer from './nav';
 import authReducer from './auth';
 import animateReducer from './animate';
+import messagingReducer from './messaging';
 
 const reducer = combineReducers({
   event: eventReducer,
   nav: navReducer,
   user: authReducer,
-  animate: animateReducer
+  animate: animateReducer,
+  messaging: messagingReducer
 });
 
 const middleware = createReactNavigationReduxMiddleware(
@@ -46,3 +48,4 @@ export const store = createStore(
 
 export * from './event';
 export * from './auth';
+export * from './messaging';

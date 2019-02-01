@@ -88,9 +88,8 @@ class AllEventsMap extends React.Component {
           <TouchableOpacity
             key={thisId}
             onPress={() => {
-              console.log('details in map', eventData);
               this.props.selectEvent(eventData);
-              this.props.navigation.navigate('SingleEvent', { eventDetails });
+              // this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}
           >
             <View style={styles.card}>
@@ -360,7 +359,7 @@ const mapState = state => ({
 
 const mapDispatch = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email)),
-  selectEvent: uid => dispatch(setSelectedEvent(uid))
+  selectEvent: event => dispatch(setSelectedEvent(event))
 });
 
 export default connect(

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { Location, Permissions, TaskManager, Constants } from 'expo';
-import { Map, EventList, Snackbar } from '../components';
+import { SingleEventMap, EventList, Snackbar } from '../components';
 import { database } from '../config/firebase';
 import { connect } from 'react-redux';
 import { store } from '../redux/store';
@@ -161,18 +161,25 @@ class EventMap extends React.Component {
     const { region, eventMembers, event, backgroundLocation } = this.state;
     const { user, navigation } = this.props;
     return (
-      region && (
+      region &&
+      (Object.keys(this.props.event.selectedEvent).length ? (
+        <SingleEventMap
+          region={region}
+          updateMapRegion={this.updateMapRegion}
+          navigation={this.props.navigation}
+        />
+      ) : (
         <AllEventsMap
           // user={user.user}
           region={region}
           updateMapRegion={this.updateMapRegion}
           navigation={this.props.navigation}
         />
-      )
+      ))
     );
   }
 }
 
-const mapStateToProps = ({ user, nav }) => ({ user, nav });
+const mapStateToProps = ({ user, nav, event }) => ({ user, nav, event });
 
 export default connect(mapStateToProps)(EventMap);
