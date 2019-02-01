@@ -162,7 +162,7 @@ class EventMap extends React.Component {
     return (
       region && (
         <AllEventsMap
-          user={user.user}
+          // user={user.user}
           region={region}
           updateMapRegion={this.updateMapRegion}
           navigation={this.props.navigation}

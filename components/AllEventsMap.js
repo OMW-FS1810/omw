@@ -123,7 +123,7 @@ class AllEventsMap extends React.Component {
     this.index = 0;
     this.animation = new Animated.Value(0);
     if (this.props.user.email) {
-      this.props.fetchEvents(this.props.user.email)
+      this.props.fetchEvents(this.props.user.email);
     }
 
     this.setState({ region: this.props.region });
@@ -162,7 +162,7 @@ class AllEventsMap extends React.Component {
   };
 
   render() {
-    // console.log(this.props);
+    console.log(this.props.allEvents);
     const {
       user,
       backgroundLocation,
@@ -194,7 +194,7 @@ class AllEventsMap extends React.Component {
 
     return (
       <View style={styles.container}>
-        {/* <Snackbar navigation={this.props.navigation}/> */}
+        <Snackbar navigation={this.props.navigation} />
         <MapView
           ref={map => (this.map = map)}
           style={styles.map}

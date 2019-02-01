@@ -26,7 +26,7 @@ class Invite extends Component {
   };
 
   handleAddToInviteList = () => {
-    const email = this.state.input;
+    const email = this.state.input.toLowerCase();
     const emails = this.state.emails;
     emails.push(email);
     this.setState({ emails });
@@ -79,7 +79,7 @@ let styles = StyleSheet.create({
     top: 0
   },
   titleView: {
-    marginTop: 100,
+    marginTop: 80,
     flex: 1
   },
   input: {
