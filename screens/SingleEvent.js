@@ -35,7 +35,6 @@ class SingleEvent extends Component {
     let event = false;
     if (this.props.selectedEvent) {
       event = Object.values(this.props.selectedEvent)[0];
-      console.log(event);
 
       return (
         { event } && (

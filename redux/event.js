@@ -50,7 +50,6 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
     await dispatch(addEventToList({ [newUID]: newEvent }));
-    console.log('newEvent in thunk', newEvent);
     dispatch(setSelectedEvent({ [newUID]: newEvent }));
     //first we send the invitations
     const host = store.getState().user.user;
