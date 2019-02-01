@@ -19,7 +19,7 @@ const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = height / 4;
 const CARD_HEIGHT = CARD_WIDTH - 50;
 
-class AllEventsMap extends React.Component {
+class SingleEventsMap extends React.Component {
   state = {
     user: {},
     region: null
@@ -67,7 +67,7 @@ class AllEventsMap extends React.Component {
     //   });
     // }
   };
-
+/*
   renderEventCard = () => {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
@@ -120,7 +120,7 @@ class AllEventsMap extends React.Component {
       });
     }
   };
-
+*/
   componentDidMount() {
     this.index = 0;
     this.animation = new Animated.Value(0);
@@ -254,7 +254,7 @@ class AllEventsMap extends React.Component {
               })
             : null}
         </MapView>
-        <Animated.ScrollView
+        {/* <Animated.ScrollView
           horizontal
           scrollEventThrottle={1}
           showsHorizontalScrollIndicator={false}
@@ -275,7 +275,7 @@ class AllEventsMap extends React.Component {
           contentContainerStyle={styles.endPadding}
         >
           {this.renderEventCard()}
-        </Animated.ScrollView>
+        </Animated.ScrollView> */}
       </View>
     );
   }
@@ -373,4 +373,4 @@ const mapDispatch = dispatch => ({
 export default connect(
   mapState,
   mapDispatch
-)(AllEventsMap);
+)(SingleEventsMap);
