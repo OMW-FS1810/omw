@@ -113,6 +113,41 @@ class AllEventsMap extends React.Component {
       });
     }
   };
+  // animate region changes
+  mapAnimation = (value) => {
+    console.log('in mount', value);
+    let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+    console.log(index);
+    if (index >= this.props.allEvents.length) {
+      index = this.props.allEvents.length - 1;
+    }
+    if (index <= 0) {
+      index = 0;
+    }
+
+    clearTimeout(this.regionTimeout);
+    this.regionTimeout = setTimeout(() => {
+      if (this.index !== index) {
+        this.index = index;
+        let latitude, longitude;
+        for (let uid in this.props.allEvents[index]) {
+          latitude = this.props.allEvents[index][uid].location.locationGeocode
+            .lat;
+          longitude = this.props.allEvents[index][uid].location
+            .locationGeocode.lng;
+        }
+        this.map.animateToRegion(
+          {
+            latitude,
+            longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.043
+          },
+          350
+        );
+      }
+    }, 10);
+  }
   componentDidMount() {
     this.index = 0;
     if (this.props.user.email) {
@@ -121,40 +156,7 @@ class AllEventsMap extends React.Component {
 
     this.setState({ region: this.props.region });
 
-    // animate region changes
-    this.props.animation.addListener(({ value }) => {
-      let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-      console.log(index);
-      if (index >= this.props.allEvents.length) {
-        index = this.props.allEvents.length - 1;
-      }
-      if (index <= 0) {
-        index = 0;
-      }
 
-      clearTimeout(this.regionTimeout);
-      this.regionTimeout = setTimeout(() => {
-        if (this.index !== index) {
-          this.index = index;
-          let latitude, longitude;
-          for (let uid in this.props.allEvents[index]) {
-            latitude = this.props.allEvents[index][uid].location.locationGeocode
-              .lat;
-            longitude = this.props.allEvents[index][uid].location
-              .locationGeocode.lng;
-          }
-          this.map.animateToRegion(
-            {
-              latitude,
-              longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.043
-            },
-            350
-          );
-        }
-      }, 10);
-    });
   }
 
   //this updates the map region when the user interacts with the map
@@ -260,6 +262,12 @@ class AllEventsMap extends React.Component {
                 }
               }
             ],
+            {
+              listener: event => {
+                this.mapAnimation(event.nativeEvent.contentOffset.x)
+              }
+
+            },
             { useNativeDriver: true }
           )}
           style={styles.scrollView}
