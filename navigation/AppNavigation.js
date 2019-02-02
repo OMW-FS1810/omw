@@ -23,6 +23,8 @@ import {
   Notifications
 } from '../screens';
 
+import { Snackbar } from '../components';
+
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator(
   {
@@ -35,7 +37,7 @@ const DrawerStack = createDrawerNavigator(
     Notifications: { screen: Notifications }
   },
   {
-    // headerMode: 'float',
+    headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
       headerStyle: { backgroundColor: 'transparent' },
@@ -47,13 +49,13 @@ const DrawerStack = createDrawerNavigator(
           containerStyle={{ paddingRight: 10 }}
           onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
         />
-      )
+      ),
+      footer: { screen: Snackbar }
     })
-  },
-  { headerMode: 'none' }
+  }
 );
 
-//CREATE EVENT STACK
+//CREATE EVENT STACK}
 const CreateEventStack = createStackNavigator({
   createEventScreen: { screen: CreateEvent },
   inviteScreen: { screen: Invite }

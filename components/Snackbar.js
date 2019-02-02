@@ -13,6 +13,7 @@ export default class Notify extends React.Component {
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification
     );
+    console.log('mounted');
   }
   _handleNotification = async notification => {
     this.setState({ incoming: notification.data, visible: true });
@@ -36,7 +37,8 @@ export default class Notify extends React.Component {
             label: 'Open',
             onPress: () => {
               // Do something
-              this.props.navigation.navigate('Notifications');
+              console.log('ok');
+              // this.props.navigation.navigate('Notifications');
             }
           }}
         >

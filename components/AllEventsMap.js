@@ -8,17 +8,18 @@ import {
   ScrollView,
   Animated,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  PixelRatio,
+  Platform
 } from 'react-native';
 import { MapView, Constants } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
 import { fetchAllEvents, setSelectedEvent } from '../redux/event';
-import { Snackbar } from './';
 
 const { width, height } = Dimensions.get('window');
-const CARD_WIDTH = height / 4;
-const CARD_HEIGHT = CARD_WIDTH - 50;
+const CARD_WIDTH = width / 1.4; //height / 4;
+const CARD_HEIGHT = height / 6; //CARD_WIDTH - 50;
 
 class AllEventsMap extends React.Component {
   state = {
@@ -114,7 +115,7 @@ class AllEventsMap extends React.Component {
     }
   };
   // animate region changes
-  mapAnimation = (value) => {
+  mapAnimation = value => {
     console.log('in mount', value);
     let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
     console.log(index);
@@ -133,8 +134,8 @@ class AllEventsMap extends React.Component {
         for (let uid in this.props.allEvents[index]) {
           latitude = this.props.allEvents[index][uid].location.locationGeocode
             .lat;
-          longitude = this.props.allEvents[index][uid].location
-            .locationGeocode.lng;
+          longitude = this.props.allEvents[index][uid].location.locationGeocode
+            .lng;
         }
         this.map.animateToRegion(
           {
@@ -147,7 +148,7 @@ class AllEventsMap extends React.Component {
         );
       }
     }, 10);
-  }
+  };
   componentDidMount() {
     this.index = 0;
     if (this.props.user.email) {
@@ -155,8 +156,6 @@ class AllEventsMap extends React.Component {
     }
 
     this.setState({ region: this.props.region });
-
-
   }
 
   //this updates the map region when the user interacts with the map
@@ -193,11 +192,23 @@ class AllEventsMap extends React.Component {
         return { scale, opacity };
       });
     }
+    //move center map button above cards
+    const iosEdgePadding = { top: 20, right: 20, bottom: 170, left: 50 };
+
+    const androidEdgePadding = {
+      top: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.top),
+      right: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.right),
+      bottom: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.bottom),
+      left: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.left)
+    };
+
+    const edgePadding =
+      Platform.OS === 'android' ? androidEdgePadding : iosEdgePadding;
 
     return (
       <View style={styles.container}>
-        <Snackbar navigation={this.props.navigation} />
         <MapView
+          mapPadding={edgePadding}
           ref={map => (this.map = map)}
           style={styles.map}
           showsUserLocation={true}
@@ -264,9 +275,8 @@ class AllEventsMap extends React.Component {
             ],
             {
               listener: event => {
-                this.mapAnimation(event.nativeEvent.contentOffset.x)
+                this.mapAnimation(event.nativeEvent.contentOffset.x);
               }
-
             },
             { useNativeDriver: true }
           )}
@@ -300,7 +310,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     position: 'absolute',
-    top: 30,
+    bottom: 30,
     left: 0,
     right: 0,
     paddingVertical: 10
