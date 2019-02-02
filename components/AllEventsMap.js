@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     position: 'absolute',
-    bottom: 30,
+    top: 30,
     left: 0,
     right: 0,
     paddingVertical: 10
