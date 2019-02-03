@@ -1,13 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
-import { Portal } from 'react-native-paper';
-import { Location, Permissions, TaskManager, Constants } from 'expo';
-import { SingleEventMap, EventList, Snackbar } from '../components';
-import { database } from '../config/firebase';
+import { StyleSheet } from 'react-native';
+import { Constants } from 'expo';
+import { SingleEventMap } from '../components';
 import { connect } from 'react-redux';
-import { store } from '../redux/store';
 import AllEventsMap from '../components/AllEventsMap';
-import { NavigationEvents } from 'react-navigation';
 
 let styles = StyleSheet.create({
   container: {
@@ -17,140 +13,82 @@ let styles = StyleSheet.create({
   }
 });
 
-const SEND_LOCATION = 'sendLocation';
-
-const deviceId = Constants.installationId;
-
-//This logs our location, running in the background -- eventually move this to when the app is opened
-TaskManager.defineTask(SEND_LOCATION, async ({ data: { locations }, err }) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  try {
-    await database.ref(`/Devices/${deviceId}`).update({
-      coords: locations[0].coords,
-      timestamp: locations[0].timestamp
-    });
-  } catch (error) {
-    console.error(error);
-  }
-});
-
 class EventMap extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      region: null,
-      membersByEmail: null,
-      backgroundLocation: false,
-      errorMessage: ''
-    };
-  }
-  //this updates the map region when the user interacts with the map
-  updateMapRegion = region => {
-    this.setState({ region });
-  };
-  //This gets our initial position and region for our map
-  getLocationAsync = async () => {
-    try {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        this.setState({
-          errorMessage: 'Permission to access location was denied'
-        });
-      }
-      const location = await Location.getCurrentPositionAsync({});
-      //send initial location to the DB
-      try {
-        await database.ref(`/Devices/${deviceId}`).update({
-          coords: location.coords,
-          timestamp: location.timestamp
-        });
-      } catch (error) {
-        console.error(error);
-      }
+  // //this updates the map region when the user interacts with the map
+  // updateMapRegion = region => {
+  //   this.setState({ region });
+  // };
+  // //This gets our initial position and region for our map
+  // getLocationAsync = async () => {
+  //   try {
+  //     let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  //     if (status !== 'granted') {
+  //       this.setState({
+  //         errorMessage: 'Permission to access location was denied'
+  //       });
+  //     }
+  //     const location = await Location.getCurrentPositionAsync({});
+  //     //send initial location to the DB
+  //     try {
+  //       await database.ref(`/Devices/${deviceId}`).update({
+  //         coords: location.coords,
+  //         timestamp: location.timestamp
+  //       });
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
 
-      //might want to calculate starting delta based on event location so it's shown along with user position
-      const region = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.043
-      };
-      this.setState({ region });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  setBackgroundLocation = async () => {
-    const isPolling = await Location.hasStartedLocationUpdatesAsync(
-      SEND_LOCATION
-    );
-    if (isPolling) {
-      await Location.stopLocationUpdatesAsync(SEND_LOCATION);
-      this.setState({ backgroundLocation: false });
-    } else {
-      //triggers sending my location -- works in the background on iOS
-      await Location.startLocationUpdatesAsync(SEND_LOCATION, {
-        accuracy: Location.Accuracy.Balanced,
-        distanceInterval: 50,
-        timeInterval: 60000
-      });
-      this.setState({ backgroundLocation: true });
-    }
-  };
-  locateMembers = members => {
-    //rearrange users by email
+  //     //might want to calculate starting delta based on event location so it's shown along with user position
+  //     const region = {
+  //       latitude: location.coords.latitude,
+  //       longitude: location.coords.longitude,
+  //       latitudeDelta: 0.0922,
+  //       longitudeDelta: 0.043
+  //     };
+  //     this.setState({ region });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
-    const membersByEmail = {};
-    // eslint-disable-next-line guard-for-in
-    for (let key in members) {
-      if (members[key].email) {
-        let thisEmail = members[key].email.toLowerCase();
-        membersByEmail[thisEmail] = members[key];
-      }
-    }
-    this.setState({ membersByEmail });
-  };
-  async componentDidMount() {
-    try {
-      //gets my location
-      await this.getLocationAsync();
+  // locateMembers = members => {
+  //   //rearrange users by email
 
-      //FIX!!!!! This will have to be event-specific eventually -- and tied into users
-      // local state can be set to match redux store selected event or the props can just be passed down from the store to the map
-      const userLocationsDB = database.ref(`/Devices/`);
+  //   const membersByEmail = {};
+  //   // eslint-disable-next-line guard-for-in
+  //   for (let key in members) {
+  //     if (members[key].email) {
+  //       let thisEmail = members[key].email.toLowerCase();
+  //       membersByEmail[thisEmail] = members[key];
+  //     }
+  //   }
+  //   this.setState({ membersByEmail });
+  // };
+  // async componentDidMount() {
+  //   try {
+  //     //gets my location
+  //     await this.getLocationAsync();
 
-      await userLocationsDB.on('value', snapshot => {
-        return this.locateMembers(snapshot.val());
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  //     //FIX!!!!! This will have to be event-specific eventually -- and tied into users
+  //     // local state can be set to match redux store selected event or the props can just be passed down from the store to the map
+  //     const userLocationsDB = database.ref(`/Devices/`);
+
+  //     await userLocationsDB.on('value', snapshot => {
+  //       return this.locateMembers(snapshot.val());
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
   render() {
-    const { region, eventMembers, event, backgroundLocation } = this.state;
-    const { user, navigation } = this.props;
-    return (
-      region &&
-      (Object.keys(this.props.event.selectedEvent).length ? (
-        <SingleEventMap
-          membersByEmail={this.state.membersByEmail}
-          navigation={this.props.navigation}
-        />
-      ) : (
-        <AllEventsMap
-          // user={user.user}
-          region={region}
-          updateMapRegion={this.updateMapRegion}
-          navigation={this.props.navigation}
-        />
-      ))
+    const { navigation, event } = this.props;
+    return Object.keys(event.selectedEvent).length ? (
+      <SingleEventMap navigation={navigation} />
+    ) : (
+      <AllEventsMap navigation={navigation} />
     );
   }
 }
-
-const mapStateToProps = ({ user, nav, event }) => ({ user, nav, event });
+const mapStateToProps = ({ event }) => ({ event });
 
 export default connect(mapStateToProps)(EventMap);

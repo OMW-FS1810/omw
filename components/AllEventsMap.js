@@ -1,5 +1,5 @@
 /* eslint-disable guard-for-in */
-import React, { Component } from 'react';
+import React from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -12,59 +12,24 @@ import {
   PixelRatio,
   Platform
 } from 'react-native';
-import { MapView, Constants } from 'expo';
+import { MapView, Location, Permissions } from 'expo';
 import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
-import { fetchAllEvents, setSelectedEvent } from '../redux/event';
+import {
+  fetchAllEvents,
+  setSelectedEvent,
+  setAllEventsMapLocation,
+  setSingleEventMapLocation
+} from '../redux/store';
 
 const { width, height } = Dimensions.get('window');
-const CARD_WIDTH = width / 1.4; //height / 4;
-const CARD_HEIGHT = height / 6; //CARD_WIDTH - 50;
+const CARD_WIDTH = height / 4;
+const CARD_HEIGHT = CARD_WIDTH - 50;
 
 class AllEventsMap extends React.Component {
   state = {
     user: {},
     region: null
-  };
-
-  renderEventMarker = () => {
-    // if (this.props.allEvents.length) {
-    //   const allEvents = this.props.allEvents;
-    //   return allEvents.map(eventData => {
-    //     for (let uid in eventData) {
-    //       const event = eventData[uid];
-    //       const latitude = event.location.locationGeocode.lat;
-    //       const longitude = event.location.locationGeocode.lng;
-    //       const title = event.name;
-    //       const time = event.time;
-    //       const date = event.date;
-    //       const description = event.location.locationName;
-    //       const id = uid;
-    //       const scaleStyle = {
-    //         transform: [
-    //           {
-    //             scale: interpolations[index].scale
-    //           }
-    //         ]
-    //       };
-    //       const opacityStyle = {
-    //         opacity: interpolations[index].opacity
-    //       };
-    //       return (
-    //         <MapView.Marker
-    //           key={id}
-    //           title={title}
-    //           coordinate={{ latitude, longitude }}
-    //         >
-    //           <Animated.View style={styles.markerWrap}>
-    //             <Animated.View style={styles.ring} />
-    //             <View style={styles.marker} />
-    //           </Animated.View>
-    //         </MapView.Marker>
-    //       );
-    //     }
-    //   });
-    // }
   };
 
   renderEventCard = () => {
@@ -85,11 +50,18 @@ class AllEventsMap extends React.Component {
         // Touchable opacity on this card that will navigate the user to
         // the single event map and also pass along that event information
         const thisId = Object.keys(eventData)[0];
+        const eventLocation = {
+          latitude: event.location.locationGeocode.lat,
+          longitude: event.location.locationGeocode.lng,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.043
+        };
         return (
           <TouchableOpacity
             key={thisId}
             onPress={() => {
-              this.props.selectEvent(eventData);
+              this.props.setSingleEventMapLocation(eventLocation);
+              this.props.setSelectedEvent(eventData);
               // this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}
           >
@@ -116,9 +88,7 @@ class AllEventsMap extends React.Component {
   };
   // animate region changes
   mapAnimation = value => {
-    console.log('in mount', value);
     let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-    console.log(index);
     if (index >= this.props.allEvents.length) {
       index = this.props.allEvents.length - 1;
     }
@@ -149,28 +119,55 @@ class AllEventsMap extends React.Component {
       }
     }, 10);
   };
-  componentDidMount() {
+  //This gets our initial position and region for our map
+  getLocationAsync = async () => {
+    try {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== 'granted') {
+        this.setState({
+          errorMessage: 'Permission to access location was denied'
+        });
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      //send initial location to the DB -- SHOULD BE DONE IN BACKGROUND?
+      // try {
+      //   await database.ref(`/Devices/${deviceId}`).update({
+      //     coords: location.coords,
+      //     timestamp: location.timestamp
+      //   });
+      // } catch (error) {
+      //   console.error(error);
+      // }
+
+      //might want to calculate starting delta based on event location (in single event) so it's shown along with user position
+      const region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.043
+      };
+      this.props.setLocation(region);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  async componentDidMount() {
     this.index = 0;
     if (this.props.user.email) {
       this.props.fetchEvents(this.props.user.email);
     }
 
-    this.setState({ region: this.props.region });
+    //gets my location and sets map center
+    await this.getLocationAsync();
   }
 
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
-    this.setState({ region });
+    this.props.setAllEventsMapLocation(region);
   };
 
   render() {
-    const {
-      user,
-      backgroundLocation,
-      setBackgroundLocation,
-      allEvents
-    } = this.props;
-    const { region } = this.state;
+    const { allEvents, location } = this.props;
     let interpolations;
     if (allEvents.length) {
       interpolations = allEvents.map((event, index) => {
@@ -193,30 +190,18 @@ class AllEventsMap extends React.Component {
       });
     }
     //move center map button above cards
-    const iosEdgePadding = { top: 20, right: 20, bottom: 170, left: 50 };
-
-    const androidEdgePadding = {
-      top: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.top),
-      right: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.right),
-      bottom: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.bottom),
-      left: PixelRatio.getPixelSizeForLayoutSize(iosEdgePadding.left)
-    };
-
-    const edgePadding =
-      Platform.OS === 'android' ? androidEdgePadding : iosEdgePadding;
 
     return (
       <View style={styles.container}>
         <MapView
-          mapPadding={edgePadding}
           ref={map => (this.map = map)}
           style={styles.map}
           showsUserLocation={true}
           followsUserLocation={true}
-          showsMyLocationButton={true}
+          showsMyLocationButton={false}
           showsCompass={true}
           showsScale={true}
-          region={region}
+          region={location}
           onRegionChangeComplete={e => this.updateMapRegion(e)}
           provider={MapView.PROVIDER_GOOGLE}
           customMapStyle={mapStyle}
@@ -373,12 +358,17 @@ const styles = StyleSheet.create({
 const mapState = state => ({
   allEvents: state.event.allEvents,
   user: state.user.user,
-  animation: state.animate.allEventsAnimate
+  animation: state.animate.allEventsAnimate,
+  location: state.maps.allEventsMap
 });
 
 const mapDispatch = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email)),
-  selectEvent: event => dispatch(setSelectedEvent(event))
+  setSelectedEvent: event => dispatch(setSelectedEvent(event)),
+  setAllEventsMapLocation: location =>
+    dispatch(setAllEventsMapLocation(location)),
+  setSingleEventMapLocation: location =>
+    dispatch(setSingleEventMapLocation(location))
 });
 
 export default connect(

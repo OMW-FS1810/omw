@@ -40,17 +40,19 @@ const DrawerStack = createDrawerNavigator(
     headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: 'transparent' },
+      // headerStyle: { backgroundColor: 'transparent' },
       // title: 'Logged in!',
       headerRight: (
         <Icon
           name="menu"
           color={color.blue}
           containerStyle={{ paddingRight: 10 }}
-          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          onPress={() => {
+            console.log('hamburger pressed');
+            navigation.dispatch(DrawerActions.toggleDrawer());
+          }}
         />
-      ),
-      footer: { screen: Snackbar }
+      )
     })
   }
 );

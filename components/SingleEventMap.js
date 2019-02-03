@@ -14,13 +14,139 @@ import { connect } from 'react-redux';
 import { mapStyle } from './styles/mapStyle';
 //vectir icons '@expo/vector-icons'
 import { convertTimestamp } from '../helpers/convertTimestamp';
-import AllEventsMap from './AllEventsMap';
+import { setSelectedEvent, setSingleEventMapLocation } from '../redux/store';
 import { database } from '../config/firebase';
-import { setSelectedEvent } from '../redux/event';
 
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = height / 4;
 const CARD_WIDTH = CARD_HEIGHT - 50;
+
+const { Marker, Callout } = MapView;
+const deviceId = Constants.installationId;
+
+class Map extends React.Component {
+  state = {
+    eventMembers: [],
+  };
+
+  renderMemberMarkers = () => {
+    return this.state.eventMembers.map(member => {
+      let markerName;
+      if (member[0] && member[1]) {
+        markerName = member[0];
+
+        return (
+          //only return members who are not this device -- give device ID as description -- it's no longer keyed by user id!!
+          // member[0] !== deviceId &&
+          member[1].coords && (
+            <Marker
+              key={member[0]}
+              title={markerName}
+              description={convertTimestamp(member[1].timestamp)}
+              coordinate={member[1].coords}
+              pinColor="blue"
+            />
+          )
+        );
+      } else {
+        return null;
+      }
+    });
+  };
+  locateMembers = async members => {
+    // const membersByEmail = {};
+    // // eslint-disable-next-line guard-for-in
+    // for (let key in members) {
+    //   if (members[key].email) {
+    //     let thisEmail = members[key].email.toLowerCase();
+    //     membersByEmail[thisEmail] = members[key];
+    //   }
+    // }
+
+    // rearrange users by email
+    // try {
+    //   const userLocationsDB = database.ref(`/Devices/`);
+
+    //   await userLocationsDB.on('value', snapshot => {
+    //     return this.locateMembers(snapshot.val());
+    //   });
+    // } catch (err) {
+    //   console.error(err);
+    // }
+
+    // if (Object.keys(this.state.event).length) {
+    //   let { membersByEmail } = this.props;
+    //   const thisEvent = this.state.event;
+
+    //   const eventMembers = [];
+    //   thisEvent.invites.forEach(invite => {
+    //     eventMembers.push([invite, membersByEmail[invite.toLowerCase()]]);
+    //   });
+    //   this.setState({ eventMembers });
+    // }
+    console.log(members);
+  };
+  updateMapRegion = region => {
+    this.props.setSingleEventMapLocation(region);
+
+  };
+  async componentDidMount() {
+    this.index = 0;
+    //TO DO: connect animations (if any) to store value
+    this.animation = new Animated.Value(0);
+
+    await this.locateMembers(this.props.selectedEvent.invites);
+  }
+
+  render() {
+    const { selectedEvent, location } = this.props;
+    if (Object.keys(selectedEvent).length) {
+      const coordinate = {
+        latitude: selectedEvent.location.locationGeocode.lat,
+        longitude: selectedEvent.location.locationGeocode.lng
+      };
+      return (
+        location && (
+          <View style={styles.container}>
+            <MapView
+              style={styles.map}
+              showsUserLocation={true}
+              followsUserLocation={true}
+              showsMyLocationButton={true}
+              showsCompass={true}
+              showsScale={true}
+              region={location}
+              onRegionChangeComplete={e => this.updateMapRegion(e)}
+              provider={MapView.PROVIDER_GOOGLE}
+              customMapStyle={mapStyle}
+            >
+              {/* {this.renderMemberMarkers()} */}
+              <Marker
+                coordinate={coordinate}
+                title={event.name}
+                description={`${event.location.locationName} ${event.date} ${
+                  event.time
+                }`}
+              />
+            </MapView>
+            <Callout style={styles.callout}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.setSingleEventMapLocation({});
+                  this.props.setSelectedEvent({});
+                }}
+              >
+                <Text>See All Events</Text>
+              </TouchableOpacity>
+            </Callout>
+          </View>
+        )
+      );
+    } else {
+      return null;
+    }
+  }
+}
 
 let styles = StyleSheet.create({
   // container: {
@@ -109,155 +235,15 @@ let styles = StyleSheet.create({
   }
 });
 
-const { Marker, Callout } = MapView;
-const deviceId = Constants.installationId;
-
-class Map extends React.Component {
-  state = {
-    eventMembers: [],
-    event: {},
-    region: null
-  };
-  updateMapRegion = region => {
-    this.setState({ region });
-  };
-  renderMemberMarkers = () => {
-    return this.state.eventMembers.map(member => {
-      let markerName;
-      if (member[0] && member[1]) {
-        markerName = member[0];
-
-        return (
-          //only return members who are not this device -- give device ID as description -- it's no longer keyed by user id!!
-          // member[0] !== deviceId &&
-          member[1].coords && (
-            <Marker
-              key={member[0]}
-              title={markerName}
-              description={convertTimestamp(member[1].timestamp)}
-              coordinate={member[1].coords}
-              pinColor="blue"
-            />
-          )
-        );
-      } else {
-        return null;
-      }
-    });
-  };
-  locateMembers = () => {
-    //rearrange users by email
-
-    // const membersByEmail = {};
-    // // eslint-disable-next-line guard-for-in
-    // for (let key in members) {
-    //   if (members[key].email) {
-    //     let thisEmail = members[key].email.toLowerCase();
-    //     membersByEmail[thisEmail] = members[key];
-    //   }
-    // }
-    if (Object.keys(this.state.event).length) {
-      let { membersByEmail } = this.props;
-      const thisEvent = this.state.event;
-
-      const eventMembers = [];
-      thisEvent.invites.forEach(invite => {
-        eventMembers.push([invite, membersByEmail[invite.toLowerCase()]]);
-      });
-      this.setState({ eventMembers });
-    }
-  };
-  async componentDidMount() {
-    this.index = 0;
-    this.animation = new Animated.Value(0);
-
-    await this.setState({
-      event: Object.values(this.props.selectedEvent)[0]
-    });
-
-    const thisEvent = this.state.event;
-
-    const region = {
-      latitude: thisEvent.location.locationGeocode.lat,
-      longitude: thisEvent.location.locationGeocode.lng,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.043
-    };
-    await this.setState({
-      region
-    });
-    this.locateMembers();
-  }
-
-  render() {
-    let event = false;
-    if (Object.keys(this.state.event).length) {
-      event = this.state.event;
-      console.log(event);
-      const { region } = this.state;
-      const { user, backgroundLocation, setBackgroundLocation } = this.props;
-      const coordinate = {
-        latitude: event.location.locationGeocode.lat,
-        longitude: event.location.locationGeocode.lng
-      };
-      return (
-        region && (
-          <View style={styles.container}>
-            <MapView
-              style={styles.map}
-              showsUserLocation={true}
-              followsUserLocation={true}
-              showsMyLocationButton={true}
-              showsCompass={true}
-              showsScale={true}
-              region={region}
-              onRegionChangeComplete={e => this.updateMapRegion(e)}
-              provider={MapView.PROVIDER_GOOGLE}
-              customMapStyle={mapStyle}
-            >
-              {this.renderMemberMarkers()}
-              <Marker
-                coordinate={coordinate}
-                title={event.name}
-                description={`${event.location.locationName} ${event.date} ${
-                  event.time
-                }`}
-              />
-            </MapView>
-            <Callout style={styles.callout}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    eventMembers: [],
-                    event: {},
-                    region: null
-                  });
-                  this.props.selectEvent({});
-                }}
-              >
-                <Text>See All Events</Text>
-                {/* onPress={setBackgroundLocation}> */}
-                {/* {backgroundLocation ? (
-                <Text>Stop Background Location</Text>
-              ) : (
-                <Text>Start Background Location</Text>
-              )} */}
-              </TouchableOpacity>
-            </Callout>
-          </View>
-        )
-      );
-    } else {
-      return null;
-    }
-  }
-}
-
-const mapStateToProps = ({ event }) => ({
-  selectedEvent: event.selectedEvent
+const mapStateToProps = ({ event, maps, user }) => ({
+  selectedEvent: Object.values(event.selectedEvent)[0],
+  location: maps.singleEventMap,
+  myEmail: user.user.email
 });
 const mapDispatchToProps = dispatch => ({
-  selectEvent: event => dispatch(setSelectedEvent(event))
+  setSelectedEvent: event => dispatch(setSelectedEvent(event)),
+  setSingleEventMapLocation: location =>
+    dispatch(setSingleEventMapLocation(location))
 });
 
 export default connect(
