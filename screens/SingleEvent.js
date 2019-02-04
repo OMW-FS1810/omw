@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Text } from 'react-native';
+import { Button } from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,7 +27,8 @@ const styles = StyleSheet.create({
   box5: {
     backgroundColor: 'white',
     height: 200
-  }
+  },
+  editButton: {}
 });
 
 class SingleEvent extends Component {
