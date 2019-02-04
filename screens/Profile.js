@@ -234,10 +234,10 @@ class Profile extends Component {
                 style={styles.avatar}
                 source={{ uri: profilePicture || this.props.user.pictureUrl }}
               />
-              <Button title="Choose image..." onPress={this.selectPicture}>
+              <Button title="Picture Library" onPress={this.selectPicture}>
                 Picture Library{' '}
               </Button>
-              <Button title="Choose image..." onPress={this.takePicture}>
+              <Button title="Take Picture" onPress={this.takePicture}>
                 Take Picture{' '}
               </Button>
               <TextInput
@@ -316,7 +316,7 @@ class Profile extends Component {
             </Button>
           )}
           {isEditing && (
-            <Button title="Edit" onPress={this.editInfo}>
+            <Button title="Save" onPress={this.editInfo}>
               Save
             </Button>
           )}
