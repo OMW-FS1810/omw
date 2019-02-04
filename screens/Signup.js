@@ -11,35 +11,38 @@ import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'blue'
+    // justifyContent: 'center',
+    backgroundColor: color.whiteBlue
   },
   content: {
     alignItems: 'center'
   },
   inputContainer: {
-    width: 300,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: windowWidth - 40,
     borderRadius: 25,
     paddingHorizontal: 16,
-    fontSize: 16,
-    color: '#aaa',
-    marginVertical: 10
+    fontSize: 18,
+    fontFamily: fontFamily.light,
+    color: color.darkBlue,
+    marginVertical: 15
   },
   button: {
-    width: 300,
-    backgroundColor: '#1c313a',
+    width: windowWidth - 40,
+    backgroundColor: color.darkOrange,
     borderRadius: 25,
     marginVertical: 10,
-    paddingVertical: 13
+    paddingVertical: 13,
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#aaa',
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold,
+    color: '#FFFFFF',
     textAlign: 'center'
   }
 });
@@ -51,6 +54,18 @@ class Signup extends React.Component {
     firstName: '',
     lastName: '',
     error: ''
+  };
+
+  static navigationOptions = {
+    title: 'SIGN UP',
+    headerStyle: {
+      backgroundColor: color.darkBlue,
+      fontSize: fontSize.regular
+    },
+    headerTintColor: color.whiteBlue,
+    headerTitleStyle: {
+      fontFamily: fontFamily.medium
+    },
   };
 
   handlePress = async () => {
@@ -93,8 +108,27 @@ class Signup extends React.Component {
           <Text> {this.state.error} </Text>
           <TextInput
             style={styles.inputContainer}
+            placeholder="First Name"
+            placeholderTextColor="#aaa"
+            clearButtonMode="while-editing"
+            onChangeText={firstName => this.setState({ firstName })}
+            value={this.state.firstName}
+            marginTop={50}
+          />
+          <TextInput
+            style={styles.inputContainer}
+            placeholder="Last name"
+            placeholderTextColor="#aaa"
+            clearButtonMode="while-editing"
+            onChangeText={lastName => this.setState({ lastName })}
+            value={this.state.lastName}
+          />
+          <TextInput
+            style={styles.inputContainer}
             placeholder="Email"
             placeholderTextColor="#aaa"
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
             keyboardType="email-address"
             onChangeText={email => this.setState({ email })}
             value={this.state.email}
@@ -104,25 +138,13 @@ class Signup extends React.Component {
             placeholder="Password"
             secureTextEntry={true}
             placeholderTextColor="#aaa"
+            clearButtonMode="while-editing"
             onChangeText={password => this.setState({ password })}
             value={this.state.password}
-          />
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="First Name"
-            placeholderTextColor="#aaa"
-            onChangeText={firstName => this.setState({ firstName })}
-            value={this.state.firstName}
-          />
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Last name"
-            placeholderTextColor="#aaa"
-            onChangeText={lastName => this.setState({ lastName })}
-            value={this.state.lastName}
+            marginBottom={50}
           />
           <TouchableOpacity style={styles.button} onPress={this.handlePress}>
-            <Text style={styles.buttonText}>Sign up with email </Text>
+            <Text style={styles.buttonText}>SIGN UP WITH EMAIL</Text>
           </TouchableOpacity>
         </View>
       </View>

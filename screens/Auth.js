@@ -18,7 +18,6 @@ import { Login, Google, Facebook } from '../components';
 import Communications from 'react-native-communications';
 
 import * as theme from '../styles/theme';
-import { Colors } from 'react-native-paper';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 const deviceId = Constants.installationId;
 
@@ -49,14 +48,13 @@ let styles = StyleSheet.create({
   title: {
     fontSize: fontSize.large + 2,
     lineHeight: fontSize.large + 4,
-    fontFamily: fontFamily.bold,
+    fontFamily: fontFamily.light,
     color: color.whiteBlue,
     letterSpacing: 1
   },
 
   bottomContainer: {
-    backgroundColor: 'white',
-    // paddingVertical: padding,
+    backgroundColor: color.whiteBlue,
     shadowColor: '#000000',
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -85,7 +83,7 @@ let styles = StyleSheet.create({
 
   buttonText: {
     fontSize: fontSize.regular + 2,
-    fontFamily: fontFamily.medium
+    fontFamily: fontFamily.bold
   },
 
   orContainer: {
@@ -104,8 +102,8 @@ let styles = StyleSheet.create({
   },
 
   orText: {
-    backgroundColor: '#FFFFFF',
-    fontSize: fontSize.regular,
+    backgroundColor: color.whiteBlue,
+    fontSize: fontSize.small,
     fontFamily: fontFamily.medium,
     color: color.darkBlue,
     paddingHorizontal: padding
@@ -130,7 +128,7 @@ class Auth extends React.Component {
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <Image style={styles.image} source={require('../assets/logo.png')} />
-          <Text style={styles.title}>ON MY WAY</Text>
+          <Text style={styles.title}>on my way</Text>
         </View>
 
         <View style={styles.bottomContainer}>
@@ -143,7 +141,7 @@ class Auth extends React.Component {
 
             <View style={styles.orContainer}>
               <Divider style={styles.divider} />
-              <Text style={styles.orText}>Or</Text>
+              <Text style={styles.orText}>OR</Text>
             </View>
 
             {/* <Facebook navigation={this.props.navigation} /> */}

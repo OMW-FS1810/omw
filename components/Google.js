@@ -48,7 +48,7 @@ let styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: fontSize.regular + 2,
-    fontFamily: fontFamily.medium
+    fontFamily: fontFamily.bold
   }
 });
 
