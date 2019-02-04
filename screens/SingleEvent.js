@@ -79,6 +79,11 @@ class SingleEvent extends Component {
     this.setState({ emailInput: '' });
   };
 
+  handlePress = () => {
+    // console.log('PREST!');
+    // this.setState({ editing: true });
+  };
+
   async componentDidMount() {
     if (this.props.selectedEvent) {
       const { name, date, time } = Object.values(this.props.selectedEvent)[0];
@@ -126,9 +131,10 @@ class SingleEvent extends Component {
                 ))}
                 <MaterialCommunityIcons
                   name="email-plus"
-                  size={24}
+                  size={30}
                   style={styles.addButton}
-                  onPress={() => console.log('button persd')}
+                  disabled={this.editing}
+                  onPress={this.handlePress}
                 />
                 {/* {this.state.editing ? (
                   <View style={styles.inputContainer}>
