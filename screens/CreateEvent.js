@@ -80,7 +80,6 @@ class CreateEvent extends Component {
                 const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=${photoreference}&key=${GOOGLE_API}`;
                 const photoSearch = await fetch(url);
                 locationPhoto = photoSearch.url;
-                console.log(locationPhoto);
               }
 
               await this.setState({
@@ -106,8 +105,7 @@ class CreateEvent extends Component {
                 borderWidth: 1,
                 borderColor: color.whiteBlue,
                 marginBottom: 5,
-                borderRadius: 4,
-                height: 200
+                borderRadius: 4
               },
               textInputContainer: {
                 backgroundColor: color.whiteBlue,
@@ -239,7 +237,7 @@ let styles = StyleSheet.create({
     bottom: 0
   },
   location: {
-    borderWidth: 0,
+    borderWidth: 0
     // alignSelf: 'center'
   },
   content: {
