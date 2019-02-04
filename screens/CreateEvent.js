@@ -1,8 +1,8 @@
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { TextInput, Button, Surface } from 'react-native-paper';
+import { Surface } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { populateEventDeets, fetchAllEvents } from '../redux/event';
 import { GOOGLE_API } from '../secrets';
@@ -167,6 +167,7 @@ class CreateEvent extends Component {
         <View style={styles.bottom}>
           <Button
             onPress={this.handlePress}
+            title='next'
             type="contained"
             disabled={
               !this.state.date ||

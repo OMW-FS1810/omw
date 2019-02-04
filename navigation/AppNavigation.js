@@ -60,6 +60,7 @@ const LoginStack = createStackNavigator({
   loginScreen: { screen: Auth },
   signupScreen: { screen: Signup }
 });
+import { Snackbar } from '../components';
 
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator(
@@ -73,7 +74,7 @@ const DrawerStack = createDrawerNavigator(
 
   },
   {
-    // headerMode: 'float',
+    headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
       headerStyle: { backgroundColor: 'transparent' },

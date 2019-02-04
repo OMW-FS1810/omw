@@ -37,6 +37,9 @@ export const setUserAndDevice = user => async dispatch => {
       deviceId,
       token
     });
+    await database.ref(`/Devices/${deviceId}`).update({
+      user
+    });
 
     //remove old user associations for this device
     const currDevices = await database.ref(`/Users/`);

@@ -6,11 +6,12 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
+  Button
 } from 'react-native';
 import { connect } from 'react-redux';
 import { setUserAndDevice, setUser } from '../redux/store';
-import { Button } from 'react-native-paper'
+// import { Button } from 'react-native-paper'
 import { database } from '../config/firebase';
 import * as firebase from 'firebase';
 import { ImagePicker, Permissions } from 'expo';

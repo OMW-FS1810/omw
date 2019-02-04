@@ -41,7 +41,7 @@ class SingleEvent extends Component {
   render() {
     // const { navigation } = this.props;
     let event = false;
-    if (this.props.selectedEvent) {
+    if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
 
       return (
