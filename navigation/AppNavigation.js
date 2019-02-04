@@ -52,7 +52,7 @@ const CreateEventStack = createStackNavigator({
     navigationOptions: {
       headerTitle: 'Invite'
     }
-  },
+  }
 });
 
 //LOGIN STACK
@@ -65,13 +65,12 @@ import { Snackbar } from '../components';
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator(
   {
-    'Event Map': { screen: EventMap, headerTitle: 'Event Map'},
-    'Create an Event': { screen: CreateEvent},
+    'Event Map': { screen: EventMap, headerTitle: 'Event Map' },
+    'Create an Event': { screen: CreateEvent },
     Profile: { screen: Profile },
-    SingleEvent: { screen: SingleEvent },
+    SingleEvent: { screen: SingleEvent }
     // Invite: { screen: Invite },
     // Notifications: { screen: Notifications }
-
   },
   {
     headerMode: 'float',
@@ -82,27 +81,26 @@ const DrawerStack = createDrawerNavigator(
       // title: 'Logged in!',
       headerRight: (
         <Icon
-        name="menu"
-        color={color.blue}
-        containerStyle={{ paddingRight: 10 }}
-        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          name="menu"
+          color={color.blue}
+          containerStyle={{ paddingRight: 10 }}
+          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
         />
-        )
-      })
-    },
+      )
+    })
+  },
   { headerMode: 'none' }
 );
 
-
 const DrawerNavigation = createStackNavigator({
-  'My Events': { screen: DrawerStack,
-  // navigationOptions: ({ navigation }) => ({
-  //   headerTitle: navigation.state.routeName
+  'My Events': {
+    screen: DrawerStack
+    // navigationOptions: ({ navigation }) => ({
+    //   headerTitle: navigation.state.routeName
   },
-  'Test': {screen: CreateEventStack}
+  Test: { screen: CreateEventStack }
   // )}
 });
-
 
 export default createAppContainer(
   createSwitchNavigator(
@@ -110,7 +108,7 @@ export default createAppContainer(
       AuthLoading: { screen: AuthLoading },
       LoginStack: { screen: LoginStack },
       App: { screen: DrawerNavigation },
-      CreateEvent: { screen: CreateEventStack },
+      CreateEvent: { screen: CreateEventStack }
       //CreateMap: { screen: CreateMapStack }
     },
     {
@@ -134,4 +132,3 @@ export default createAppContainer(
 //     })
 //   }
 // );
-

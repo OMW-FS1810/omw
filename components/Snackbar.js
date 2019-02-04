@@ -13,7 +13,6 @@ export default class Notify extends React.Component {
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification
     );
-    console.log('mounted');
   }
   _handleNotification = async notification => {
     this.setState({ incoming: notification.data, visible: true });

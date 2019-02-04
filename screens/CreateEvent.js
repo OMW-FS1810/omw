@@ -54,16 +54,15 @@ class CreateEvent extends Component {
           <Text style={styles.title}>Create Event</Text>
         </View>
 
-          <TextInput
-            style={styles.inputContainer}
-            placeholder="Event Name"
-            placeholderTextColor="#aaa"
-            clearButtonMode="while-editing"
-            value={this.state.name}
-            onChangeText={name => this.setState({ name })}
-          />
+        <TextInput
+          style={styles.inputContainer}
+          placeholder="Event Name"
+          placeholderTextColor="#aaa"
+          clearButtonMode="while-editing"
+          value={this.state.name}
+          onChangeText={name => this.setState({ name })}
+        />
         <View style={styles.content}>
-
           <GooglePlacesAutocomplete
             style={styles.location}
             placeholder="Event Location"
@@ -215,7 +214,7 @@ let styles = StyleSheet.create({
     marginTop: 10,
     width: windowWidth - 40,
     justifyContent: 'center',
-    borderRadius: 5,
+    borderRadius: 5
   },
   bottom: {
     flex: 1,
