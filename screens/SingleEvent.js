@@ -1,73 +1,155 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import DatePicker from 'react-native-datepicker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { addEmailToEvent } from '../redux/store';
+import * as theme from '../styles/theme';
+
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column'
   },
-  boxContainer: {
+  detailsContainer: {
+    flex: 1.25
+    // flexDirection: 'column'
+  },
+  emailsContainer: {
     flex: 1
+    // flexDirection: 'column'
   },
-  box1: {
-    backgroundColor: 'black',
-    flex: 1,
+  emailsList: {
+    alignItems: 'flex-start'
+  },
+  titleBox: {
+    // flex: 1,
+    backgroundColor: color.blue,
     alignItems: 'center'
   },
-  box2: {
-    backgroundColor: 'blue',
-    flex: 3,
-    fontSize: 48
+  titleText: {
+    fontFamily: fontFamily.bold,
+    color: color.whiteGrey,
+    padding,
+    fontSize: fontSize.xLarge
   },
-  box3: {
-    backgroundColor: 'black',
-    flex: 1,
-    alignItems: 'center'
-  },
-  box4: {
-    backgroundColor: 'blue',
-    flex: 3,
-    fontSize: 48
+  subtitle: {
+    // flex: 2,
+    fontFamily: fontFamily.light,
+    fontSize: fontSize.large,
+    color: color.darkBlue,
+    padding
   },
   text: {
-    color: 'white',
-    fontSize: 60
+    flex: 1,
+    color: color.indigoBlue,
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.large,
+    paddingLeft: padding * 2
+  },
+  emailText: {
+    // flex: 1,
+    color: color.indigoBlue,
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.large,
+    paddingLeft: padding * 2
+  },
+  addButton: {
+    padding: padding * 2,
+    color: color.darkOrange
   }
 });
 
 class SingleEvent extends Component {
-   static navigationOptions = {title: 'Single Event'}
+  state = {
+    editing: false,
+    emailInput: '',
+    uid: '',
+    editName: '',
+    editDate: '',
+    editTime: ''
+  };
+
+  handleAddToInviteList = () => {
+    const { uid, emailInput } = this.state;
+
+    this.props.addEmail(uid, emailInput);
+    this.setState({ emailInput: '' });
+  };
+
+  handlePress = () => {
+    // console.log('PREST!');
+    // this.setState({ editing: true });
+  };
+
+  async componentDidMount() {
+    if (this.props.selectedEvent) {
+      const { name, date, time } = Object.values(this.props.selectedEvent)[0];
+      const uid = Object.keys(this.props.selectedEvent)[0];
+      await this.setState({
+        uid,
+        editName: name,
+        editDate: date,
+        editTime: time
+      });
+    }
+  }
+
+  static navigationOptions = { title: 'Single Event' };
   render() {
-    // const { navigation } = this.props;
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
-
       return (
         { event } && (
           <View style={styles.container}>
-            <View style={[styles.boxContainer, styles.box1]}>
-              <Text style={styles.text}>DETAILS</Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.titleBox}>
+                <Text style={styles.titleText}>DETAILS</Text>
+              </View>
+              <Text style={styles.subtitle}>Event:</Text>
+              <Text style={styles.text}>{event.name}</Text>
+              <Text style={styles.subtitle}>Location:</Text>
+              <Text style={styles.text}>{event.location.locationName}</Text>
+              <Text style={styles.subtitle}>Date:</Text>
+              <Text style={styles.text}>{event.date}</Text>
+              <Text style={styles.subtitle}>Time:</Text>
+              <Text style={styles.text}>{event.time}</Text>
             </View>
-            <View style={[styles.boxContainer, styles.box2]}>
-              <Text>Event:</Text>
-              <Text>{event.name}</Text>
-              <Text>Location:</Text>
-              <Text>{event.location.locationName}</Text>
-              <Text>Date:</Text>
-              <Text>{event.date}</Text>
-              <Text>Time:</Text>
-              <Text>{event.time}</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box3]}>
-              <Text style={styles.text}>INVITEES</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box4]}>
-              <Text>Email:</Text>
-              {event.invites.map(invitee => (
-              <Text key={invitee}> {invitee} </Text>
-              ))}
+            <View style={styles.emailsContainer}>
+              <View style={styles.titleBox}>
+                <Text style={styles.titleText}>FRIENDS</Text>
+              </View>
+              <View style={styles.emailList}>
+                {/* <Text style={styles.subtitle}>Email:</Text> */}
+                {event.invites.map(invitee => (
+                  <Text key={invitee} style={styles.emailText}>
+                    {invitee}
+                  </Text>
+                ))}
+                <MaterialCommunityIcons
+                  name="email-plus"
+                  size={30}
+                  style={styles.addButton}
+                  disabled={this.editing}
+                  onPress={this.handlePress}
+                />
+                {/* {this.state.editing ? (
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      value={this.state.emailInput}
+                      label="Invite Another Friendo!"
+                      style={styles.input}
+                      onChangeText={emailInput => this.setState({ emailInput })}
+                    />
+                    <Button onPress={this.handleAddToInviteList}>
+                      <Text>invite this friendo!</Text>
+                    </Button>
+                  </View>
+                ) : null} */}
+              </View>
             </View>
           </View>
         )
@@ -78,8 +160,69 @@ class SingleEvent extends Component {
   }
 }
 
-const mapStateToProps = ({ event }) => ({
+const mapState = ({ event }) => ({
   selectedEvent: event.selectedEvent
 });
 
-export default connect(mapStateToProps)(SingleEvent);
+const mapDispatch = dispatch => ({
+  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email))
+});
+
+export default connect(
+  mapState,
+  mapDispatch
+)(SingleEvent);
+
+/*
+
+            <View style}>
+              <Text>{event.name}</Text>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  if (!this.state.editing) {
+                    this.setState({ editing: true });
+                  } else {
+                    this.setState({ editing: false });
+                  }
+                }}
+                style={styles.editButton}
+              >
+                <Text>{this.state.editing ? 'SAVE' : 'EDIT'}</Text>
+              </Button>
+            </View>
+            {this.state.editing ? (
+              <>
+                <DatePicker
+                  label="Date"
+                  date={this.state.editDate}
+                  mode="date"
+                  showIcon={false}
+                  style={styles.date}
+                  onDateChange={editDate => this.setState({ editDate })}
+                  placeholder="select date"
+                  format="MM-DD-YYYY"
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                />
+                <DatePicker
+                  mode="time"
+                  showIcon={false}
+                  date={this.state.editTime}
+                  placeholder="select time"
+                  style={styles.date}
+                  onDateChange={editTime => this.setState({ editTime })}
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                />
+              </>
+            ) : (
+              <View style={styles.box2}>
+                <Text>
+                  {event.date} {event.time}
+                </Text>
+              </View>
+            )}
+            <View style={styles.box3}>
+            
+            */
