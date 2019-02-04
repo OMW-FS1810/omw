@@ -78,6 +78,9 @@ class EventMap extends React.Component {
       errorMessage: ''
     };
   }
+
+  static navigationOptions = {title: 'Event Map'}
+
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
     this.setState({ region });
@@ -141,6 +144,8 @@ class EventMap extends React.Component {
       });
     this.setState({ eventMembers });
   };
+
+
   async componentDidMount() {
     try {
       //gets my location
@@ -157,6 +162,9 @@ class EventMap extends React.Component {
       console.error(err);
     }
   }
+
+
+
   render() {
     const { region, eventMembers, event, backgroundLocation } = this.state;
     const { user, navigation } = this.props;

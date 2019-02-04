@@ -21,6 +21,9 @@ class CreateEvent extends Component {
     host: ''
   };
 
+
+  // static navigationOptions = {title: 'Create Event'}
+
   componentDidMount() {
     if (this.props.user) {
       this.setState({ host: this.props.user.uid });
@@ -165,12 +168,12 @@ class CreateEvent extends Component {
           <Button
             onPress={this.handlePress}
             type="contained"
-            // disabled={
-            //   !this.state.date ||
-            //   !this.state.name ||
-            //   !this.state.time ||
-            //   !this.state.location
-            // }
+            disabled={
+              !this.state.date ||
+              !this.state.name ||
+              !this.state.time ||
+              !this.state.location
+            }
           >
             <Text style={styles.butonText}>next</Text>
           </Button>

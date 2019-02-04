@@ -23,44 +23,36 @@ import {
   Notifications
 } from '../screens';
 
-//DRAWER STACK
-const DrawerStack = createDrawerNavigator(
-  {
-    'Event Map': { screen: EventMap },
-    'Create an Event': { screen: CreateEvent },
-    // Invite: { screen: Invite },
-    Profile: { screen: Profile },
-    Settings: { screen: Settings },
-    SingleEvent: { screen: SingleEvent },
-    Notifications: { screen: Notifications }
-  },
-  {
-    // headerMode: 'float',
-    drawerPosition: 'right',
-    navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: 'transparent' },
-      // title: 'Logged in!',
-      headerRight: (
-        <Icon
-          name="menu"
-          color={color.blue}
-          containerStyle={{ paddingRight: 10 }}
-          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-        />
-      )
-    })
-  },
-  { headerMode: 'none' }
-);
+//CREATE MAP STACK
+// const CreateMapStack = createStackNavigator({
+//   createEventMap: {
+//     screen: EventMap,
+//     navigationOptions: {
+//       headerTitle: 'Event Map'
+//     },
+//   },
+//   singleEvent: {
+//     screen: SingleEvent,
+//     navigationOptions: {
+//       headerTitle: 'Single Event'
+//     },
+//   },
+// });
 
 //CREATE EVENT STACK
 const CreateEventStack = createStackNavigator({
-  createEventScreen: { screen: CreateEvent },
-  inviteScreen: { screen: Invite }
-});
-
-const DrawerNavigation = createStackNavigator({
-  DrawerStack: { screen: DrawerStack }
+  createEventScreen: {
+    screen: CreateEvent,
+    navigationOptions: {
+      headerTitle: 'Create Event'
+    }
+  },
+  inviteScreen: {
+    screen: Invite,
+    navigationOptions: {
+      headerTitle: 'Invite'
+    }
+  },
 });
 
 //LOGIN STACK
@@ -69,16 +61,76 @@ const LoginStack = createStackNavigator({
   signupScreen: { screen: Signup }
 });
 
+//DRAWER STACK
+const DrawerStack = createDrawerNavigator(
+  {
+    'Event Map': { screen: EventMap, headerTitle: 'Event Map'},
+    'Create an Event': { screen: CreateEvent},
+    Profile: { screen: Profile },
+    SingleEvent: { screen: SingleEvent },
+    // Invite: { screen: Invite },
+    // Notifications: { screen: Notifications }
+
+  },
+  {
+    // headerMode: 'float',
+    drawerPosition: 'right',
+    navigationOptions: ({ navigation }) => ({
+      headerStyle: { backgroundColor: 'transparent' },
+      title: navigation.state.routeName,
+      // title: 'Logged in!',
+      headerRight: (
+        <Icon
+        name="menu"
+        color={color.blue}
+        containerStyle={{ paddingRight: 10 }}
+        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+        />
+        )
+      })
+    },
+  { headerMode: 'none' }
+);
+
+
+const DrawerNavigation = createStackNavigator({
+  'My Events': { screen: DrawerStack,
+  // navigationOptions: ({ navigation }) => ({
+  //   headerTitle: navigation.state.routeName
+  },
+  'Test': {screen: CreateEventStack}
+  // )}
+});
+
+
 export default createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: { screen: AuthLoading },
       LoginStack: { screen: LoginStack },
       App: { screen: DrawerNavigation },
-      CreateEvent: { screen: CreateEventStack }
+      CreateEvent: { screen: CreateEventStack },
+      //CreateMap: { screen: CreateMapStack }
     },
     {
       initialRouteName: 'LoginStack'
     }
   )
 );
+
+// const EventMapS = createStackNavigator(
+//   {
+//     'Event Map': {
+//       screen: EventMap
+//     }
+//   },
+//   {
+//     navigationOptions: ({ navigation }) => ({
+//       initialRouteName: 'MainScreen',
+//       headerMode: 'screen',
+//       headerTitle: 'Main Screen Header',
+//       drawerLabel: 'Main Screen'
+//     })
+//   }
+// );
+
