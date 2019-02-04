@@ -18,6 +18,7 @@ import { Login, Google, Facebook } from '../components';
 import Communications from 'react-native-communications';
 
 import * as theme from '../styles/theme';
+import { Colors } from 'react-native-paper';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 const deviceId = Constants.installationId;
 
@@ -154,6 +155,7 @@ class Auth extends React.Component {
               style={[styles.containerView, styles.socialButton, {marginBottom: 8}, {marginTop: 8}]}
               fontStyle={styles.buttonText}
               onPress={() => this.props.navigation.navigate('signupScreen')}
+              underlayColor= {color.orange}
             />
             <Google navigation={this.props.navigation} />
           </View>

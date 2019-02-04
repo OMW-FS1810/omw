@@ -192,6 +192,7 @@ class Google extends React.Component {
           style={[styles.containerView, styles.socialButton]}
           fontStyle={styles.buttonText}
           onPress={this.signInWithGoogleAsync}
+          underlayColor= {color.orange}
         />
         <ActivityIndicator
           animating={this.state.loading}

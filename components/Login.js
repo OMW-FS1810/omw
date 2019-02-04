@@ -42,7 +42,8 @@ let styles = StyleSheet.create({
     backgroundColor: color.darkOrange,
     borderRadius: 25,
     marginVertical: 10,
-    paddingVertical: 13
+    paddingVertical: 13,
+    color: color.orange
   },
   buttonText: {
     fontSize: fontSize.regular + 2,
