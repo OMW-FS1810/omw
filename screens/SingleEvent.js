@@ -14,37 +14,6 @@ const styles = StyleSheet.create({
     flex: 1
   },
   box1: {
-<<<<<<< HEAD
-    flex: 1,
-    backgroundColor: '#e3aa1a'
-  },
-  box2: {
-    flex: 1,
-    backgroundColor: 'grey'
-  },
-  box3: {
-    flex: 3,
-    backgroundColor: 'white'
-  },
-  box4: {
-    flex: 3,
-    backgroundColor: 'grey'
-  },
-  box5: {
-    flex: 3,
-    backgroundColor: 'white'
-  },
-  editButton: {
-    alignSelf: 'flex-start'
-  },
-  date: {
-    marginBottom: 5,
-    // backgroundColor: '#C8D7E3',
-    marginTop: 10,
-    width: '95%',
-    justifyContent: 'center',
-    borderRadius: 5
-=======
     backgroundColor: 'black',
     flex: 1,
     alignItems: 'center'
@@ -67,12 +36,10 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     fontSize: 60
->>>>>>> 7911439b3978743348c26924f162341198f22431
   }
 });
 
 class SingleEvent extends Component {
-<<<<<<< HEAD
   state = {
     editing: false,
     emailInput: '',
@@ -102,9 +69,7 @@ class SingleEvent extends Component {
     }
   }
 
-=======
-   static navigationOptions = {title: 'Single Event'}
->>>>>>> 7911439b3978743348c26924f162341198f22431
+  static navigationOptions = { title: 'Single Event' };
   render() {
     // const { navigation } = this.props;
     let event = false;
@@ -113,7 +78,65 @@ class SingleEvent extends Component {
       return (
         { event } && (
           <View style={styles.container}>
-<<<<<<< HEAD
+            <View style={[styles.boxContainer, styles.box1]}>
+              <Text style={styles.text}>DETAILS</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box2]}>
+              <Text>Event:</Text>
+              <Text>{event.name}</Text>
+              <Text>Location:</Text>
+              <Text>{event.location.locationName}</Text>
+              <Text>Date:</Text>
+              <Text>{event.date}</Text>
+              <Text>Time:</Text>
+              <Text>{event.time}</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box3]}>
+              <Text style={styles.text}>INVITEES</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box4]}>
+              <Text>Email:</Text>
+              {event.invites.map(invitee => (
+                <Text key={invitee}> {invitee} </Text>
+              ))}
+              {this.state.editing ? (
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    value={this.state.emailInput}
+                    label="Invite Another Friendo!"
+                    style={styles.input}
+                    onChangeText={emailInput => this.setState({ emailInput })}
+                  />
+                  <Button onPress={this.handleAddToInviteList}>
+                    <Text>invite this friendo!</Text>
+                  </Button>
+                </View>
+              ) : null}
+            </View>
+          </View>
+        )
+      );
+    } else {
+      return null;
+    }
+  }
+}
+
+const mapState = ({ event }) => ({
+  selectedEvent: event.selectedEvent
+});
+
+const mapDispatch = dispatch => ({
+  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email))
+});
+
+export default connect(
+  mapState,
+  mapDispatch
+)(SingleEvent);
+
+/*
+
             <View style={styles.box1}>
               <Text>{event.name}</Text>
               <Button
@@ -163,61 +186,5 @@ class SingleEvent extends Component {
               </View>
             )}
             <View style={styles.box3}>
-=======
-            <View style={[styles.boxContainer, styles.box1]}>
-              <Text style={styles.text}>DETAILS</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box2]}>
-              <Text>Event:</Text>
-              <Text>{event.name}</Text>
-              <Text>Location:</Text>
->>>>>>> 7911439b3978743348c26924f162341198f22431
-              <Text>{event.location.locationName}</Text>
-              <Text>Date:</Text>
-              <Text>{event.date}</Text>
-              <Text>Time:</Text>
-              <Text>{event.time}</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box3]}>
-              <Text style={styles.text}>INVITEES</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box4]}>
-              <Text>Email:</Text>
-              {event.invites.map(invitee => (
-              <Text key={invitee}> {invitee} </Text>
-              ))}
-              {this.state.editing ? (
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    value={this.state.emailInput}
-                    label="Invite Another Friendo!"
-                    style={styles.input}
-                    onChangeText={emailInput => this.setState({ emailInput })}
-                  />
-                  <Button onPress={this.handleAddToInviteList}>
-                    <Text>invite this friendo!</Text>
-                  </Button>
-                </View>
-              ) : null}
-            </View>
-          </View>
-        )
-      );
-    } else {
-      return null;
-    }
-  }
-}
-
-const mapState = ({ event }) => ({
-  selectedEvent: event.selectedEvent
-});
-
-const mapDispatch = dispatch => ({
-  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email))
-});
-
-export default connect(
-  mapState,
-  mapDispatch
-)(SingleEvent);
+            
+            */

@@ -10,7 +10,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 
 class CreateEvent extends Component {
   state = {
-    name: '',
+    name: 'This is an event TEST',
     date: '',
     time: '',
     location: {
@@ -20,7 +20,6 @@ class CreateEvent extends Component {
     },
     host: ''
   };
-
 
   // static navigationOptions = {title: 'Create Event'}
 
