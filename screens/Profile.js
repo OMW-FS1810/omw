@@ -18,37 +18,37 @@ import { ImagePicker, Permissions } from 'expo';
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: "#DCDCDC",
+    backgroundColor: '#DCDCDC'
   },
   headerContent: {
     padding: 30,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   avatar: {
     width: 130,
     height: 130,
     borderRadius: 63,
     borderWidth: 4,
-    borderColor: "white",
-    marginBottom: 10,
+    borderColor: 'white',
+    marginBottom: 10
   },
   name: {
     fontSize: 22,
-    color: "#000000",
-    fontWeight: '600',
+    color: '#000000',
+    fontWeight: '600'
   },
   userInfo: {
     fontSize: 16,
-    color: "#778899",
-    fontWeight: '600',
+    color: '#778899',
+    fontWeight: '600'
   },
   body: {
-    backgroundColor: "#778899",
+    backgroundColor: '#778899',
     height: 500,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   item: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   infoContent: {
     flex: 1,
@@ -64,12 +64,12 @@ const styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
-    marginTop: 20,
+    marginTop: 20
   },
   info: {
     fontSize: 18,
     marginTop: 20,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     width: 30,
     height: 30
   },
@@ -90,158 +90,193 @@ class Profile extends Component {
     editLastName: '',
     err: '',
     editSuccess: ''
-
-  }
+  };
 
   // Current state is based on previous state
   toggleEdit = () => {
-    this.setState(prevState => ({isEditing: !prevState.isEditing}))
-  }
+    this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+  };
 
   editInfo = () => {
-    const {editFirstName, editLastName} = this.state;
-    const {uid, pictureUrl, deviceId, email } = this.props.user;
-      database.ref(`/Users/${this.props.user.uid}`).update({
+    const { editFirstName, editLastName } = this.state;
+    const { uid, pictureUrl, deviceId, email } = this.props.user;
+    database
+      .ref(`/Users/${this.props.user.uid}`)
+      .update({
         first_name: editFirstName,
-        last_name: editLastName,
+        last_name: editLastName
       })
-        // .then(() => database.ref.once('value'))
-        // .then(snapshot => console.log('HELLO', snapshot.val()))
-        .catch(err => this.setState({err: err.message}));
-      this.setState(prevState => ({isEditing: !prevState.isEditing, editSuccess: 'Successfully updated'}));
-      this.props.setUser({
-        uid,
-        email,
-        firstName: editFirstName,
-        lastName: editLastName,
-        pictureUrl,
-        deviceId
-      })
-      setTimeout(() => {
-        this.setState({ editSuccess: '' });
-      }, 5000);
-  }
+      // .then(() => database.ref.once('value'))
+      // .then(snapshot => console.log('HELLO', snapshot.val()))
+      .catch(err => this.setState({ err: err.message }));
+    this.setState(prevState => ({
+      isEditing: !prevState.isEditing,
+      editSuccess: 'Successfully updated'
+    }));
+    this.props.setUser({
+      uid,
+      email,
+      firstName: editFirstName,
+      lastName: editLastName,
+      pictureUrl,
+      deviceId
+    });
+    setTimeout(() => {
+      this.setState({ editSuccess: '' });
+    }, 5000);
+  };
 
   signOutUser = async () => {
     try {
       await firebase.auth().signOut();
       this.props.setUser({});
       this.props.navigation.navigate('loginScreen');
-
-    } catch(err) {
-      this.setState({err: err.message});
+    } catch (err) {
+      this.setState({ err: err.message });
     }
     // Logout in our store (set user to {})
-  }
+  };
 
   selectPicture = async () => {
-    await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
     let result = await ImagePicker.launchImageLibraryAsync();
     //let result = await ImagePicker.launchImageLibraryAsync();
 
     if (!result.cancelled) {
-      this.uploadImage(result.uri, "test-image")
+      this.uploadImage(result.uri, 'test-image')
         .then(() => {
-          Alert.alert("Success");
+          Alert.alert('Success');
         })
-        .catch((error) => {
+        .catch(error => {
           Alert.alert(error);
         });
     }
-  }
+  };
 
   takePicture = async () => {
-    await Permissions.askAsync(Permissions.CAMERA)
+    await Permissions.askAsync(Permissions.CAMERA);
     let result = await ImagePicker.launchCameraAsync();
     //let result = await ImagePicker.launchImageLibraryAsync();
 
     if (!result.cancelled) {
-      this.uploadImage(result.uri, "test-image-2")
+      this.uploadImage(result.uri, 'test-image-2')
         .then(() => {
-          Alert.alert("Success");
+          Alert.alert('Success');
         })
-        .catch((error) => {
+        .catch(error => {
           Alert.alert(error);
         });
     }
-  }
+  };
 
   uploadImage = async (uri, imageName) => {
     const response = await fetch(uri);
     const blob = await response.blob();
 
-    var ref = firebase.storage().ref().child("images/" + imageName);
+    var ref = firebase
+      .storage()
+      .ref()
+      .child('images/' + imageName);
     return ref.put(blob);
-  }
+  };
 
   render() {
-    const {isEditing, err, editSuccess} = this.state;
+    const { isEditing, err, editSuccess } = this.state;
     // console.log('Profile props:', this.props.user);
     return (
       <View style={styles.container}>
-        {isEditing ? <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Image style={styles.avatar} source={{ uri: `${this.props.user.pictureUrl}` }} />
-            <Button title="Choose image..." onPress={this.selectPicture}>Picture Library </Button>
-            <Button title="Choose image..." onPress={this.takePicture}>Take Picture </Button>
-              <TextInput
-                style={styles.input}
-                onChangeText={editFirstName => this.setState(
-                    { editFirstName }
-                  )}
-                autoCapitalize="sentences"
-                autoComplete="name"
-                placeholder={this.props.user.firstName} />
-              <TextInput
-                style={styles.input}
-                onChangeText={editLastName => this.setState(
-                    { editLastName }
-                  )}
-                autoCapitalize="sentences"
-                autoComplete="name"
-                placeholder={this.props.user.lastName} />
-            </View>
-          </View> : <View style={styles.header}>
+        {isEditing ? (
+          <View style={styles.header}>
             <View style={styles.headerContent}>
-              <Image style={styles.avatar} source={{ uri: `${this.props.user.pictureUrl}` }} />
+              <Image
+                style={styles.avatar}
+                source={{ uri: `${this.props.user.pictureUrl}` }}
+              />
+              <Button title="Choose image..." onPress={this.selectPicture}>
+                Picture Library{' '}
+              </Button>
+              <Button title="Choose image..." onPress={this.takePicture}>
+                Take Picture{' '}
+              </Button>
+              <TextInput
+                style={styles.input}
+                onChangeText={editFirstName => this.setState({ editFirstName })}
+                autoCapitalize="sentences"
+                autoComplete="name"
+                placeholder={this.props.user.firstName}
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={editLastName => this.setState({ editLastName })}
+                autoCapitalize="sentences"
+                autoComplete="name"
+                placeholder={this.props.user.lastName}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <Image
+                style={styles.avatar}
+                source={{ uri: `${this.props.user.pictureUrl}` }}
+              />
               <Text style={styles.name}>
                 {this.props.user.firstName} {this.props.user.lastName}{' '}
               </Text>
               <Text style={styles.userInfo}>{this.props.user.email} </Text>
             </View>
-          </View>}
+          </View>
+        )}
         <View style={styles.body}>
           <View style={styles.item}>
             <View style={styles.iconContent}>
-              <Image style={styles.icon} source={{ uri: 'https://png.icons8.com/home/win8/50/ffffff' }} />
+              <Image
+                style={styles.icon}
+                source={{ uri: 'https://png.icons8.com/home/win8/50/ffffff' }}
+              />
             </View>
-            <TouchableOpacity style={styles.infoContent} color="#ffffff" onPress={() => this.props.navigation.navigate('Event Map')}>
+            <TouchableOpacity
+              style={styles.infoContent}
+              color="#ffffff"
+              onPress={() => this.props.navigation.navigate('Event Map')}
+            >
               <Text>Home</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.item}>
             <View style={styles.iconContent}>
-              <Image style={styles.icon} source={{ uri: 'https://png.icons8.com/events/win8/50/ffffff' }} />
+              <Image
+                style={styles.icon}
+                source={{ uri: 'https://png.icons8.com/events/win8/50/ffffff' }}
+              />
             </View>
-            <TouchableOpacity style={styles.infoContent} onPress={() => this.props.navigation.navigate('Create an Event')}>
+            <TouchableOpacity
+              style={styles.infoContent}
+              onPress={() => this.props.navigation.navigate('Create an Event')}
+            >
               <Text>Events</Text>
             </TouchableOpacity>
           </View>
           <Button title="Sign out" onPress={this.signOutUser}>
-          Sign out
+            Sign out
           </Button>
-            {editSuccess ? <Text> {editSuccess} </Text> : null}
-            {err ? <Text> {err} </Text> : null}
-            {!isEditing && <Button title="Edit" onPress={this.toggleEdit}>
-            Edit
-          </Button>}
-            {isEditing && <Button title="Edit" onPress={this.editInfo}>
-            Save
-          </Button>}
+          {editSuccess ? <Text> {editSuccess} </Text> : null}
+          {err ? <Text> {err} </Text> : null}
+          {!isEditing && (
+            <Button title="Edit" onPress={this.toggleEdit}>
+              Edit
+            </Button>
+          )}
+          {isEditing && (
+            <Button title="Edit" onPress={this.editInfo}>
+              Save
+            </Button>
+          )}
         </View>
       </View>
-    )
+    );
   }
 }
 

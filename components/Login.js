@@ -42,7 +42,7 @@ let styles = StyleSheet.create({
     backgroundColor: color.darkOrange,
     borderRadius: 25,
     marginVertical: 10,
-    paddingVertical: 13,
+    paddingVertical: 13
   },
   buttonText: {
     fontSize: fontSize.regular + 2,
@@ -75,9 +75,9 @@ class Login extends React.Component {
         });
         const thisUserData = {
           email: thisUser.email,
-          firstName: thisUser.first_name,
-          lastName: thisUser.last_name,
-          pictureUrl: thisUser.profile_picture,
+          firstName: thisUser.first_name || '',
+          lastName: thisUser.last_name || '',
+          pictureUrl: thisUser.profile_picture || '',
           uid: data.user.uid
         };
 
@@ -114,7 +114,10 @@ class Login extends React.Component {
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <TouchableOpacity style={[styles.button, styles.containerView]} onPress={this.handlePress}>
+        <TouchableOpacity
+          style={[styles.button, styles.containerView]}
+          onPress={this.handlePress}
+        >
           <Text style={styles.buttonText}>SIGN IN</Text>
         </TouchableOpacity>
       </View>

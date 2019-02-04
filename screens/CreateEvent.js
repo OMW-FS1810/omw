@@ -69,6 +69,7 @@ class CreateEvent extends Component {
           renderDescription={row => row.description} // custom description render
           onPress={async (data, details = null) => {
             // 'details' is provided when fetchDetails = true
+            // console.log(details);
             await this.setState({
               location: {
                 locationName: data.structured_formatting.main_text,
@@ -164,7 +165,7 @@ class CreateEvent extends Component {
         <View style={styles.bottom}>
           <Button
             onPress={this.handlePress}
-            title='next'
+            title="next"
             type="contained"
             disabled={
               !this.state.date ||
