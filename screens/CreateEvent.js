@@ -53,7 +53,7 @@ class CreateEvent extends Component {
         </View>
         <TextInput
           style={styles.input}
-          mode="outlined"
+          // mode="outlined"
           label="Event Name"
           value={this.state.name}
           onChangeText={name => this.setState({ name })}
@@ -164,7 +164,7 @@ class CreateEvent extends Component {
         <View style={styles.bottom}>
           <Button
             onPress={this.handlePress}
-            title='next'
+            title="next"
             type="contained"
             disabled={
               !this.state.date ||
