@@ -23,6 +23,8 @@ import {
   Notifications
 } from '../screens';
 
+import { Snackbar } from '../components';
+
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator(
   {
@@ -35,25 +37,27 @@ const DrawerStack = createDrawerNavigator(
     Notifications: { screen: Notifications }
   },
   {
-    // headerMode: 'float',
+    headerMode: 'float',
     drawerPosition: 'right',
     navigationOptions: ({ navigation }) => ({
-      headerStyle: { backgroundColor: 'transparent' },
+      // headerStyle: { backgroundColor: 'transparent' },
       // title: 'Logged in!',
       headerRight: (
         <Icon
           name="menu"
           color={color.blue}
           containerStyle={{ paddingRight: 10 }}
-          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          onPress={() => {
+            console.log('hamburger pressed');
+            navigation.dispatch(DrawerActions.toggleDrawer());
+          }}
         />
       )
     })
-  },
-  { headerMode: 'none' }
+  }
 );
 
-//CREATE EVENT STACK
+//CREATE EVENT STACK}
 const CreateEventStack = createStackNavigator({
   createEventScreen: { screen: CreateEvent },
   inviteScreen: { screen: Invite }

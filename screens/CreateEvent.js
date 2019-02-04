@@ -166,12 +166,12 @@ class CreateEvent extends Component {
             onPress={this.handlePress}
             title='next'
             type="contained"
-            // disabled={
-            //   !this.state.date ||
-            //   !this.state.name ||
-            //   !this.state.time ||
-            //   !this.state.location
-            // }
+            disabled={
+              !this.state.date ||
+              !this.state.name ||
+              !this.state.time ||
+              !this.state.location
+            }
           >
             <Text style={styles.butonText}>next</Text>
           </Button>

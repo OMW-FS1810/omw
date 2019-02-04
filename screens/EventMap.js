@@ -1,192 +1,462 @@
 import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
-import { Portal } from 'react-native-paper';
-import { Location, Permissions, TaskManager, Constants } from 'expo';
-import { Map, EventList, Snackbar } from '../components';
-import { database } from '../config/firebase';
+import {
+  StyleSheet,
+  ActivityIndicator,
+  View,
+  TouchableOpacity,
+  Animated,
+  Text
+} from 'react-native';
+
+import { MapView } from 'expo';
+import {
+  SingleEventMapCards,
+  AllEventsMapCards,
+  MemberMarkers,
+  EventMarkers,
+  Snackbar
+} from '../components';
 import { connect } from 'react-redux';
-import { store } from '../redux/store';
-import AllEventsMap from '../components/AllEventsMap';
-import { NavigationEvents } from 'react-navigation';
-import * as theme from '../styles/theme';
-const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
+import { mapStyle } from '../styles/mapStyle';
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+  MaterialIcons,
+  Entypo,
+  AntDesign
+} from '@expo/vector-icons';
+import { getMyLocationNow } from '../helpers/location';
+import { fetchAllEvents, setSelectedEvent } from '../redux/store';
+import { database } from '../config/firebase';
+
+import { Dimensions } from 'react-native';
+import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
+
+class EventMap extends React.Component {
+  state = {
+    loading: false,
+    localMapRegion: null,
+    eventMembers: {}
+  };
+
+  //this updates the map region when the user interacts with the map
+  updateMapRegion = region => {
+    this.setState({ localMapRegion: region });
+  };
+
+  recenterMap = async () => {
+    const myRegion = await getMyLocationNow();
+    this.animateToMapPosition(myRegion);
+  };
+
+  animateToMapPosition = position => {
+    this.map.animateToRegion(position, 300);
+  };
+
+  // change region to follow cards
+  mapAnimation = value => {
+    let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+    if (index >= this.props.allEvents.length) {
+      index = this.props.allEvents.length - 1;
+    }
+    if (index <= 0) {
+      index = 0;
+    }
+
+    clearTimeout(this.regionTimeout);
+    this.regionTimeout = setTimeout(() => {
+      if (this.index !== index) {
+        this.index = index;
+        let latitude, longitude;
+        if (Object.keys(this.state.eventMembers).length) {
+          const memberArr = Object.keys(this.state.eventMembers)
+            .map(memberEmail => {
+              return [memberEmail, this.state.eventMembers[memberEmail]];
+            })
+            .filter(member => member[1]);
+          console.log(memberArr);
+          latitude = memberArr[index][1].coords.latitude;
+          longitude = memberArr[index][1].coords.longitude;
+        } else {
+          for (let uid in this.props.allEvents[index]) {
+            latitude = this.props.allEvents[index][uid].location.locationGeocode
+              .lat;
+            longitude = this.props.allEvents[index][uid].location
+              .locationGeocode.lng;
+          }
+        }
+        this.animateToMapPosition({
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.043
+        });
+      }
+    }, 10);
+  };
+
+  trackMembersStart = members => {
+    try {
+      const userLocationsDB = database.ref(`/Devices/`);
+
+      members.forEach(async memberEmail => {
+        await userLocationsDB
+          .orderByChild('email')
+          .equalTo(memberEmail.toLowerCase())
+          .on('value', snapshot => {
+            this.setState({
+              eventMembers: {
+                ...this.state.eventMembers,
+                [memberEmail.toLowerCase()]:
+                  snapshot.val() && Object.values(snapshot.val())[0]
+              }
+            });
+          });
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  trackMembersStop = members => {
+    try {
+      const userLocationsDB = database.ref(`/Devices/`);
+
+      members.forEach(async memberEmail => {
+        await userLocationsDB
+          .orderByChild('email')
+          .equalTo(memberEmail.toLowerCase())
+          .off('value');
+      });
+      this.setState({ eventMembers: {} });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  selectEvent = async event => {
+    await this.props.setSelectedEvent(event);
+
+    const location = Object.values(event)[0].location;
+    const latitude = location.locationGeocode.lat;
+    const longitude = location.locationGeocode.lng;
+    const newRegion = {
+      latitude,
+      longitude,
+      latitudeDelta: 0.1226,
+      longitudeDelta: 0.0467
+    };
+    await this.trackMembersStart(Object.values(event)[0].invites);
+
+    //for some reason i can't get a smooth transition here
+    // setTimeout(() => {
+    // this.animateToMapPosition(newRegion);
+    // }, 50);
+
+    this.setState({ localMapRegion: newRegion });
+  };
+
+  clearEvent = async () => {
+    await this.trackMembersStop(
+      Object.values(this.props.selectedEvent)[0].invites
+    );
+    await this.props.setSelectedEvent({});
+  };
+
+  async componentDidMount() {
+    try {
+      this.setState({ loading: true });
+      //gets my location
+      await this.setState({ localMapRegion: await getMyLocationNow() });
+      await this.props.fetchEvents(this.props.user.email);
+      this.setState({ loading: false });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  render() {
+    const { navigation, allEvents, selectedEvent } = this.props;
+    let interpolations;
+    if (allEvents.length) {
+      interpolations = allEvents.map((event, index) => {
+        const inputRange = [
+          (index - 1) * CARD_WIDTH,
+          index * CARD_WIDTH,
+          (index + 1) * CARD_WIDTH
+        ];
+        const scale = this.props.animation.interpolate({
+          inputRange,
+          outputRange: [1, 2.5, 1],
+          extrapolate: 'clamp'
+        });
+        const opacity = this.props.animation.interpolate({
+          inputRange,
+          outputRange: [0.35, 1, 0.35],
+          extrapolate: 'clamp'
+        });
+        return { scale, opacity };
+      });
+    }
+
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator
+          animating={this.state.loading}
+          color="darkgrey"
+          size="large"
+          style={{ margin: 15 }}
+        />
+        {this.state.localMapRegion && (
+          <>
+            <MapView
+              ref={map => (this.map = map)}
+              style={styles.map}
+              showsUserLocation={true}
+              followsUserLocation={true}
+              showsMyLocationButton={false}
+              showsScale={true}
+              region={this.state.localMapRegion}
+              onRegionChangeComplete={e => this.updateMapRegion(e)}
+              provider={MapView.PROVIDER_GOOGLE}
+              customMapStyle={mapStyle}
+            >
+              {Object.keys(selectedEvent).length ? (
+                <>
+                  <MemberMarkers
+                    eventMembers={this.state.eventMembers}
+                    me={this.props.user.email}
+                  />
+                  <MapView.Marker
+                    coordinate={{
+                      latitude: Object.values(this.props.selectedEvent)[0]
+                        .location.locationGeocode.lat,
+                      longitude: Object.values(this.props.selectedEvent)[0]
+                        .location.locationGeocode.lng
+                    }}
+                    title={Object.values(this.props.selectedEvent)[0].name}
+                    description={
+                      Object.values(this.props.selectedEvent)[0].date
+                    }
+                  >
+                    <SimpleLineIcons
+                      name="location-pin"
+                      size={30}
+                      color="red"
+                    />
+                  </MapView.Marker>
+                </>
+              ) : allEvents.length ? (
+                <EventMarkers
+                  allEvents={allEvents}
+                  interpolations={interpolations}
+                  me={this.props.user.email}
+                />
+              ) : null}
+            </MapView>
+            {Object.keys(selectedEvent).length ? (
+              <>
+                <MapView.Callout style={styles.allEventsButton}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.clearEvent();
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="map-marker-multiple"
+                      size={24}
+                      color="teal"
+                    />
+                    <Text>Show all events</Text>
+                  </TouchableOpacity>
+                </MapView.Callout>
+                <MapView.Callout style={styles.eventDetailsButton}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log('I pressed details!');
+                    }}
+                  >
+                    <MaterialIcons name="event-note" size={24} color="teal" />
+                    <Text>Event details</Text>
+                  </TouchableOpacity>
+                </MapView.Callout>
+                <MapView.Callout style={styles.centerEventButton}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const latitude = Object.values(
+                        this.props.selectedEvent
+                      )[0].location.locationGeocode.lat;
+                      const longitude = Object.values(
+                        this.props.selectedEvent
+                      )[0].location.locationGeocode.lng;
+
+                      this.animateToMapPosition({
+                        latitude,
+                        longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.043
+                      });
+                    }}
+                  >
+                    <Entypo name="location" size={24} color="teal" />
+                    <Text>Center event</Text>
+                  </TouchableOpacity>
+                </MapView.Callout>
+              </>
+            ) : (
+              <MapView.Callout style={styles.allEventsButton}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.props.navigation.navigate('Create an Event');
+                  }}
+                >
+                  <AntDesign name="pluscircleo" size={45} color="teal" />
+                  <Text>Create an event</Text>
+                </TouchableOpacity>
+              </MapView.Callout>
+            )}
+
+            <Animated.ScrollView
+              horizontal
+              scrollEventThrottle={1}
+              showsHorizontalScrollIndicator={false}
+              snapToInterval={CARD_WIDTH}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        x: this.props.animation
+                      }
+                    }
+                  }
+                ],
+                {
+                  listener: event => {
+                    this.mapAnimation(event.nativeEvent.contentOffset.x);
+                  }
+                },
+                { useNativeDriver: true }
+              )}
+              style={styles.scrollView}
+              contentContainerStyle={styles.endPadding}
+            >
+              {Object.keys(selectedEvent).length ? (
+                <SingleEventMapCards
+                  eventMembers={this.state.eventMembers}
+                  me={this.props.user.email}
+                  animateToMapPosition={this.animateToMapPosition}
+                />
+              ) : (
+                <AllEventsMapCards
+                  allEvents={allEvents}
+                  selectEvent={this.selectEvent}
+                  // animateToMapPosition={this.animateToMapPosition}
+                />
+              )}
+            </Animated.ScrollView>
+
+            <MapView.Callout style={styles.myLocationButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.recenterMap();
+                }}
+              >
+                <Ionicons name="md-locate" size={40} color="teal" />
+              </TouchableOpacity>
+            </MapView.Callout>
+            <Snackbar navigation={navigation} />
+          </>
+        )}
+      </View>
+    );
+  }
+}
 
 let styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  map: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  },
+  myLocationButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    shadowColor: 'black',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.7,
+    shadowRadius: 1,
+    elevation: 1
+  },
+  scrollView: {
+    position: 'absolute',
+    bottom: 50,
+    left: 0,
+    right: 0,
+    paddingVertical: 10
+  },
+  endPadding: {
+    paddingRight: width - CARD_WIDTH
+  },
+  allEventsButton: {
+    padding: 10,
+    top: 10,
+    width: 80,
+    height: 100,
+    left: 10,
+    borderRadius: 5,
+    borderColor: 'teal',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    alignItems: 'center'
+  },
+  eventDetailsButton: {
+    padding: 10,
+    top: 10,
+    width: 80,
+    height: 100,
+    left: 100,
+    borderRadius: 5,
+    borderColor: 'teal',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    alignItems: 'center'
+  },
+  centerEventButton: {
+    padding: 10,
+    top: 120,
+    width: 80,
+    height: 100,
+    left: 10,
+    borderRadius: 5,
+    borderColor: 'teal',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    alignItems: 'center'
   }
 });
 
-const SEND_LOCATION = 'sendLocation';
-
-const deviceId = Constants.installationId;
-
-//This logs our location, running in the background -- eventually move this to when the app is opened
-TaskManager.defineTask(SEND_LOCATION, async ({ data: { locations }, err }) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  try {
-    await database.ref(`/Devices/${deviceId}`).update({
-      coords: locations[0].coords,
-      timestamp: locations[0].timestamp
-    });
-  } catch (error) {
-    console.error(error);
-  }
+const mapStateToProps = state => ({
+  allEvents: state.event.allEvents,
+  selectedEvent: state.event.selectedEvent,
+  user: state.user.user,
+  animation: state.animate.allEventsAnimate
 });
 
-class EventMap extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      region: null,
-      //Eventually state will be tied to the redux store...
-      /*
-      event: {
-        name: '',
-        date: '',
-        time: '',
-        location: {
-          locationName: '',
-          locationAddress: '',
-          locationGeocode: {
-            latitude: '',
-            longitude: ''
-          }
-        }
-      },
-      eventMembers: [],
-      backgroundLocation: false,
-      errorMessage: ''
-      */
+const mapDispatchToProps = dispatch => ({
+  fetchEvents: email => dispatch(fetchAllEvents(email)),
+  setSelectedEvent: event => dispatch(setSelectedEvent(event))
+});
 
-      // --> THIS IS TESTING HARDCODED EVENT DATA...
-      event: {
-        name: 'Party on the Roof',
-        date: '2-15-2019',
-        time: '7:00 PM',
-        location: {
-          locationName: 'Willis Tower',
-          locationAddress: '',
-          locationGeocode: { latitude: 41.8789, longitude: -87.6358 }
-        }
-      },
-      eventMembers: [],
-      backgroundLocation: false,
-      errorMessage: ''
-    };
-  }
-  static navigationOptions = {
-    title: 'MY EVENTS',
-    headerStyle: {
-      backgroundColor: color.darkBlue,
-      fontSize: fontSize.regular
-    },
-    headerTintColor: color.whiteBlue,
-    headerTitleStyle: {
-      fontFamily: fontFamily.medium
-    },
-  };
-
-  //this updates the map region when the user interacts with the map
-  updateMapRegion = region => {
-    this.setState({ region });
-  };
-  //This gets our initial position and region for our map
-  getLocationAsync = async () => {
-    try {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        this.setState({
-          errorMessage: 'Permission to access location was denied'
-        });
-      }
-      const location = await Location.getCurrentPositionAsync({});
-      //send initial location to the DB
-      try {
-        await database.ref(`/Devices/${deviceId}`).update({
-          coords: location.coords,
-          timestamp: location.timestamp
-        });
-      } catch (error) {
-        console.error(error);
-      }
-
-      //might want to calculate starting delta based on event location so it's shown along with user position
-      const region = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.043
-      };
-      this.setState({ region });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  setBackgroundLocation = async () => {
-    const isPolling = await Location.hasStartedLocationUpdatesAsync(
-      SEND_LOCATION
-    );
-    if (isPolling) {
-      await Location.stopLocationUpdatesAsync(SEND_LOCATION);
-      this.setState({ backgroundLocation: false });
-    } else {
-      //triggers sending my location -- works in the background on iOS
-      await Location.startLocationUpdatesAsync(SEND_LOCATION, {
-        accuracy: Location.Accuracy.Balanced,
-        distanceInterval: 50,
-        timeInterval: 60000
-      });
-      this.setState({ backgroundLocation: true });
-    }
-  };
-  locateMembers = members => {
-    //turns the object into an array
-    const eventMembers = Object.keys(members)
-      // filters this device out of the group of members (disabled)
-      // .filter(member => member !== myId)
-      .map(device => {
-        return [device, members[device]];
-      });
-    this.setState({ eventMembers });
-  };
-  async componentDidMount() {
-    try {
-      //gets my location
-      await this.getLocationAsync();
-
-      //FIX!!!!! This will have to be event-specific eventually -- and tied into users
-      // local state can be set to match redux store selected event or the props can just be passed down from the store to the map
-      const userLocationsDB = database.ref(`/Devices/`);
-
-      await userLocationsDB.on('value', snapshot => {
-        return this.locateMembers(snapshot.val());
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  render() {
-    const { region, eventMembers, event, backgroundLocation } = this.state;
-    const { user, navigation } = this.props;
-    return (
-      region && (
-        <AllEventsMap
-          // user={user.user}
-          region={region}
-          updateMapRegion={this.updateMapRegion}
-          navigation={this.props.navigation}
-        />
-      )
-    );
-  }
-}
-
-const mapStateToProps = ({ user, nav }) => ({ user, nav });
-
-export default connect(mapStateToProps)(EventMap);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EventMap);
