@@ -24,7 +24,7 @@ class Invite extends Component {
     });
     // is this where we want to go?
     // need to populate the new event in the store!
-    console.log('selected event in invite', this.props.selectedEvent);
+    // console.log('selected event in invite', this.props.selectedEvent);
     this.props.navigation.navigate('SingleEvent');
   };
 
