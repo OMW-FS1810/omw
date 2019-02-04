@@ -13,6 +13,8 @@ import { Constants } from 'expo';
 // import { Button } from 'react-native-paper'
 import * as firebase from 'firebase';
 
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 const deviceId = Constants.installationId;
 
 let styles = StyleSheet.create({
@@ -25,25 +27,27 @@ let styles = StyleSheet.create({
     alignItems: 'center'
   },
   inputContainer: {
-    width: 300,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: windowWidth - 40,
     borderRadius: 25,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#aaa',
+    color: color.darkBlue,
     marginVertical: 10
+  },
+  containerView: {
+    width: windowWidth - 40
   },
   button: {
     width: 300,
-    backgroundColor: '#1c313a',
+    backgroundColor: color.darkOrange,
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#aaa',
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold,
+    color: '#FFFFFF',
     textAlign: 'center'
   }
 });
@@ -92,6 +96,8 @@ class Login extends React.Component {
         <Text> {this.state.error} </Text>
         <TextInput
           style={styles.inputContainer}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
           placeholder="Email"
           placeholderTextColor="#aaa"
           keyboardType="email-address"
@@ -100,14 +106,19 @@ class Login extends React.Component {
         />
         <TextInput
           style={styles.inputContainer}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
           placeholder="Password"
           secureTextEntry={true}
           placeholderTextColor="#aaa"
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <TouchableOpacity style={styles.button} onPress={this.handlePress}>
-          <Text style={styles.buttonText}>Sign in</Text>
+        <TouchableOpacity
+          style={[styles.button, styles.containerView]}
+          onPress={this.handlePress}
+        >
+          <Text style={styles.buttonText}>SIGN IN</Text>
         </TouchableOpacity>
       </View>
     );

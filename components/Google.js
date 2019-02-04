@@ -6,6 +6,7 @@ import {
   Text,
   ActivityIndicator
 } from 'react-native';
+import { SocialIcon } from 'react-native-elements';
 import { setUserAndDevice } from '../redux/store';
 import { connect } from 'react-redux';
 // import { Button } from 'react-native-paper'
@@ -14,11 +15,13 @@ import * as firebase from 'firebase';
 import { GOOGLE_IOS_LOGIN_KEY } from '../secrets';
 import { database } from '../config/firebase';
 
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'blue'
   },
   content: {
     alignItems: 'center'
@@ -32,18 +35,20 @@ let styles = StyleSheet.create({
     color: '#aaa',
     marginVertical: 10
   },
-  button: {
-    width: 300,
-    backgroundColor: '#1c313a',
-    borderRadius: 25,
-    marginVertical: 10,
-    paddingVertical: 13
+  containerView: {
+    width: windowWidth - 40
+  },
+
+  socialButton: {
+    height: normalize(55),
+    borderRadius: 4,
+    marginTop: 0,
+    marginBottom: 0,
+    backgroundColor: color.darkOrange
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#aaa',
-    textAlign: 'center'
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold
   }
 });
 
@@ -152,7 +157,6 @@ class Google extends React.Component {
           .on('value', async snapshot => {
             thisUid = await snapshot.val();
             if (thisUid) {
-
               const thisUidFormatted = Object.keys(thisUid)[0];
               const user = Object.values(thisUid)[0];
               const thisUser = {
@@ -178,20 +182,25 @@ class Google extends React.Component {
 
   render() {
     return (
-      <View style={styles.content}>
-        <TouchableOpacity
-          style={styles.button}
+      <>
+        <SocialIcon
+          raised
+          button
+          type="google"
+          title="SIGN UP WITH GOOGLE"
+          iconSize={19}
+          style={[styles.containerView, styles.socialButton]}
+          fontStyle={styles.buttonText}
           onPress={this.signInWithGoogleAsync}
-        >
-          <Text style={styles.buttonText}>Sign in with Google</Text>
-        </TouchableOpacity>
+          underlayColor= {color.orange}
+        />
         <ActivityIndicator
           animating={this.state.loading}
           color="white"
           size="large"
           style={{ margin: 15 }}
         />
-      </View>
+      </>
     );
   }
 }
