@@ -1,6 +1,12 @@
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity
+} from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { connect } from 'react-redux';
 import { populateEventDeets, fetchAllEvents } from '../redux/event';
@@ -90,7 +96,6 @@ class CreateEvent extends Component {
             }}
             styles={{
               container: {
-                flex: 1,
                 width: windowWidth - 40,
                 marginTop: 10,
                 borderWidth: 1,
@@ -140,35 +145,35 @@ class CreateEvent extends Component {
             debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
           />
 
-          <DatePicker
-            label="Date"
-            date={this.state.date}
-            mode="date"
-            showIcon={false}
-            style={styles.picker}
-            onDateChange={date => this.setState({ date })}
-            placeholder="Select Date"
-            format="MM-DD-YYYY"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-          />
-          <DatePicker
-            mode="time"
-            showIcon={false}
-            date={this.state.time}
-            placeholder="Pick a Time"
-            style={styles.picker}
-            onDateChange={time => this.setState({ time })}
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-          />
+            <DatePicker
+              label="Date"
+              date={this.state.date}
+              mode="date"
+              showIcon={false}
+              style={styles.picker}
+              onDateChange={date => this.setState({ date })}
+              placeholder="Select Date"
+              format="MM-DD-YYYY"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+            />
+            <DatePicker
+              mode="time"
+              showIcon={false}
+              date={this.state.time}
+              placeholder="Pick a Time"
+              style={styles.picker}
+              onDateChange={time => this.setState({ time })}
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+            />
+
         </View>
 
         <View style={styles.bottom}>
-          <Button
+          <TouchableOpacity
+            style={[styles.button, styles.containerView]}
             onPress={this.handlePress}
-            title="next"
-            type="contained"
             disabled={
               !this.state.date ||
               !this.state.name ||
@@ -176,8 +181,8 @@ class CreateEvent extends Component {
               !this.state.location
             }
           >
-            <Text style={styles.buttonText}>next</Text>
-          </Button>
+            <Text style={styles.buttonText}>NEXT</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -220,22 +225,32 @@ let styles = StyleSheet.create({
   bottom: {
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: 36
-  },
-  buttonText: {
-    fontSize: 30,
-    position: 'absolute',
-    bottom: 0
+    marginBottom: 36,
+    alignItems: 'center'
   },
   location: {
     borderWidth: 0,
-    alignSelf: 'center'
+
   },
+
   content: {
     flex: 1,
     alignItems: 'center',
     alignSelf: 'center',
     width: windowWidth - 40
+  },
+  button: {
+    width: 300,
+    backgroundColor: color.darkOrange,
+    borderRadius: 25,
+    marginVertical: 10,
+    paddingVertical: 13
+  },
+  buttonText: {
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold,
+    color: '#FFFFFF',
+    textAlign: 'center'
   }
 });
 

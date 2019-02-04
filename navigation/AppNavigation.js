@@ -112,7 +112,7 @@ export default createAppContainer(
       //CreateMap: { screen: CreateMapStack }
     },
     {
-      initialRouteName: 'LoginStack'
+      initialRouteName: 'AuthLoading'
     }
   )
 );
