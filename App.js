@@ -1,22 +1,15 @@
 import React from 'react';
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import { Provider as StoreProvider } from 'react-redux';
-import { Font, AppLoading } from 'expo';
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font'
 
 import { AppWithNavigationState, store } from './redux/store';
-// import * as theme from './styles/theme';
+import * as theme from './styles/theme';
 
-// function cacheFonts(fonts) {
-//   return fonts.map(font => Font.loadAsync(font));
-// }
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'blue',
-    accent: 'green'
-  }
-};
+function cacheFonts(fonts) {
+  return fonts.map(font => Font.loadAsync(font));
+}
 
 export default class App extends React.Component {
   constructor() {
@@ -26,28 +19,28 @@ export default class App extends React.Component {
     };
   }
 
-  // async _loadAssetsAsync() {
-  //   const fontAssets = cacheFonts([
-  //     { RobotoExtraBold: require('./assets/fonts/Roboto-Black.ttf') },
-  //     { RobotoBold: require('./assets/fonts/Roboto-Bold.ttf') },
-  //     { RobotoMedium: require('./assets/fonts/Roboto-Medium.ttf') },
-  //     { RobotoRegular: require('./assets/fonts/Roboto-Regular.ttf') },
-  //     { RobotoLight: require('./assets/fonts/Roboto-Light.ttf') }
-  //   ]);
+  async _loadAssetsAsync() {
+    const fontAssets = cacheFonts([
+      { RobotoExtraBold: require('./assets/fonts/Roboto-Black.ttf') },
+      { RobotoBold: require('./assets/fonts/Roboto-Bold.ttf') },
+      { RobotoMedium: require('./assets/fonts/Roboto-Medium.ttf') },
+      { RobotoRegular: require('./assets/fonts/Roboto-Regular.ttf') },
+      { RobotoLight: require('./assets/fonts/Roboto-Light.ttf') }
+    ]);
 
-  //   await Promise.all([...fontAssets]);
-  // }
+    await Promise.all([...fontAssets]);
+  }
 
   render() {
-    // if (!this.state.isReady) {
-    //   return (
-    //     <AppLoading
-    //       startAsync={this._loadAssetsAsync}
-    //       onFinish={() => this.setState({ isReady: true })}
-    //       onError={console.warn}
-    //     />
-    //   );
-    // }
+    if (!this.state.isReady) {
+      return (
+        <AppLoading
+          startAsync={this._loadAssetsAsync}
+          onFinish={() => this.setState({ isReady: true })}
+          onError={console.warn}
+        />
+      );
+    }
 
     return (
       <StoreProvider store={store}>

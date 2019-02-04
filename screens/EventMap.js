@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import { store } from '../redux/store';
 import AllEventsMap from '../components/AllEventsMap';
 import { NavigationEvents } from 'react-navigation';
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 let styles = StyleSheet.create({
   container: {
@@ -78,6 +80,18 @@ class EventMap extends React.Component {
       errorMessage: ''
     };
   }
+  static navigationOptions = {
+    title: 'MY EVENTS',
+    headerStyle: {
+      backgroundColor: color.darkBlue,
+      fontSize: fontSize.regular
+    },
+    headerTintColor: color.whiteBlue,
+    headerTitleStyle: {
+      fontFamily: fontFamily.medium
+    },
+  };
+
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
     this.setState({ region });
