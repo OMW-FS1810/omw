@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { addEmailToEvent } from '../redux/store';
 import * as theme from '../styles/theme';
 
@@ -35,6 +35,16 @@ const styles = StyleSheet.create({
     // flex: 1,
     backgroundColor: color.blue,
     alignItems: 'center'
+  },
+  inputContainer: {
+    width: windowWidth - 33,
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    fontSize: 18,
+    fontFamily: fontFamily.light,
+    color: color.darkBlue,
+    marginVertical: 15,
+    alignSelf: 'center'
   },
   titleText: {
     fontFamily: fontFamily.bold,
@@ -73,10 +83,7 @@ class SingleEvent extends Component {
   state = {
     editing: false,
     emailInput: '',
-    uid: '',
-    editName: '',
-    editDate: '',
-    editTime: ''
+    uid: ''
   };
 
   handleAddToInviteList = () => {
@@ -86,21 +93,21 @@ class SingleEvent extends Component {
     this.setState({ emailInput: '' });
   };
 
-  handlePress = () => {
+  handlePressAddEmail = () => {
     console.log('PREST!');
     this.setState({ editing: true });
+  };
+
+  handleSubmitEmail = () => {
+    console.log('email:', this.state.emailInput);
+    console.log('uid', this.state.uid);
   };
 
   async componentDidMount() {
     if (this.props.selectedEvent) {
       const { name, date, time } = Object.values(this.props.selectedEvent)[0];
       const uid = Object.keys(this.props.selectedEvent)[0];
-      await this.setState({
-        uid,
-        editName: name,
-        editDate: date,
-        editTime: time
-      });
+      await this.setState({ uid });
     }
   }
 
@@ -136,28 +143,53 @@ class SingleEvent extends Component {
                     {invitee}
                   </Text>
                 ))}
-                <TouchableOpacity
-                  disabled={this.state.editing}
-                  onPress={this.handlePress}
-                >
-                  <Text
-                    style={[
-                      styles.addButton,
-                      {
-                        color: this.state.editing
-                          ? color.grey
-                          : color.darkOrange
-                      }
-                    ]}
-                  >
-                    <MaterialCommunityIcons
-                      name="email-plus"
-                      size={30}
-                      style={styles.addButton}
+                {this.state.editing ? (
+                  <>
+                    <TextInput
+                      style={styles.inputContainer}
+                      placeholder="Email"
+                      placeholderTextColor="#aaa"
+                      clearButtonMode="while-editing"
+                      borderBottomColor={theme.blue}
+                      value={this.state.emailInput}
+                      onChangeText={emailInput => this.setState({ emailInput })}
                     />
-                    {'  '}Invite another friendo!
-                  </Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                      disabled={!this.state.emailInput}
+                      onPress={this.handleSubmitEmail}
+                    >
+                      <AntDesign
+                        style={{ left: 16 }}
+                        name="enter"
+                        size={30}
+                        color={theme.orange}
+                      />
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <TouchableOpacity
+                    disabled={this.state.editing}
+                    onPress={this.handlePressAddEmail}
+                  >
+                    <Text
+                      style={[
+                        styles.addButton,
+                        {
+                          color: this.state.editing
+                            ? color.grey
+                            : color.darkOrange
+                        }
+                      ]}
+                    >
+                      <MaterialCommunityIcons
+                        name="email-plus"
+                        size={30}
+                        style={styles.addButton}
+                      />
+                      {'  '}Invite another friendo!
+                    </Text>
+                  </TouchableOpacity>
+                )}
                 {/* {this.state.editing ? (
                   <View style={styles.inputContainer}>
                     <TextInput
