@@ -7,31 +7,39 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column'
   },
+  boxContainer: {
+    flex: 1
+  },
   box1: {
-    backgroundColor: '#e3aa1a',
-    height: 75
+    backgroundColor: 'black',
+    flex: 1,
+    alignItems: 'center'
   },
   box2: {
-    backgroundColor: 'grey',
-    height: 75
+    backgroundColor: 'blue',
+    flex: 3,
+    fontSize: 48
   },
   box3: {
-    backgroundColor: 'white',
-    height: 250
+    backgroundColor: 'black',
+    flex: 1,
+    alignItems: 'center'
   },
   box4: {
-    backgroundColor: 'grey',
-    height: 75
+    backgroundColor: 'blue',
+    flex: 3,
+    fontSize: 48
   },
-  box5: {
-    backgroundColor: 'white',
-    height: 200
+  text: {
+    color: 'white',
+    fontSize: 60
   }
 });
 
 class SingleEvent extends Component {
+   static navigationOptions = {title: 'Single Event'}
   render() {
-    const { navigation } = this.props;
+    // const { navigation } = this.props;
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
@@ -39,24 +47,27 @@ class SingleEvent extends Component {
       return (
         { event } && (
           <View style={styles.container}>
-            <View style={styles.box1}>
+            <View style={[styles.boxContainer, styles.box1]}>
+              <Text style={styles.text}>DETAILS</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box2]}>
+              <Text>Event:</Text>
               <Text>{event.name}</Text>
-            </View>
-            <View style={styles.box2}>
-              <Text>
-                {event.date} {event.time}
-              </Text>
-            </View>
-            <View style={styles.box3}>
+              <Text>Location:</Text>
               <Text>{event.location.locationName}</Text>
+              <Text>Date:</Text>
+              <Text>{event.date}</Text>
+              <Text>Time:</Text>
+              <Text>{event.time}</Text>
             </View>
-            <View style={styles.box4}>
+            <View style={[styles.boxContainer, styles.box3]}>
+              <Text style={styles.text}>INVITEES</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box4]}>
+              <Text>Email:</Text>
               {event.invites.map(invitee => (
-                <Text key={invitee}> {invitee} </Text>
+              <Text key={invitee}> {invitee} </Text>
               ))}
-            </View>
-            <View style={styles.box5}>
-              <Text>Names</Text>
             </View>
           </View>
         )
