@@ -24,7 +24,6 @@ const deviceId = Constants.installationId;
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: color.whiteBlue
   },
 
@@ -78,12 +77,8 @@ let styles = StyleSheet.create({
     height: normalize(55),
     borderRadius: 4,
     marginTop: 0,
-    marginBottom: 0
-  },
-
-  button: {
-    backgroundColor: color.black,
-    height: normalize(55)
+    marginBottom: 0,
+    backgroundColor: color.darkOrange
   },
 
   buttonText: {
@@ -107,10 +102,10 @@ let styles = StyleSheet.create({
   },
 
   orText: {
-    backgroundColor: color.white,
+    backgroundColor: '#FFFFFF',
     fontSize: fontSize.regular,
     fontFamily: fontFamily.medium,
-    color: color.indigoBlue,
+    color: color.darkBlue,
     paddingHorizontal: padding
   }
 });
@@ -141,6 +136,7 @@ class Auth extends React.Component {
             <Login
               navigation={this.props.navigation}
               onPress={this._signInAsync}
+              style={styles.containerView}
             />
 
             <View style={styles.orContainer}>
@@ -149,12 +145,16 @@ class Auth extends React.Component {
             </View>
 
             {/* <Facebook navigation={this.props.navigation} /> */}
-            <TouchableOpacity
-              style={styles.button}
+
+            <SocialIcon
+              raised
+              button
+              title="SIGN UP WITH EMAIL"
+              iconSize={19}
+              style={[styles.containerView, styles.socialButton, {marginBottom: 8}, {marginTop: 8}]}
+              fontStyle={styles.buttonText}
               onPress={() => this.props.navigation.navigate('signupScreen')}
-            >
-              <Text style={styles.buttonText}>Sign up with email</Text>
-            </TouchableOpacity>
+            />
             <Google navigation={this.props.navigation} />
           </View>
         </View>

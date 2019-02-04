@@ -22,7 +22,6 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'blue'
   },
   content: {
     alignItems: 'center'
@@ -44,7 +43,8 @@ let styles = StyleSheet.create({
     height: normalize(55),
     borderRadius: 4,
     marginTop: 0,
-    marginBottom: 0
+    marginBottom: 0,
+    backgroundColor: color.darkOrange
   },
   buttonText: {
     fontSize: fontSize.regular + 2,
