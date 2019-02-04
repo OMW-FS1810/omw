@@ -18,37 +18,37 @@ import { ImagePicker, Permissions } from 'expo';
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: "#DCDCDC",
+    backgroundColor: '#DCDCDC'
   },
   headerContent: {
     padding: 30,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   avatar: {
     width: 130,
     height: 130,
     borderRadius: 63,
     borderWidth: 4,
-    borderColor: "white",
-    marginBottom: 10,
+    borderColor: 'white',
+    marginBottom: 10
   },
   name: {
     fontSize: 22,
-    color: "#000000",
-    fontWeight: '600',
+    color: '#000000',
+    fontWeight: '600'
   },
   userInfo: {
     fontSize: 16,
-    color: "#778899",
-    fontWeight: '600',
+    color: '#778899',
+    fontWeight: '600'
   },
   body: {
-    backgroundColor: "#778899",
+    backgroundColor: '#778899',
     height: 500,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   item: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   infoContent: {
     flex: 1,
@@ -64,12 +64,12 @@ const styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
-    marginTop: 20,
+    marginTop: 20
   },
   info: {
     fontSize: 18,
     marginTop: 20,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     width: 30,
     height: 30
   },
@@ -100,7 +100,7 @@ class Profile extends Component {
     err: '',
     editSuccess: '',
     profilePicture: null
-  }
+  };
 
   // static navigationOptions = ({ navigation }) => {
   //   console.log('profile in navigation:', navigation);
@@ -111,89 +111,88 @@ class Profile extends Component {
 
   // Current state is based on previous state
   toggleEdit = () => {
-    this.setState(prevState => ({isEditing: !prevState.isEditing}))
-  }
+    this.setState(prevState => ({ isEditing: !prevState.isEditing }));
+  };
 
   editInfo = () => {
-    const {editFirstName, editLastName} = this.state;
-    const {uid, pictureUrl, deviceId, email } = this.props.user;
-      if (editFirstName.trim().length > 0 && editLastName.trim().length > 0) {
-        database.ref(`/Users/${this.props.user.uid}`).update({
+    const { editFirstName, editLastName } = this.state;
+    const { uid, pictureUrl, deviceId, email } = this.props.user;
+    if (editFirstName.trim().length > 0 && editLastName.trim().length > 0) {
+      database
+        .ref(`/Users/${this.props.user.uid}`)
+        .update({
           first_name: editFirstName,
-          last_name: editLastName,
+          last_name: editLastName
         })
-          .catch(err => this.setState({ err: err.message }));
-        this.setState(prevState => ({ isEditing: !prevState.isEditing, editSuccess: 'Successfully updated' }));
-        this.props.setUser({
-          uid,
-          email,
-          firstName: editFirstName,
-          lastName: editLastName,
-          pictureUrl,
-          deviceId
-        })
-        // Clear any error messages if the user successfully edits their info
-        this.setState({err: ''});
-        setTimeout(() => {
-          this.setState({ editSuccess: '' });
-        }, 1000);
-      } else {
-        this.setState({err: 'First name and last name cannot be blank'});
-      }
-
-  }
+        .catch(err => this.setState({ err: err.message }));
+      this.setState(prevState => ({
+        isEditing: !prevState.isEditing,
+        editSuccess: 'Successfully updated'
+      }));
+      this.props.setUser({
+        uid,
+        email,
+        firstName: editFirstName,
+        lastName: editLastName,
+        pictureUrl,
+        deviceId
+      });
+      // Clear any error messages if the user successfully edits their info
+      this.setState({ err: '' });
+      setTimeout(() => {
+        this.setState({ editSuccess: '' });
+      }, 1000);
+    } else {
+      this.setState({ err: 'First name and last name cannot be blank' });
+    }
+  };
 
   signOutUser = async () => {
     try {
       await firebase.auth().signOut();
       this.props.setUser({});
       this.props.navigation.navigate('loginScreen');
-
-    } catch(err) {
-      this.setState({err: err.message});
+    } catch (err) {
+      this.setState({ err: err.message });
     }
     // Logout in our store (set user to {})
-  }
+  };
 
   selectPicture = async () => {
     const { uid } = this.props.user;
-    await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
     let result = await ImagePicker.launchImageLibraryAsync();
 
     if (!result.cancelled) {
       this.uploadImage(result.uri, `profile_picture/${uid}`)
-        .then((url) => {
-          Alert.alert("Success");
-            database
-                .ref(`/Users/${uid}/profile_picture`)
-                .set(url)
-                this.setState({profilePicture: url})
+        .then(url => {
+          Alert.alert('Success');
+          database.ref(`/Users/${uid}/profile_picture`).set(url);
+          this.setState({ profilePicture: url });
         })
-        .catch((error) => {
+        .catch(error => {
           Alert.alert(error);
         });
     }
-  }
+  };
 
   takePicture = async () => {
     const { uid } = this.props.user;
-    await Permissions.askAsync(Permissions.CAMERA)
+    await Permissions.askAsync(Permissions.CAMERA);
     let result = await ImagePicker.launchCameraAsync();
 
     if (!result.cancelled) {
       this.uploadImage(result.uri, `profile_picture/${uid}`)
-        .then((url) => {
-          Alert.alert("Success");
-                database
-                .ref(`/Users/${uid}/profile_picture`)
-                .set(url)
-              this.setState({profilePicture: url})
+        .then(url => {
+          Alert.alert('Success');
+          database.ref(`/Users/${uid}/profile_picture`).set(url);
+          this.setState({ profilePicture: url });
         })
-        .catch((error) => {
+        .catch(error => {
           Alert.alert(error);
         });
     }
-  }
+  };
 
   uploadImage = async (uri, imageName) => {
     const blob = await new Promise((resolve, reject) => {
@@ -210,19 +209,21 @@ class Profile extends Component {
       xhr.send(null);
     });
 
-    var ref = firebase.storage().ref().child("images/" + imageName)
+    var ref = firebase
+      .storage()
+      .ref()
+      .child('images/' + imageName);
     var metadata = {
-        contentType: 'image/jpeg',
-      };
+      contentType: 'image/jpeg'
+    };
     const snapshot = await ref.put(blob, metadata);
     blob.close();
 
     return snapshot.ref.getDownloadURL();
-  }
-
+  };
 
   render() {
-    const {isEditing, err, editSuccess, profilePicture} = this.state;
+    const { isEditing, err, editSuccess, profilePicture } = this.state;
     // console.log('Profile props:', this.state);
     return (
       <View style={styles.container}>
@@ -241,18 +242,14 @@ class Profile extends Component {
               </Button>
               <TextInput
                 style={styles.inputContainer}
-                onChangeText={editFirstName =>
-                  this.setState({ editFirstName })
-                }
+                onChangeText={editFirstName => this.setState({ editFirstName })}
                 autoCapitalize="sentences"
                 autoComplete="name"
                 placeholder={this.props.user.firstName}
               />
               <TextInput
                 style={styles.inputContainer}
-                onChangeText={editLastName =>
-                  this.setState({ editLastName })
-                }
+                onChangeText={editLastName => this.setState({ editLastName })}
                 autoCapitalize="sentences"
                 autoComplete="name"
                 placeholder={this.props.user.lastName}
@@ -303,9 +300,7 @@ class Profile extends Component {
             </View>
             <TouchableOpacity
               style={styles.infoContent}
-              onPress={() =>
-                this.props.navigation.navigate('Create an Event')
-              }
+              onPress={() => this.props.navigation.navigate('Create an Event')}
             >
               <Text>Events</Text>
             </TouchableOpacity>
@@ -313,17 +308,17 @@ class Profile extends Component {
           <Button title="Sign out" onPress={this.signOutUser}>
             Sign out
           </Button>
-            {editSuccess ? <Text> {editSuccess} </Text> : null}
-            {err ? <Text> {err} </Text> : null}
-            {!isEditing && (
-          <Button title="Edit" onPress={this.toggleEdit}>
-            Edit Name
-          </Button>
+          {editSuccess ? <Text> {editSuccess} </Text> : null}
+          {err ? <Text> {err} </Text> : null}
+          {!isEditing && (
+            <Button title="Edit" onPress={this.toggleEdit}>
+              Edit Name
+            </Button>
           )}
-            {isEditing && (
-          <Button title="Edit" onPress={this.editInfo}>
-            Save
-          </Button>
+          {isEditing && (
+            <Button title="Edit" onPress={this.editInfo}>
+              Save
+            </Button>
           )}
         </View>
       </View>

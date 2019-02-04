@@ -1,6 +1,7 @@
 import { database } from '../config/firebase';
 import { Constants } from 'expo';
 import { registerForPushNotificationsAsync } from '../helpers/notificationSetup';
+import { setBackgroundLocationOn } from '../helpers/location';
 
 const deviceId = Constants.installationId;
 
@@ -38,6 +39,7 @@ export const setUserAndDevice = user => async dispatch => {
       token
     });
     await database.ref(`/Devices/${deviceId}`).update({
+      email: user.email,
       user
     });
 
@@ -55,6 +57,9 @@ export const setUserAndDevice = user => async dispatch => {
           deviceId: null
         });
       });
+
+    //turn on background location
+    await setBackgroundLocationOn();
   } catch (error) {
     console.error(error);
   }
