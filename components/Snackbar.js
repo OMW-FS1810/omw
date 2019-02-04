@@ -13,6 +13,7 @@ export default class Notify extends React.Component {
     this._notificationSubscription = Notifications.addListener(
       this._handleNotification
     );
+    console.log('mounted');
   }
   _handleNotification = async notification => {
     this.setState({ incoming: notification.data, visible: true });
@@ -27,29 +28,32 @@ export default class Notify extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Snackbar
-          visible={this.state.visible}
-          onDismiss={() => this.setState({ visible: false })}
-          duration="10000"
-          action={{
-            label: 'Open',
-            onPress: () => {
-              // Do something
-              this.props.navigation.navigate('Notifications');
-            }
-          }}
-        >
-          {this.state.incoming.message}
-        </Snackbar>
-      </View>
+      // <View style={styles.container}>
+      <Snackbar
+        visible={this.state.visible}
+        onDismiss={() => this.setState({ visible: false })}
+        duration="10000"
+        action={{
+          label: 'Open',
+          onPress: () => {
+            // Do something
+            console.log('ok');
+            // this.props.navigation.navigate('Notifications');
+          }
+        }}
+      >
+        {this.state.incoming.message}
+      </Snackbar>
+      // </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'space-between'
+    // flex: 1,
+    // justifyContent: 'space-between',
+    position: 'absolute',
+    top: 10
   }
 });
