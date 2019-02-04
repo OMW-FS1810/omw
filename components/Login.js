@@ -42,7 +42,7 @@ let styles = StyleSheet.create({
     backgroundColor: color.darkOrange,
     borderRadius: 25,
     marginVertical: 10,
-    paddingVertical: 13,
+    paddingVertical: 13
   },
   buttonText: {
     fontSize: fontSize.regular + 2,
@@ -56,8 +56,8 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'linjingt@gmail.com',
-      password: '111111'
+      email: '',
+      password: ''
     };
   }
 
@@ -114,7 +114,10 @@ class Login extends React.Component {
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <TouchableOpacity style={[styles.button, styles.containerView]} onPress={this.handlePress}>
+        <TouchableOpacity
+          style={[styles.button, styles.containerView]}
+          onPress={this.handlePress}
+        >
           <Text style={styles.buttonText}>SIGN IN</Text>
         </TouchableOpacity>
       </View>
