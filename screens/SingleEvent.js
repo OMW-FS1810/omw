@@ -3,38 +3,46 @@ import { connect } from 'react-redux';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { addEmailToEvent } from '../redux/store';
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column'
   },
-  boxContainer: {
+  detailsContainer: {
+    flex: 1.25
+    // flexDirection: 'column'
+  },
+  emailsContainer: {
     flex: 1
+    // flexDirection: 'column'
   },
-  box1: {
-    backgroundColor: 'black',
-    flex: 1,
+  titleBox: {
+    // flex: 1,
+    backgroundColor: color.blue,
     alignItems: 'center'
   },
-  box2: {
-    backgroundColor: 'blue',
-    flex: 3,
-    fontSize: 48
+  titleText: {
+    fontFamily: fontFamily.bold,
+    color: color.whiteGrey,
+    padding,
+    fontSize: fontSize.xLarge
   },
-  box3: {
-    backgroundColor: 'black',
-    flex: 1,
-    alignItems: 'center'
-  },
-  box4: {
-    backgroundColor: 'blue',
-    flex: 3,
-    fontSize: 48
+  subtitle: {
+    // flex: 2,
+    fontFamily: fontFamily.light,
+    fontSize: fontSize.large,
+    color: color.darkBlue,
+    padding
   },
   text: {
-    color: 'white',
-    fontSize: 60
+    flex: 1,
+    color: color.indigoBlue,
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.large,
+    paddingLeft: padding * 2
   }
 });
 
@@ -76,40 +84,44 @@ class SingleEvent extends Component {
       return (
         { event } && (
           <View style={styles.container}>
-            <View style={[styles.boxContainer, styles.box1]}>
-              <Text style={styles.text}>DETAILS</Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.titleBox}>
+                <Text style={styles.titleText}>DETAILS</Text>
+              </View>
+              <Text style={styles.subtitle}>Event:</Text>
+              <Text style={styles.text}>{event.name}</Text>
+              <Text style={styles.subtitle}>Location:</Text>
+              <Text style={styles.text}>{event.location.locationName}</Text>
+              <Text style={styles.subtitle}>Date:</Text>
+              <Text style={styles.text}>{event.date}</Text>
+              <Text style={styles.subtitle}>Time:</Text>
+              <Text style={styles.text}>{event.time}</Text>
             </View>
-            <View style={[styles.boxContainer, styles.box2]}>
-              <Text>Event:</Text>
-              <Text>{event.name}</Text>
-              <Text>Location:</Text>
-              <Text>{event.location.locationName}</Text>
-              <Text>Date:</Text>
-              <Text>{event.date}</Text>
-              <Text>Time:</Text>
-              <Text>{event.time}</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box3]}>
-              <Text style={styles.text}>INVITEES</Text>
-            </View>
-            <View style={[styles.boxContainer, styles.box4]}>
-              <Text>Email:</Text>
-              {event.invites.map(invitee => (
-                <Text key={invitee}> {invitee} </Text>
-              ))}
-              {this.state.editing ? (
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    value={this.state.emailInput}
-                    label="Invite Another Friendo!"
-                    style={styles.input}
-                    onChangeText={emailInput => this.setState({ emailInput })}
-                  />
-                  <Button onPress={this.handleAddToInviteList}>
-                    <Text>invite this friendo!</Text>
-                  </Button>
-                </View>
-              ) : null}
+            <View style={styles.emailsContainer}>
+              <View style={styles.titleBox}>
+                <Text style={styles.titleText}>FRIENDS</Text>
+              </View>
+              <View style={styles.emailContiner}>
+                <Text style={styles.subtitle}>Email:</Text>
+                {event.invites.map(invitee => (
+                  <Text key={invitee} style={styles.text}>
+                    {invitee}
+                  </Text>
+                ))}
+                {this.state.editing ? (
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      value={this.state.emailInput}
+                      label="Invite Another Friendo!"
+                      style={styles.input}
+                      onChangeText={emailInput => this.setState({ emailInput })}
+                    />
+                    <Button onPress={this.handleAddToInviteList}>
+                      <Text>invite this friendo!</Text>
+                    </Button>
+                  </View>
+                ) : null}
+              </View>
             </View>
           </View>
         )
@@ -135,7 +147,7 @@ export default connect(
 
 /*
 
-            <View style={styles.box1}>
+            <View style}>
               <Text>{event.name}</Text>
               <Button
                 mode="contained"
