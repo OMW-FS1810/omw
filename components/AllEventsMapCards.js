@@ -1,6 +1,6 @@
 /* eslint-disable guard-for-in */
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
 
@@ -12,13 +12,14 @@ export default class AllEventsMapCards extends React.Component {
       const allEvents = this.props.allEvents;
       return allEvents.map(eventData => {
         //this is a trick to get the objects out -- there's only one 'uid' for each event
-        let event, title, time, date, description;
+        let event, title, time, date, description, locationPhoto;
         for (let uid in eventData) {
           event = eventData[uid];
           title = event.name;
           time = event.time;
           date = event.date;
           description = event.location.locationName;
+          locationPhoto = event.location.locationPhoto || '';
         }
         const thisId = Object.keys(eventData)[0];
         const eventLocation = {
@@ -45,12 +46,20 @@ export default class AllEventsMapCards extends React.Component {
                   {description}
                 </Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
-                  {date}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {time}
+                  {date} {time}
                 </Text>
               </View>
+              {locationPhoto !== '' && (
+                <View style={styles.textContent}>
+                  <Image
+                    source={{
+                      uri: locationPhoto
+                    }}
+                    style={styles.cardImage}
+                    resizeMode="cover"
+                  />
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         );
@@ -63,7 +72,7 @@ export default class AllEventsMapCards extends React.Component {
 
 const styles = StyleSheet.create({
   card: {
-    padding: 10,
+    // padding: 10,
     elevation: 2,
     backgroundColor: '#FFF',
     marginHorizontal: 10,
@@ -75,16 +84,18 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     overflow: 'hidden',
     borderColor: 'teal',
-    borderWidth: 1
+    borderWidth: 1,
+    flexDirection: 'column'
   },
   cardImage: {
     flex: 3,
     width: '100%',
-    height: '100%',
+    height: '80%',
     alignSelf: 'center'
   },
   textContent: {
-    flex: 1
+    flex: 1,
+    padding: 5
   },
   cardtitle: {
     fontSize: 12,

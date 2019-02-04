@@ -79,11 +79,21 @@ class CreateEvent extends Component {
             renderDescription={row => row.description} // custom description render
             onPress={async (data, details = null) => {
               // 'details' is provided when fetchDetails = true
+
+              let locationPhoto = '';
+              if (details.photos) {
+                const photoreference = details.photos[0].photo_reference;
+                const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=${photoreference}&key=${GOOGLE_API}`;
+                const photoSearch = await fetch(url);
+                locationPhoto = photoSearch.url;
+              }
+
               await this.setState({
                 location: {
                   locationName: data.structured_formatting.main_text,
                   locationAddress: data.description,
-                  locationGeocode: details.geometry.location
+                  locationGeocode: details.geometry.location,
+                  locationPhoto
                 }
               });
             }}
@@ -145,29 +155,28 @@ class CreateEvent extends Component {
             debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
           />
 
-            <DatePicker
-              label="Date"
-              date={this.state.date}
-              mode="date"
-              showIcon={false}
-              style={styles.picker}
-              onDateChange={date => this.setState({ date })}
-              placeholder="Select Date"
-              format="MM-DD-YYYY"
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-            />
-            <DatePicker
-              mode="time"
-              showIcon={false}
-              date={this.state.time}
-              placeholder="Pick a Time"
-              style={styles.picker}
-              onDateChange={time => this.setState({ time })}
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-            />
-
+          <DatePicker
+            label="Date"
+            date={this.state.date}
+            mode="date"
+            showIcon={false}
+            style={styles.picker}
+            onDateChange={date => this.setState({ date })}
+            placeholder="Select Date"
+            format="MM-DD-YYYY"
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+          />
+          <DatePicker
+            mode="time"
+            showIcon={false}
+            date={this.state.time}
+            placeholder="Pick a Time"
+            style={styles.picker}
+            onDateChange={time => this.setState({ time })}
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+          />
         </View>
 
         <View style={styles.bottom}>
@@ -229,8 +238,7 @@ let styles = StyleSheet.create({
     alignItems: 'center'
   },
   location: {
-    borderWidth: 0,
-
+    borderWidth: 0
   },
 
   content: {

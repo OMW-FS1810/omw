@@ -40,8 +40,9 @@ export const setUserAndDevice = user => async dispatch => {
       deviceId,
       token
     });
+    const email = user.email.toLowerCase();
     await database.ref(`/Devices/${deviceId}`).update({
-      email: user.email,
+      email,
       user
     });
 
