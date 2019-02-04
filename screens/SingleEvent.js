@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+import DatePicker from 'react-native-datepicker';
 import { addEmailToEvent } from '../redux/store';
 
 const styles = StyleSheet.create({
@@ -31,6 +32,14 @@ const styles = StyleSheet.create({
   },
   editButton: {
     alignSelf: 'flex-start'
+  },
+  date: {
+    marginBottom: 5,
+    // backgroundColor: '#C8D7E3',
+    marginTop: 10,
+    width: '95%',
+    justifyContent: 'center',
+    borderRadius: 5
   }
 });
 
@@ -89,11 +98,38 @@ class SingleEvent extends Component {
                 <Text>{this.state.editing ? 'SAVE' : 'EDIT'}</Text>
               </Button>
             </View>
-            <View style={styles.box2}>
-              <Text>
-                {event.date} {event.time}
-              </Text>
-            </View>
+            {this.state.editing ? (
+              <>
+                <DatePicker
+                  label="Date"
+                  date={this.state.editDate}
+                  mode="date"
+                  showIcon={false}
+                  style={styles.date}
+                  onDateChange={editDate => this.setState({ editDate })}
+                  placeholder="select date"
+                  format="MM-DD-YYYY"
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                />
+                <DatePicker
+                  mode="time"
+                  showIcon={false}
+                  date={this.state.editTime}
+                  placeholder="select time"
+                  style={styles.date}
+                  onDateChange={editTime => this.setState({ editTime })}
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                />
+              </>
+            ) : (
+              <View style={styles.box2}>
+                <Text>
+                  {event.date} {event.time}
+                </Text>
+              </View>
+            )}
             <View style={styles.box3}>
               <Text>{event.location.locationName}</Text>
             </View>
