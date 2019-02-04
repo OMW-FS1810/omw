@@ -85,6 +85,24 @@ export const fetchAllEvents = email => async dispatch => {
     console.error(err);
   }
 };
+export const addEmailToEvent = (uid, email) => async dispatch => {
+  try {
+    // const eventRef = database.ref(`Events/${uid}`);
+    // console.log(eventRef.child('invites'));
+
+    await database.ref(`Events/${uid}/invites`).push(email);
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const editEvent = (uid, info) => async dispatch => {
+  try {
+    const eventRef = database.ref(`Events/${uid}`);
+    await eventRef.update({ ...info });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 // DEFAULT STATE
 const defaultEvent = {
