@@ -35,7 +35,6 @@ export default class SingleEventMapCards extends React.Component {
                   longitudeDelta: 0.043
                 };
                 this.props.animateToMapPosition(memberRegion);
-                console.log('you pressed a person');
               }}
             >
               <View style={styles.card}>

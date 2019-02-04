@@ -75,7 +75,7 @@ class EventMap extends React.Component {
               return [memberEmail, this.state.eventMembers[memberEmail]];
             })
             .filter(member => member[1]);
-          console.log(memberArr);
+          // console.log(memberArr);
           latitude = memberArr[index][1].coords.latitude;
           longitude = memberArr[index][1].coords.longitude;
         } else {
@@ -176,8 +176,6 @@ class EventMap extends React.Component {
     }
   }
 
-
-
   render() {
     const { navigation, allEvents, selectedEvent } = this.props;
     let interpolations;
@@ -276,7 +274,7 @@ class EventMap extends React.Component {
                 <MapView.Callout style={styles.eventDetailsButton}>
                   <TouchableOpacity
                     onPress={() => {
-                      console.log('I pressed details!');
+                      // console.log('I pressed details!');
                     }}
                   >
                     <MaterialIcons name="event-note" size={24} color="teal" />
