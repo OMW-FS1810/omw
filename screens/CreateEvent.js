@@ -101,7 +101,6 @@ class CreateEvent extends Component {
             }}
             styles={{
               container: {
-                flex: 1,
                 width: windowWidth - 40,
                 marginTop: 10,
                 borderWidth: 1,
@@ -241,7 +240,7 @@ let styles = StyleSheet.create({
   },
   location: {
     borderWidth: 0,
-    alignSelf: 'center'
+    // alignSelf: 'center'
   },
   content: {
     flex: 1,
