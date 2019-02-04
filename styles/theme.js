@@ -10,7 +10,9 @@ const color = {
     lightBlue: '#7288A2',
     blue: '#384D66',
     darkBlue: '#242D49',
-    indigoBlue: '#040421'
+    indigoBlue: '#040421',
+    darkOrange: '#D15A2E',
+    orange: '#E8A389'
 }
 
 const fontSize = {
