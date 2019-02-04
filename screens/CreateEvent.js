@@ -12,7 +12,7 @@ const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 class CreateEvent extends Component {
   state = {
-    name: 'BIG FAKE EVENT',
+    name: '',
     date: '',
     time: '',
     location: {
