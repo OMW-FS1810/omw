@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
-// import {  } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { populateEventEmails, createEvent } from '../redux/event';
 import { NavigationActions, StackActions } from 'react-navigation';

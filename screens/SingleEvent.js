@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
 import DatePicker from 'react-native-datepicker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { addEmailToEvent } from '../redux/store';
 import * as theme from '../styles/theme';
+
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 const styles = StyleSheet.create({
@@ -18,6 +20,9 @@ const styles = StyleSheet.create({
   emailsContainer: {
     flex: 1
     // flexDirection: 'column'
+  },
+  emailsList: {
+    alignItems: 'flex-start'
   },
   titleBox: {
     // flex: 1,
@@ -101,10 +106,11 @@ class SingleEvent extends Component {
               <View style={styles.titleBox}>
                 <Text style={styles.titleText}>FRIENDS</Text>
               </View>
-              <View style={styles.emailContiner}>
-                <Text style={styles.subtitle}>Email:</Text>
+              <View style={styles.emailList}>
+                {/* <Text style={styles.subtitle}>Email:</Text> */}
                 {event.invites.map(invitee => (
                   <Text key={invitee} style={styles.text}>
+                    {console.log(invitee)}
                     {invitee}
                   </Text>
                 ))}
