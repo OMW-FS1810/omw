@@ -1,10 +1,14 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-return-assign */
+/* eslint-disable no-use-before-define */
 import React from 'react';
 import {
-  StyleSheet,
   ActivityIndicator,
-  View,
   TouchableOpacity,
+  StyleSheet,
+  Dimensions,
   Animated,
+  View,
   Text
 } from 'react-native';
 
@@ -30,7 +34,6 @@ import { getMyLocationNow } from '../helpers/location';
 import { fetchAllEvents, setSelectedEvent } from '../redux/store';
 import { database } from '../config/firebase';
 
-import { Dimensions } from 'react-native';
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
 
 class EventMap extends React.Component {

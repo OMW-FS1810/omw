@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  TextInput,
+  TouchableOpacity
+} from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { addEmailToEvent } from '../redux/store';
@@ -57,8 +64,8 @@ const styles = StyleSheet.create({
     paddingLeft: padding * 2
   },
   addButton: {
-    padding: padding * 2,
-    color: color.darkOrange
+    padding: padding * 2
+    // color: color.darkOrange
   }
 });
 
@@ -80,8 +87,8 @@ class SingleEvent extends Component {
   };
 
   handlePress = () => {
-    // console.log('PREST!');
-    // this.setState({ editing: true });
+    console.log('PREST!');
+    this.setState({ editing: true });
   };
 
   async componentDidMount() {
@@ -129,13 +136,28 @@ class SingleEvent extends Component {
                     {invitee}
                   </Text>
                 ))}
-                <MaterialCommunityIcons
-                  name="email-plus"
-                  size={30}
-                  style={styles.addButton}
-                  disabled={this.editing}
+                <TouchableOpacity
+                  disabled={this.state.editing}
                   onPress={this.handlePress}
-                />
+                >
+                  <Text
+                    style={[
+                      styles.addButton,
+                      {
+                        color: this.state.editing
+                          ? color.grey
+                          : color.darkOrange
+                      }
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="email-plus"
+                      size={30}
+                      style={styles.addButton}
+                    />
+                    {'  '}Invite another friendo!
+                  </Text>
+                </TouchableOpacity>
                 {/* {this.state.editing ? (
                   <View style={styles.inputContainer}>
                     <TextInput
