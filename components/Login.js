@@ -103,6 +103,7 @@ class Login extends React.Component {
         <TextInput
           style={styles.inputContainer}
           autoCapitalize='none'
+          clearButtonMode='while-editing'
           placeholder="Password"
           secureTextEntry={true}
           placeholderTextColor="#aaa"
