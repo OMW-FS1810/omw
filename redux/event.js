@@ -87,10 +87,18 @@ export const fetchAllEvents = email => async dispatch => {
 };
 export const addEmailToEvent = (uid, email) => async dispatch => {
   try {
-    // const eventRef = database.ref(`Events/${uid}`);
-    // console.log(eventRef.child('invites'));
+    const eventRef = database.ref(`Events/${uid}`);
+    let invitesArr;
+    eventRef.child('invites').once('value', snapshot => {
+      let oldInvitesArr = snapshot.val();
+      let newInvitesArr = [...oldInvitesArr, email];
+      eventRef.update({
+        invites: newInvitesArr
+      });
+    });
 
-    await database.ref(`Events/${uid}/invites`).push(email);
+    console.log('🔥');
+    // await database.ref(`Events/${uid}/invites`).push(email);
   } catch (err) {
     console.error(err);
   }

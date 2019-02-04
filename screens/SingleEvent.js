@@ -99,8 +99,11 @@ class SingleEvent extends Component {
   };
 
   handleSubmitEmail = () => {
-    console.log('email:', this.state.emailInput);
-    console.log('uid', this.state.uid);
+    // console.log('email:', this.state.emailInput);
+    // console.log('uid', this.state.uid);
+
+    this.props.addEmail(this.state.uid, this.state.emailInput);
+    this.setState({ emailInput: '', editing: false });
   };
 
   async componentDidMount() {
