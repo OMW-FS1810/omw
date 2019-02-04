@@ -176,8 +176,6 @@ class EventMap extends React.Component {
     }
   }
 
-
-
   render() {
     const { navigation, allEvents, selectedEvent } = this.props;
     let interpolations;
@@ -276,7 +274,7 @@ class EventMap extends React.Component {
                 <MapView.Callout style={styles.eventDetailsButton}>
                   <TouchableOpacity
                     onPress={() => {
-                      console.log('I pressed details!');
+                      this.props.navigation.navigate('SingleEvent');
                     }}
                   >
                     <MaterialIcons name="event-note" size={24} color="teal" />
