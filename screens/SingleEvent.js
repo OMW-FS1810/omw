@@ -38,18 +38,31 @@ class SingleEvent extends Component {
   state = {
     editing: false,
     emailInput: '',
-    edits: {
-      name: '',
-      date: '',
-      time: ''
-    }
+    uid: '',
+    editName: '',
+    editDate: '',
+    editTime: ''
   };
 
-  handleAddToInviteList = uid => {
-    const email = this.state.emailInput;
-    this.props.addEmail(uid, email);
+  handleAddToInviteList = () => {
+    const { uid, emailInput } = this.state;
+
+    this.props.addEmail(uid, emailInput);
     this.setState({ emailInput: '' });
   };
+
+  async componentDidMount() {
+    if (this.props.selectedEvent) {
+      const { name, date, time } = Object.values(this.props.selectedEvent)[0];
+      const uid = Object.keys(this.props.selectedEvent)[0];
+      await this.setState({
+        uid,
+        editName: name,
+        editDate: date,
+        editTime: time
+      });
+    }
+  }
 
   render() {
     const { navigation } = this.props;
@@ -57,14 +70,6 @@ class SingleEvent extends Component {
 
     if (this.props.selectedEvent) {
       event = Object.values(this.props.selectedEvent)[0];
-      const uid = Object.keys(this.props.selectedEvent)[0];
-      this.setState({
-        edits: {
-          name: event.name,
-          date: event.date,
-          time: event.time
-        }
-      });
       return (
         { event } && (
           <View style={styles.container}>
@@ -104,7 +109,7 @@ class SingleEvent extends Component {
                     style={styles.input}
                     onChangeText={emailInput => this.setState({ emailInput })}
                   />
-                  <Button onPress={() => this.handleAddToInviteList(uid)}>
+                  <Button onPress={this.handleAddToInviteList}>
                     <Text>invite this friendo!</Text>
                   </Button>
                 </View>
