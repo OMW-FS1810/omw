@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
-// import {  } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker';
 import { addEmailToEvent } from '../redux/store';
 
@@ -71,7 +70,6 @@ class SingleEvent extends Component {
 
   static navigationOptions = { title: 'Single Event' };
   render() {
-    // const { navigation } = this.props;
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
