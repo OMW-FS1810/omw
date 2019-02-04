@@ -8,7 +8,6 @@ import {
   TextInput,
   TouchableOpacity
 } from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { addEmailToEvent } from '../redux/store';
 import * as theme from '../styles/theme';
@@ -94,14 +93,10 @@ class SingleEvent extends Component {
   };
 
   handlePressAddEmail = () => {
-    console.log('PREST!');
     this.setState({ editing: true });
   };
 
   handleSubmitEmail = () => {
-    // console.log('email:', this.state.emailInput);
-    // console.log('uid', this.state.uid);
-
     this.props.addEmail(this.state.uid, this.state.emailInput);
     this.setState({ emailInput: '', editing: false });
   };
