@@ -23,7 +23,8 @@ import {
   MaterialCommunityIcons,
   SimpleLineIcons,
   MaterialIcons,
-  Entypo
+  Entypo,
+  AntDesign
 } from '@expo/vector-icons';
 import { getMyLocationNow } from '../helpers/location';
 import { fetchAllEvents, setSelectedEvent } from '../redux/store';
@@ -303,7 +304,16 @@ class EventMap extends React.Component {
                 </MapView.Callout>
               </>
             ) : (
-              <View />
+              <MapView.Callout style={styles.allEventsButton}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.props.navigation.navigate('Create an Event');
+                  }}
+                >
+                  <AntDesign name="pluscircleo" size={45} color="teal" />
+                  <Text>Create an event</Text>
+                </TouchableOpacity>
+              </MapView.Callout>
             )}
 
             <Animated.ScrollView
