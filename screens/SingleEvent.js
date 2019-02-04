@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Text } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+// import {  } from 'react-native-paper';
 import DatePicker from 'react-native-datepicker';
 import { addEmailToEvent } from '../redux/store';
 

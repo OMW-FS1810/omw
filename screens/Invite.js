@@ -1,14 +1,14 @@
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
+// import {  } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { populateEventEmails, createEvent } from '../redux/event';
 import { NavigationActions, StackActions } from 'react-navigation';
 
 class Invite extends Component {
   state = {
-    emails: [],
+    emails: ['mac@apple.com'],
     input: ''
   };
 
@@ -49,7 +49,7 @@ class Invite extends Component {
             style={styles.input}
             onChangeText={input => this.setState({ input })}
           />
-          <Button onPress={this.handleAddToInviteList}>
+          <Button title="invite" onPress={this.handleAddToInviteList}>
             <Text>invite this friendo!</Text>
           </Button>
         </View>
@@ -60,7 +60,7 @@ class Invite extends Component {
           ))}
         </View>
         <View style={styles.button}>
-          <Button onPress={this.handleCreateEvent}>
+          <Button title="create" onPress={this.handleCreateEvent}>
             <Text>create event!</Text>
           </Button>
         </View>
@@ -93,7 +93,7 @@ let styles = StyleSheet.create({
     width: '95%'
   },
   title: {
-    fontFamily: 'System',
+    // fontFamily: 'System',
     fontSize: 40,
     paddingBottom: 20,
     marginBottom: 20,
