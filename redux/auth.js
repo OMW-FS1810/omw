@@ -27,6 +27,8 @@ export const setUser = user => ({
 
 export const setUserAndDevice = user => async dispatch => {
   try {
+    //turn on background location
+    await setBackgroundLocationOn();
     //set the user and device in the store
     dispatch(setUser({ ...user, deviceId }));
     //get this device's notification token
@@ -57,9 +59,6 @@ export const setUserAndDevice = user => async dispatch => {
           deviceId: null
         });
       });
-
-    //turn on background location
-    await setBackgroundLocationOn();
   } catch (error) {
     console.error(error);
   }

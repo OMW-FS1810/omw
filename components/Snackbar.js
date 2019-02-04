@@ -36,7 +36,6 @@ export default class Notify extends React.Component {
           label: 'Open',
           onPress: () => {
             // Do something
-            console.log('ok');
             // this.props.navigation.navigate('Notifications');
           }
         }}
