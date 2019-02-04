@@ -21,6 +21,9 @@ class CreateEvent extends Component {
     host: ''
   };
 
+
+  // static navigationOptions = {title: 'Create Event'}
+
   componentDidMount() {
     if (this.props.user) {
       this.setState({ host: this.props.user.uid });

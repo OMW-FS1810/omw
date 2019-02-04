@@ -175,6 +175,9 @@ class EventMap extends React.Component {
       console.error(err);
     }
   }
+
+
+
   render() {
     const { navigation, allEvents, selectedEvent } = this.props;
     let interpolations;

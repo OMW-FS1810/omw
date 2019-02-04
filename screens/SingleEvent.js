@@ -10,7 +10,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column'
   },
+  boxContainer: {
+    flex: 1
+  },
   box1: {
+<<<<<<< HEAD
     flex: 1,
     backgroundColor: '#e3aa1a'
   },
@@ -40,10 +44,35 @@ const styles = StyleSheet.create({
     width: '95%',
     justifyContent: 'center',
     borderRadius: 5
+=======
+    backgroundColor: 'black',
+    flex: 1,
+    alignItems: 'center'
+  },
+  box2: {
+    backgroundColor: 'blue',
+    flex: 3,
+    fontSize: 48
+  },
+  box3: {
+    backgroundColor: 'black',
+    flex: 1,
+    alignItems: 'center'
+  },
+  box4: {
+    backgroundColor: 'blue',
+    flex: 3,
+    fontSize: 48
+  },
+  text: {
+    color: 'white',
+    fontSize: 60
+>>>>>>> 7911439b3978743348c26924f162341198f22431
   }
 });
 
 class SingleEvent extends Component {
+<<<<<<< HEAD
   state = {
     editing: false,
     emailInput: '',
@@ -73,14 +102,18 @@ class SingleEvent extends Component {
     }
   }
 
+=======
+   static navigationOptions = {title: 'Single Event'}
+>>>>>>> 7911439b3978743348c26924f162341198f22431
   render() {
-    const { navigation } = this.props;
+    // const { navigation } = this.props;
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
       return (
         { event } && (
           <View style={styles.container}>
+<<<<<<< HEAD
             <View style={styles.box1}>
               <Text>{event.name}</Text>
               <Button
@@ -130,11 +163,28 @@ class SingleEvent extends Component {
               </View>
             )}
             <View style={styles.box3}>
-              <Text>{event.location.locationName}</Text>
+=======
+            <View style={[styles.boxContainer, styles.box1]}>
+              <Text style={styles.text}>DETAILS</Text>
             </View>
-            <View style={styles.box4}>
+            <View style={[styles.boxContainer, styles.box2]}>
+              <Text>Event:</Text>
+              <Text>{event.name}</Text>
+              <Text>Location:</Text>
+>>>>>>> 7911439b3978743348c26924f162341198f22431
+              <Text>{event.location.locationName}</Text>
+              <Text>Date:</Text>
+              <Text>{event.date}</Text>
+              <Text>Time:</Text>
+              <Text>{event.time}</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box3]}>
+              <Text style={styles.text}>INVITEES</Text>
+            </View>
+            <View style={[styles.boxContainer, styles.box4]}>
+              <Text>Email:</Text>
               {event.invites.map(invitee => (
-                <Text key={invitee}> {invitee} </Text>
+              <Text key={invitee}> {invitee} </Text>
               ))}
               {this.state.editing ? (
                 <View style={styles.inputContainer}>
@@ -149,9 +199,6 @@ class SingleEvent extends Component {
                   </Button>
                 </View>
               ) : null}
-            </View>
-            <View style={styles.box5}>
-              <Text>Names</Text>
             </View>
           </View>
         )

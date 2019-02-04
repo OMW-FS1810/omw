@@ -80,18 +80,34 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 5,
     width: '50%'
+  },
+  inputContainer: {
+    width: 300,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#aaa',
+    marginVertical: 10
   }
 });
 
 class Profile extends Component {
   state = {
     isEditing: false,
-    editFirstName: '',
-    editLastName: '',
+    editFirstName: this.props.user.firstName,
+    editLastName: this.props.user.lastName,
     err: '',
-    editSuccess: ''
-
+    editSuccess: '',
+    profilePicture: null
   }
+
+  // static navigationOptions = ({ navigation }) => {
+  //   console.log('profile in navigation:', navigation);
+  //   return {
+  //     title:'Profile'
+  //   }
+  // }
 
   // Current state is based on previous state
   toggleEdit = () => {
@@ -101,25 +117,30 @@ class Profile extends Component {
   editInfo = () => {
     const {editFirstName, editLastName} = this.state;
     const {uid, pictureUrl, deviceId, email } = this.props.user;
-      database.ref(`/Users/${this.props.user.uid}`).update({
-        first_name: editFirstName,
-        last_name: editLastName,
-      })
-        // .then(() => database.ref.once('value'))
-        // .then(snapshot => console.log('HELLO', snapshot.val()))
-        .catch(err => this.setState({err: err.message}));
-      this.setState(prevState => ({isEditing: !prevState.isEditing, editSuccess: 'Successfully updated'}));
-      this.props.setUser({
-        uid,
-        email,
-        firstName: editFirstName,
-        lastName: editLastName,
-        pictureUrl,
-        deviceId
-      })
-      setTimeout(() => {
-        this.setState({ editSuccess: '' });
-      }, 5000);
+      if (editFirstName.trim().length > 0 && editLastName.trim().length > 0) {
+        database.ref(`/Users/${this.props.user.uid}`).update({
+          first_name: editFirstName,
+          last_name: editLastName,
+        })
+          .catch(err => this.setState({ err: err.message }));
+        this.setState(prevState => ({ isEditing: !prevState.isEditing, editSuccess: 'Successfully updated' }));
+        this.props.setUser({
+          uid,
+          email,
+          firstName: editFirstName,
+          lastName: editLastName,
+          pictureUrl,
+          deviceId
+        })
+        // Clear any error messages if the user successfully edits their info
+        this.setState({err: ''});
+        setTimeout(() => {
+          this.setState({ editSuccess: '' });
+        }, 1000);
+      } else {
+        this.setState({err: 'First name and last name cannot be blank'});
+      }
+
   }
 
   signOutUser = async () => {
@@ -135,14 +156,18 @@ class Profile extends Component {
   }
 
   selectPicture = async () => {
+    const { uid } = this.props.user;
     await Permissions.askAsync(Permissions.CAMERA_ROLL)
     let result = await ImagePicker.launchImageLibraryAsync();
-    //let result = await ImagePicker.launchImageLibraryAsync();
 
     if (!result.cancelled) {
-      this.uploadImage(result.uri, "test-image")
-        .then(() => {
+      this.uploadImage(result.uri, `profile_picture/${uid}`)
+        .then((url) => {
           Alert.alert("Success");
+            database
+                .ref(`/Users/${uid}/profile_picture`)
+                .set(url)
+                this.setState({profilePicture: url})
         })
         .catch((error) => {
           Alert.alert(error);
@@ -151,14 +176,18 @@ class Profile extends Component {
   }
 
   takePicture = async () => {
+    const { uid } = this.props.user;
     await Permissions.askAsync(Permissions.CAMERA)
     let result = await ImagePicker.launchCameraAsync();
-    //let result = await ImagePicker.launchImageLibraryAsync();
 
     if (!result.cancelled) {
-      this.uploadImage(result.uri, "test-image-2")
-        .then(() => {
+      this.uploadImage(result.uri, `profile_picture/${uid}`)
+        .then((url) => {
           Alert.alert("Success");
+                database
+                .ref(`/Users/${uid}/profile_picture`)
+                .set(url)
+              this.setState({profilePicture: url})
         })
         .catch((error) => {
           Alert.alert(error);
@@ -167,81 +196,138 @@ class Profile extends Component {
   }
 
   uploadImage = async (uri, imageName) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        console.log(e);
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
 
-    var ref = firebase.storage().ref().child("images/" + imageName);
-    return ref.put(blob);
+    var ref = firebase.storage().ref().child("images/" + imageName)
+    var metadata = {
+        contentType: 'image/jpeg',
+      };
+    const snapshot = await ref.put(blob, metadata);
+    blob.close();
+
+    return snapshot.ref.getDownloadURL();
   }
 
+
   render() {
-    const {isEditing, err, editSuccess} = this.state;
-    // console.log('Profile props:', this.props.user);
+    const {isEditing, err, editSuccess, profilePicture} = this.state;
+    // console.log('Profile props:', this.state);
     return (
       <View style={styles.container}>
-        {isEditing ? <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Image style={styles.avatar} source={{ uri: `${this.props.user.pictureUrl}` }} />
-            <Button title="Choose image..." onPress={this.selectPicture}>Picture Library </Button>
-            <Button title="Choose image..." onPress={this.takePicture}>Take Picture </Button>
-              <TextInput
-                style={styles.input}
-                onChangeText={editFirstName => this.setState(
-                    { editFirstName }
-                  )}
-                autoCapitalize="sentences"
-                autoComplete="name"
-                placeholder={this.props.user.firstName} />
-              <TextInput
-                style={styles.input}
-                onChangeText={editLastName => this.setState(
-                    { editLastName }
-                  )}
-                autoCapitalize="sentences"
-                autoComplete="name"
-                placeholder={this.props.user.lastName} />
-            </View>
-          </View> : <View style={styles.header}>
+        {isEditing ? (
+          <View style={styles.header}>
             <View style={styles.headerContent}>
-              <Image style={styles.avatar} source={{ uri: `${this.props.user.pictureUrl}` }} />
+              <Image
+                style={styles.avatar}
+                source={{ uri: profilePicture || this.props.user.pictureUrl }}
+              />
+              <Button title="Choose image..." onPress={this.selectPicture}>
+                Picture Library{' '}
+              </Button>
+              <Button title="Choose image..." onPress={this.takePicture}>
+                Take Picture{' '}
+              </Button>
+              <TextInput
+                style={styles.inputContainer}
+                onChangeText={editFirstName =>
+                  this.setState({ editFirstName })
+                }
+                autoCapitalize="sentences"
+                autoComplete="name"
+                placeholder={this.props.user.firstName}
+              />
+              <TextInput
+                style={styles.inputContainer}
+                onChangeText={editLastName =>
+                  this.setState({ editLastName })
+                }
+                autoCapitalize="sentences"
+                autoComplete="name"
+                placeholder={this.props.user.lastName}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <Image
+                style={styles.avatar}
+                source={{ uri: profilePicture || this.props.user.pictureUrl }}
+              />
               <Text style={styles.name}>
                 {this.props.user.firstName} {this.props.user.lastName}{' '}
               </Text>
               <Text style={styles.userInfo}>{this.props.user.email} </Text>
             </View>
-          </View>}
+          </View>
+        )}
         <View style={styles.body}>
           <View style={styles.item}>
             <View style={styles.iconContent}>
-              <Image style={styles.icon} source={{ uri: 'https://png.icons8.com/home/win8/50/ffffff' }} />
+              <Image
+                style={styles.icon}
+                source={{
+                  uri: 'https://png.icons8.com/home/win8/50/ffffff'
+                }}
+              />
             </View>
-            <TouchableOpacity style={styles.infoContent} color="#ffffff" onPress={() => this.props.navigation.navigate('Event Map')}>
+            <TouchableOpacity
+              style={styles.infoContent}
+              color="#ffffff"
+              onPress={() => this.props.navigation.navigate('Event Map')}
+            >
               <Text>Home</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.item}>
             <View style={styles.iconContent}>
-              <Image style={styles.icon} source={{ uri: 'https://png.icons8.com/events/win8/50/ffffff' }} />
+              <Image
+                style={styles.icon}
+                source={{
+                  uri: 'https://png.icons8.com/events/win8/50/ffffff'
+                }}
+              />
             </View>
-            <TouchableOpacity style={styles.infoContent} onPress={() => this.props.navigation.navigate('Create an Event')}>
+            <TouchableOpacity
+              style={styles.infoContent}
+              onPress={() =>
+                this.props.navigation.navigate('Create an Event')
+              }
+            >
               <Text>Events</Text>
             </TouchableOpacity>
           </View>
           <Button title="Sign out" onPress={this.signOutUser}>
-          Sign out
+            Sign out
           </Button>
             {editSuccess ? <Text> {editSuccess} </Text> : null}
             {err ? <Text> {err} </Text> : null}
-            {!isEditing && <Button title="Edit" onPress={this.toggleEdit}>
-            Edit
-          </Button>}
-            {isEditing && <Button title="Edit" onPress={this.editInfo}>
+            {!isEditing && (
+          <Button title="Edit" onPress={this.toggleEdit}>
+            Edit Name
+          </Button>
+          )}
+            {isEditing && (
+          <Button title="Edit" onPress={this.editInfo}>
             Save
-          </Button>}
+          </Button>
+          )}
         </View>
       </View>
-    )
+    );
   }
 }
 
