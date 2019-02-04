@@ -147,7 +147,7 @@ class Google extends React.Component {
       });
 
       if (result.type === 'success') {
-        this.setState({ loading: true });
+        // this.setState({ loading: true });
         await this.onSignIn(result);
         const currUser = await database.ref('/Users/');
         let thisUid;
@@ -167,7 +167,7 @@ class Google extends React.Component {
                 uid: thisUidFormatted
               };
               this.props.setUserAndDevice(thisUser);
-              this.setState({ loading: false });
+              // this.setState({ loading: false });
               this.props.navigation.navigate('App');
               return result.accessToken;
             }
