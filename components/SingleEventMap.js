@@ -11,7 +11,7 @@ import {
 import { MapView, Constants } from 'expo';
 // import { Marker } from 'react-native-maps';
 import { connect } from 'react-redux';
-import { mapStyle } from './styles/mapStyle';
+import { mapStyle } from '../styles/mapStyle';
 //vectir icons '@expo/vector-icons'
 import { convertTimestamp } from '../helpers/convertTimestamp';
 import { setSelectedEvent, setSingleEventMapLocation } from '../redux/store';
@@ -26,7 +26,7 @@ const deviceId = Constants.installationId;
 
 class Map extends React.Component {
   state = {
-    eventMembers: [],
+    eventMembers: []
   };
 
   renderMemberMarkers = () => {
@@ -88,7 +88,6 @@ class Map extends React.Component {
   };
   updateMapRegion = region => {
     this.props.setSingleEventMapLocation(region);
-
   };
   async componentDidMount() {
     this.index = 0;
@@ -123,10 +122,10 @@ class Map extends React.Component {
               {/* {this.renderMemberMarkers()} */}
               <Marker
                 coordinate={coordinate}
-                title={event.name}
-                description={`${event.location.locationName} ${event.date} ${
-                  event.time
-                }`}
+                title={selectedEvent.name}
+                description={`${selectedEvent.location.locationName} ${
+                  selectedEvent.date
+                } ${selectedEvent.time}`}
               />
             </MapView>
             <Callout style={styles.callout}>

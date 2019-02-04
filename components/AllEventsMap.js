@@ -1,54 +1,39 @@
 /* eslint-disable guard-for-in */
 import React from 'react';
 import {
-  AppRegistry,
   StyleSheet,
-  Text,
   View,
-  ScrollView,
   Animated,
-  Dimensions,
   TouchableOpacity,
-  PixelRatio,
-  Platform
+  ActivityIndicator,
+  Text
 } from 'react-native';
-import { MapView, Location, Permissions } from 'expo';
+import { MapView } from 'expo';
 import { connect } from 'react-redux';
-import { mapStyle } from './styles/mapStyle';
-import {
-  fetchAllEvents,
-  setSelectedEvent,
-  setAllEventsMapLocation,
-  setSingleEventMapLocation
-} from '../redux/store';
 
-const { width, height } = Dimensions.get('window');
-const CARD_WIDTH = height / 4;
-const CARD_HEIGHT = CARD_WIDTH - 50;
+import { fetchAllEvents, setSelectedEvent } from '../redux/store';
+
+import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
 
 class AllEventsMap extends React.Component {
   state = {
-    user: {},
-    region: null
+    loading: false
   };
 
+  //creates the individual event cards
   renderEventCard = () => {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
-      let event, title, date, description, time, id, eventDetails;
-
       return allEvents.map(eventData => {
+        //this is a trick to get the objects out -- there's only one 'uid' for each event
+        let event, title, time, date, description;
         for (let uid in eventData) {
           event = eventData[uid];
           title = event.name;
           time = event.time;
           date = event.date;
           description = event.location.locationName;
-          id = uid;
         }
-
-        // Touchable opacity on this card that will navigate the user to
-        // the single event map and also pass along that event information
         const thisId = Object.keys(eventData)[0];
         const eventLocation = {
           latitude: event.location.locationGeocode.lat,
@@ -56,11 +41,12 @@ class AllEventsMap extends React.Component {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.043
         };
+        console.log(event);
         return (
           <TouchableOpacity
             key={thisId}
             onPress={() => {
-              this.props.setSingleEventMapLocation(eventLocation);
+              this.props.animateToMapPosition(eventLocation);
               this.props.setSelectedEvent(eventData);
               // this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}
@@ -86,85 +72,14 @@ class AllEventsMap extends React.Component {
       });
     }
   };
-  // animate region changes
-  mapAnimation = value => {
-    let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-    if (index >= this.props.allEvents.length) {
-      index = this.props.allEvents.length - 1;
-    }
-    if (index <= 0) {
-      index = 0;
-    }
 
-    clearTimeout(this.regionTimeout);
-    this.regionTimeout = setTimeout(() => {
-      if (this.index !== index) {
-        this.index = index;
-        let latitude, longitude;
-        for (let uid in this.props.allEvents[index]) {
-          latitude = this.props.allEvents[index][uid].location.locationGeocode
-            .lat;
-          longitude = this.props.allEvents[index][uid].location.locationGeocode
-            .lng;
-        }
-        this.map.animateToRegion(
-          {
-            latitude,
-            longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.043
-          },
-          350
-        );
-      }
-    }, 10);
-  };
-  //This gets our initial position and region for our map
-  getLocationAsync = async () => {
-    try {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        this.setState({
-          errorMessage: 'Permission to access location was denied'
-        });
-      }
-      const location = await Location.getCurrentPositionAsync({});
-      //send initial location to the DB -- SHOULD BE DONE IN BACKGROUND?
-      // try {
-      //   await database.ref(`/Devices/${deviceId}`).update({
-      //     coords: location.coords,
-      //     timestamp: location.timestamp
-      //   });
-      // } catch (error) {
-      //   console.error(error);
-      // }
-
-      //might want to calculate starting delta based on event location (in single event) so it's shown along with user position
-      const region = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.043
-      };
-      this.props.setLocation(region);
-    } catch (err) {
-      console.error(err);
-    }
-  };
   async componentDidMount() {
     this.index = 0;
+
     if (this.props.user.email) {
-      this.props.fetchEvents(this.props.user.email);
+      await this.props.fetchEvents(this.props.user.email);
     }
-
-    //gets my location and sets map center
-    await this.getLocationAsync();
   }
-
-  //this updates the map region when the user interacts with the map
-  updateMapRegion = region => {
-    this.props.setAllEventsMapLocation(region);
-  };
 
   render() {
     const { allEvents, location } = this.props;
@@ -189,89 +104,54 @@ class AllEventsMap extends React.Component {
         return { scale, opacity };
       });
     }
-    //move center map button above cards
 
-    return (
-      <View style={styles.container}>
-        <MapView
-          ref={map => (this.map = map)}
-          style={styles.map}
-          showsUserLocation={true}
-          followsUserLocation={true}
-          showsMyLocationButton={false}
-          showsCompass={true}
-          showsScale={true}
-          region={location}
-          onRegionChangeComplete={e => this.updateMapRegion(e)}
-          provider={MapView.PROVIDER_GOOGLE}
-          customMapStyle={mapStyle}
-        >
-          {this.props.allEvents.length
-            ? this.props.allEvents.map((eventData, index) => {
-                for (let uid in eventData) {
-                  const event = eventData[uid];
-                  const latitude = event.location.locationGeocode.lat;
-                  const longitude = event.location.locationGeocode.lng;
-                  const title = event.name;
-                  const id = uid;
+    return null;
+    // {/* <View style={styles.container}> */}
+    //   {/* <ActivityIndicator
+    //     animating={this.state.loading}
+    //     color="white"
+    //     size="large"
+    //     style={{ margin: 15 }}
+    //   /> */}
 
-                  const scaleStyle = {
-                    transform: [
-                      {
-                        scale: interpolations[index].scale
-                      }
-                    ]
-                  };
+    //   {/* {this.props.allEvents.length
+    //     ? this.props.allEvents.map((eventData, index) => {
+    //         for (let uid in eventData) {
+    //           const event = eventData[uid];
+    //           const latitude = event.location.locationGeocode.lat;
+    //           const longitude = event.location.locationGeocode.lng;
+    //           const title = event.name;
+    //           const id = uid;
 
-                  const opacityStyle = {
-                    opacity: interpolations[index].opacity
-                  };
+    //           const scaleStyle = {
+    //             transform: [
+    //               {
+    //                 scale: interpolations[index].scale
+    //               }
+    //             ]
+    //           };
 
-                  return (
-                    <MapView.Marker
-                      key={id}
-                      title={title}
-                      coordinate={{ latitude, longitude }}
-                    >
-                      <Animated.View style={[styles.markerWrap, opacityStyle]}>
-                        <Animated.View style={[styles.ring, scaleStyle]} />
-                        <View style={styles.marker} />
-                      </Animated.View>
-                    </MapView.Marker>
-                  );
-                }
-              })
-            : null}
-        </MapView>
-        <Animated.ScrollView
-          horizontal
-          scrollEventThrottle={1}
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={CARD_WIDTH}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: this.props.animation
-                  }
-                }
-              }
-            ],
-            {
-              listener: event => {
-                this.mapAnimation(event.nativeEvent.contentOffset.x);
-              }
-            },
-            { useNativeDriver: true }
-          )}
-          style={styles.scrollView}
-          contentContainerStyle={styles.endPadding}
-        >
-          {this.renderEventCard()}
-        </Animated.ScrollView>
-      </View>
-    );
+    //           const opacityStyle = {
+    //             opacity: interpolations[index].opacity
+    //           };
+
+    //           return (
+    //             <MapView.Marker
+    //               key={id}
+    //               title={title}
+    //               coordinate={{ latitude, longitude }}
+    //             >
+    //               <Animated.View style={[styles.markerWrap, opacityStyle]}>
+    //                 <Animated.View style={[styles.ring, scaleStyle]} />
+    //                 <View style={styles.marker} />
+    //               </Animated.View>
+    //             </MapView.Marker>
+    //           );
+    //         }
+    //       })
+    //     : null}
+    //   </View>
+    //   */}
   }
 }
 
@@ -358,17 +238,12 @@ const styles = StyleSheet.create({
 const mapState = state => ({
   allEvents: state.event.allEvents,
   user: state.user.user,
-  animation: state.animate.allEventsAnimate,
-  location: state.maps.allEventsMap
+  animation: state.animate.allEventsAnimate
 });
 
 const mapDispatch = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email)),
-  setSelectedEvent: event => dispatch(setSelectedEvent(event)),
-  setAllEventsMapLocation: location =>
-    dispatch(setAllEventsMapLocation(location)),
-  setSingleEventMapLocation: location =>
-    dispatch(setSingleEventMapLocation(location))
+  setSelectedEvent: event => dispatch(setSelectedEvent(event))
 });
 
 export default connect(
