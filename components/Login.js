@@ -75,9 +75,9 @@ class Login extends React.Component {
         });
         const thisUserData = {
           email: thisUser.email,
-          firstName: thisUser.first_name,
-          lastName: thisUser.last_name,
-          pictureUrl: thisUser.profile_picture,
+          firstName: thisUser.first_name || '',
+          lastName: thisUser.last_name || '',
+          pictureUrl: thisUser.profile_picture || '',
           uid: data.user.uid
         };
 

@@ -71,6 +71,7 @@ class CreateEvent extends Component {
           renderDescription={row => row.description} // custom description render
           onPress={async (data, details = null) => {
             // 'details' is provided when fetchDetails = true
+            // console.log(details);
             await this.setState({
               location: {
                 locationName: data.structured_formatting.main_text,
