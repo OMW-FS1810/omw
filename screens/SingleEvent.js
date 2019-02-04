@@ -48,6 +48,17 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.regular,
     fontSize: fontSize.large,
     paddingLeft: padding * 2
+  },
+  emailText: {
+    // flex: 1,
+    color: color.indigoBlue,
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.large,
+    paddingLeft: padding * 2
+  },
+  addButton: {
+    padding: padding * 2,
+    color: color.darkOrange
   }
 });
 
@@ -109,12 +120,17 @@ class SingleEvent extends Component {
               <View style={styles.emailList}>
                 {/* <Text style={styles.subtitle}>Email:</Text> */}
                 {event.invites.map(invitee => (
-                  <Text key={invitee} style={styles.text}>
-                    {console.log(invitee)}
+                  <Text key={invitee} style={styles.emailText}>
                     {invitee}
                   </Text>
                 ))}
-                {this.state.editing ? (
+                <MaterialCommunityIcons
+                  name="email-plus"
+                  size={24}
+                  style={styles.addButton}
+                  onPress={() => console.log('button persd')}
+                />
+                {/* {this.state.editing ? (
                   <View style={styles.inputContainer}>
                     <TextInput
                       value={this.state.emailInput}
@@ -126,7 +142,7 @@ class SingleEvent extends Component {
                       <Text>invite this friendo!</Text>
                     </Button>
                   </View>
-                ) : null}
+                ) : null} */}
               </View>
             </View>
           </View>
