@@ -31,6 +31,7 @@ let styles = StyleSheet.create({
   topContainer: {
     flex: 1,
     paddingHorizontal: 15,
+    paddingTop: padding * 4,
     paddingBottom: padding * 2,
     justifyContent: 'center',
     alignItems: 'center',
@@ -38,8 +39,8 @@ let styles = StyleSheet.create({
   },
 
   image: {
-    height: 150,
-    width: 150,
+    height: 200,
+    width: windowWidth - 150,
     backgroundColor: color.darkBlue,
     marginBottom: 1,
     resizeMode: 'contain'
@@ -55,7 +56,7 @@ let styles = StyleSheet.create({
 
   bottomContainer: {
     backgroundColor: 'white',
-    paddingVertical: padding * 3,
+    // paddingVertical: padding,
     shadowColor: '#000000',
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -129,7 +130,7 @@ class Auth extends React.Component {
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <Image style={styles.image} source={require('../assets/logo.png')} />
-          <Text style={styles.title}>ON MY WAY!</Text>
+          <Text style={styles.title}>ON MY WAY</Text>
         </View>
 
         <View style={styles.bottomContainer}>

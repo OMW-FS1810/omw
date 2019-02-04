@@ -43,7 +43,6 @@ let styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13,
-    color: color.orange
   },
   buttonText: {
     fontSize: fontSize.regular + 2,
@@ -109,6 +108,7 @@ class Login extends React.Component {
           style={styles.inputContainer}
           autoCapitalize="none"
           clearButtonMode="while-editing"
+          autoFocus = {true}
           placeholder="Password"
           secureTextEntry={true}
           placeholderTextColor="#aaa"
