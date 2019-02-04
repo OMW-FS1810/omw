@@ -117,7 +117,7 @@ class Signup extends React.Component {
           />
           <TextInput
             style={styles.inputContainer}
-            placeholder="Last name"
+            placeholder="Last Name"
             placeholderTextColor="#aaa"
             clearButtonMode="while-editing"
             onChangeText={lastName => this.setState({ lastName })}
