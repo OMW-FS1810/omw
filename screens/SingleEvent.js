@@ -12,27 +12,22 @@ const styles = StyleSheet.create({
   box1: {
     flex: 1,
     backgroundColor: '#e3aa1a'
-    // height: 75
   },
   box2: {
     flex: 1,
     backgroundColor: 'grey'
-    // height: 75
   },
   box3: {
     flex: 3,
     backgroundColor: 'white'
-    // height: 250
   },
   box4: {
     flex: 3,
     backgroundColor: 'grey'
-    // height: 75
   },
   box5: {
     flex: 3,
     backgroundColor: 'white'
-    // height: 200
   },
   editButton: {
     alignSelf: 'flex-start'
