@@ -178,7 +178,7 @@ class SingleEvent extends Component {
             </View>
             <View style={styles.emailsContainer}>
               <View style={styles.titleBox}>
-                <Text style={styles.titleText}>FRIENDS</Text>
+                <Text style={styles.titleText}>WHO'S GOING</Text>
               </View>
               <View style={styles.emailList}>
                 {event.invites.map(invitee => (
