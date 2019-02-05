@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  Button
+  Button,
+  AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
 import { setUserAndDevice, setUser } from '../redux/store';
@@ -151,6 +152,7 @@ class Profile extends Component {
     try {
       await firebase.auth().signOut();
       this.props.setUser({});
+      await AsyncStorage.removeItem('user');
       this.props.navigation.navigate('loginScreen');
     } catch (err) {
       this.setState({ err: err.message });

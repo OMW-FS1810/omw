@@ -79,11 +79,21 @@ class CreateEvent extends Component {
             renderDescription={row => row.description} // custom description render
             onPress={async (data, details = null) => {
               // 'details' is provided when fetchDetails = true
+
+              let locationPhoto = '';
+              if (details.photos) {
+                const photoreference = details.photos[0].photo_reference;
+                const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=200&photoreference=${photoreference}&key=${GOOGLE_API}`;
+                const photoSearch = await fetch(url);
+                locationPhoto = photoSearch.url;
+              }
+
               await this.setState({
                 location: {
                   locationName: data.structured_formatting.main_text,
                   locationAddress: data.description,
-                  locationGeocode: details.geometry.location
+                  locationGeocode: details.geometry.location,
+                  locationPhoto
                 }
               });
             }}

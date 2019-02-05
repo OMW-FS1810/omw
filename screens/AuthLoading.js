@@ -6,6 +6,8 @@ import {
   StyleSheet,
   View
 } from 'react-native';
+import { setUserAndDevice } from '../redux/store';
+import { connect } from 'react-redux';
 
 class AuthLoading extends React.Component {
   constructor(props) {
@@ -18,7 +20,17 @@ class AuthLoading extends React.Component {
     const userToken = await AsyncStorage.getItem('user');
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    console.log(userToken);
+    if (userToken) {
+      const thisUserData = JSON.parse(userToken);
+      await this.props.setUserAndDevice(thisUserData);
+      this.props.navigation.navigate('App');
+    } else {
+      this.props.navigation.navigate('LoginStack');
+    }
+
+    // await AsyncStorage.clear();
+    // this.props.navigation.navigate('Auth');
   };
 
   // Render any loading content that you like here
@@ -40,4 +52,13 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AuthLoading;
+const mapDispatchToProps = dispatch => ({
+  setUserAndDevice(user) {
+    return dispatch(setUserAndDevice(user));
+  }
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(AuthLoading);
