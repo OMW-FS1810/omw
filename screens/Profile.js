@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  Button
+  Button,
+  AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
 import { setUserAndDevice, setUser } from '../redux/store';
@@ -15,6 +16,7 @@ import { setUserAndDevice, setUser } from '../redux/store';
 import { database } from '../config/firebase';
 import * as firebase from 'firebase';
 import { ImagePicker, Permissions } from 'expo';
+import MenuButton from '../components/MenuButton'
 
 const styles = StyleSheet.create({
   header: {
@@ -151,6 +153,7 @@ class Profile extends Component {
     try {
       await firebase.auth().signOut();
       this.props.setUser({});
+      await AsyncStorage.removeItem('user');
       this.props.navigation.navigate('loginScreen');
     } catch (err) {
       this.setState({ err: err.message });
@@ -227,6 +230,7 @@ class Profile extends Component {
     // console.log('Profile props:', this.state);
     return (
       <View style={styles.container}>
+      <MenuButton navigation={this.props.navigation} />
         {isEditing ? (
           <View style={styles.header}>
             <View style={styles.headerContent}>

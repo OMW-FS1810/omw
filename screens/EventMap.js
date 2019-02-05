@@ -5,8 +5,11 @@ import {
   View,
   TouchableOpacity,
   Animated,
-  Text
+  Text,
+  Image
 } from 'react-native';
+
+import MenuButton from '../components/MenuButton'
 
 import { MapView } from 'expo';
 import {
@@ -75,7 +78,8 @@ class EventMap extends React.Component {
               return [memberEmail, this.state.eventMembers[memberEmail]];
             })
             .filter(member => member[1]);
-          // console.log(memberArr);
+          //exit on empty members array
+          if (!memberArr.length) return;
           latitude = memberArr[index][1].coords.latitude;
           longitude = memberArr[index][1].coords.longitude;
         } else {
@@ -99,7 +103,6 @@ class EventMap extends React.Component {
   trackMembersStart = members => {
     try {
       const userLocationsDB = database.ref(`/Devices/`);
-
       members.forEach(async memberEmail => {
         await userLocationsDB
           .orderByChild('email')
@@ -202,14 +205,16 @@ class EventMap extends React.Component {
 
     return (
       <View style={styles.container}>
-        <ActivityIndicator
-          animating={this.state.loading}
-          color="darkgrey"
-          size="large"
-          style={{ margin: 15 }}
-        />
-        {this.state.localMapRegion && (
-          <>
+        <MenuButton navigation={this.props.navigation} />
+        <Text style={styles.text}>Event Map</Text>
+          <ActivityIndicator
+            animating={this.state.loading}
+            color="darkgrey"
+            size="large"
+            style={{ margin: 15 }}
+          />
+          {this.state.localMapRegion && (
+            <>
             <MapView
               ref={map => (this.map = map)}
               style={styles.map}
@@ -245,6 +250,15 @@ class EventMap extends React.Component {
                       size={30}
                       color="red"
                     />
+                    <MapView.Callout style={styles.selectedEvent}>
+                      <Text>
+                        {Object.values(this.props.selectedEvent)[0].name}
+                      </Text>
+                      <Text>
+                        {Object.values(this.props.selectedEvent)[0].date}{' '}
+                        {Object.values(this.props.selectedEvent)[0].time}
+                      </Text>
+                    </MapView.Callout>
                   </MapView.Marker>
                 </>
               ) : allEvents.length ? (
@@ -274,7 +288,7 @@ class EventMap extends React.Component {
                 <MapView.Callout style={styles.eventDetailsButton}>
                   <TouchableOpacity
                     onPress={() => {
-                      // console.log('I pressed details!');
+                      this.props.navigation.navigate('SingleEvent');
                     }}
                   >
                     <MaterialIcons name="event-note" size={24} color="teal" />
@@ -389,8 +403,8 @@ let styles = StyleSheet.create({
   },
   myLocationButton: {
     position: 'absolute',
-    top: 20,
-    right: 20,
+    top: 80,
+    right: 15,
     shadowColor: 'black',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.7,
@@ -442,6 +456,13 @@ let styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: 'white',
     alignItems: 'center'
+  },
+  selectedEvent: {
+    width: 100,
+    height: 50
+  },
+  text: {
+    fontSize: 30
   }
 });
 
