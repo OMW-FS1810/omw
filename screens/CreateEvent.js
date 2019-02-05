@@ -36,9 +36,6 @@ class CreateEvent extends Component {
   }
 
   handlePress = () => {
-    // FOR TESTING V
-    // this.props.fetch(this.props.user.uid);
-
     this.props.navigation.navigate('inviteScreen');
     this.props.populateDeets(this.state);
     this.setState({

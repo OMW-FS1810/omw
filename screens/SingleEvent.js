@@ -21,17 +21,14 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     flex: 1.25
-    // flexDirection: 'column'
   },
   emailsContainer: {
     flex: 1
-    // flexDirection: 'column'
   },
   emailsList: {
     alignItems: 'flex-start'
   },
   titleBox: {
-    // flex: 1,
     backgroundColor: color.blue,
     alignItems: 'center'
   },
@@ -52,7 +49,6 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xLarge
   },
   subtitle: {
-    // flex: 2,
     fontFamily: fontFamily.light,
     fontSize: fontSize.large,
     color: color.darkBlue,
@@ -66,7 +62,6 @@ const styles = StyleSheet.create({
     paddingLeft: padding * 2
   },
   emailText: {
-    // flex: 1,
     color: color.indigoBlue,
     fontFamily: fontFamily.regular,
     fontSize: fontSize.large,
@@ -74,7 +69,6 @@ const styles = StyleSheet.create({
   },
   addButton: {
     padding: padding * 2
-    // color: color.darkOrange
   }
 });
 
@@ -103,7 +97,6 @@ class SingleEvent extends Component {
 
   async componentDidMount() {
     if (this.props.selectedEvent) {
-      const { name, date, time } = Object.values(this.props.selectedEvent)[0];
       const uid = Object.keys(this.props.selectedEvent)[0];
       await this.setState({ uid });
     }
@@ -135,7 +128,6 @@ class SingleEvent extends Component {
                 <Text style={styles.titleText}>FRIENDS</Text>
               </View>
               <View style={styles.emailList}>
-                {/* <Text style={styles.subtitle}>Email:</Text> */}
                 {event.invites.map(invitee => (
                   <Text key={invitee} style={styles.emailText}>
                     {invitee}
@@ -188,19 +180,6 @@ class SingleEvent extends Component {
                     </Text>
                   </TouchableOpacity>
                 )}
-                {/* {this.state.editing ? (
-                  <View style={styles.inputContainer}>
-                    <TextInput
-                      value={this.state.emailInput}
-                      label="Invite Another Friendo!"
-                      style={styles.input}
-                      onChangeText={emailInput => this.setState({ emailInput })}
-                    />
-                    <Button onPress={this.handleAddToInviteList}>
-                      <Text>invite this friendo!</Text>
-                    </Button>
-                  </View>
-                ) : null} */}
               </View>
             </View>
           </View>
@@ -224,57 +203,3 @@ export default connect(
   mapState,
   mapDispatch
 )(SingleEvent);
-
-/*
-
-            <View style}>
-              <Text>{event.name}</Text>
-              <Button
-                mode="contained"
-                onPress={() => {
-                  if (!this.state.editing) {
-                    this.setState({ editing: true });
-                  } else {
-                    this.setState({ editing: false });
-                  }
-                }}
-                style={styles.editButton}
-              >
-                <Text>{this.state.editing ? 'SAVE' : 'EDIT'}</Text>
-              </Button>
-            </View>
-            {this.state.editing ? (
-              <>
-                <DatePicker
-                  label="Date"
-                  date={this.state.editDate}
-                  mode="date"
-                  showIcon={false}
-                  style={styles.date}
-                  onDateChange={editDate => this.setState({ editDate })}
-                  placeholder="select date"
-                  format="MM-DD-YYYY"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                />
-                <DatePicker
-                  mode="time"
-                  showIcon={false}
-                  date={this.state.editTime}
-                  placeholder="select time"
-                  style={styles.date}
-                  onDateChange={editTime => this.setState({ editTime })}
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                />
-              </>
-            ) : (
-              <View style={styles.box2}>
-                <Text>
-                  {event.date} {event.time}
-                </Text>
-              </View>
-            )}
-            <View style={styles.box3}>
-            
-            */

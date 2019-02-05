@@ -54,15 +54,13 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     //first we send the invitations
     const host = store.getState().user.user;
     const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
-    // const mailedInvites =
     sendInvites(invitesNotUser, eventDeets, host);
-    // }
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);
   }
 };
-export const fetchAllEvents = email => async dispatch => {
+export const fetchAllEvents = email => dispatch => {
   try {
     // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
@@ -78,14 +76,11 @@ export const fetchAllEvents = email => async dispatch => {
       }
       dispatch(requestEvents(invitedEvents));
     });
-    // setTimeout(() => {
-    //   dispatch(requestEvents(invitedEvents));
-    // }, 100);
   } catch (err) {
     console.error(err);
   }
 };
-export const addEmailToEvent = (uid, email) => async dispatch => {
+export const addEmailToEvent = (uid, email) => dispatch => {
   try {
     // grab reference to this event
     const eventRef = database.ref(`Events/${uid}`);

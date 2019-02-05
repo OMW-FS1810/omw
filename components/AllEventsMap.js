@@ -88,7 +88,6 @@ class AllEventsMap extends React.Component {
           <TouchableOpacity
             key={thisId}
             onPress={() => {
-              // console.log('details in map', eventData);
               this.props.selectEvent(eventData);
               this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}

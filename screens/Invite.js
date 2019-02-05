@@ -23,7 +23,6 @@ class Invite extends Component {
     });
     // is this where we want to go?
     // need to populate the new event in the store!
-    // console.log('selected event in invite', this.props.selectedEvent);
     this.props.navigation.navigate('SingleEvent');
   };
 
@@ -76,7 +75,6 @@ let styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    // justifyContent: 'flex-start',
     width: '95%',
     top: 0
   },
@@ -92,7 +90,6 @@ let styles = StyleSheet.create({
     width: '95%'
   },
   title: {
-    // fontFamily: 'System',
     fontSize: 40,
     paddingBottom: 20,
     marginBottom: 20,

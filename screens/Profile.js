@@ -103,13 +103,6 @@ class Profile extends Component {
     profilePicture: null
   };
 
-  // static navigationOptions = ({ navigation }) => {
-  //   console.log('profile in navigation:', navigation);
-  //   return {
-  //     title:'Profile'
-  //   }
-  // }
-
   // Current state is based on previous state
   toggleEdit = () => {
     this.setState(prevState => ({ isEditing: !prevState.isEditing }));
@@ -226,7 +219,6 @@ class Profile extends Component {
 
   render() {
     const { isEditing, err, editSuccess, profilePicture } = this.state;
-    // console.log('Profile props:', this.state);
     return (
       <View style={styles.container}>
         {isEditing ? (
