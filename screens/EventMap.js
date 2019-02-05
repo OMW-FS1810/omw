@@ -114,13 +114,20 @@ class EventMap extends React.Component {
           .orderByChild('email')
           .equalTo(memberEmail.toLowerCase())
           .on('value', snapshot => {
-            this.setState({
+            // this.setState({
+            //   eventMembers: {
+            //     ...this.state.eventMembers,
+            //     [memberEmail.toLowerCase()]:
+            //       snapshot.val() && Object.values(snapshot.val())[0]
+            //   }
+            // });
+            this.setState(prevState => ({
               eventMembers: {
-                ...this.state.eventMembers,
+                ...prevState.eventMembers,
                 [memberEmail.toLowerCase()]:
                   snapshot.val() && Object.values(snapshot.val())[0]
               }
-            });
+            }));
           });
       });
     } catch (err) {

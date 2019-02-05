@@ -51,8 +51,8 @@ class CreateEvent extends Component {
   };
 
   handlePress2 = () => {
-    this.props.navigation.navigate('Event Map')
-  }
+    this.props.navigation.navigate('Event Map');
+  };
 
   render() {
     return (
@@ -182,7 +182,18 @@ class CreateEvent extends Component {
 
         <View style={styles.bottom}>
           <TouchableOpacity
-            style={[styles.button, styles.containerView]}
+            style={[
+              styles.nextButton,
+              {
+                backgroundColor:
+                  !this.state.date ||
+                  !this.state.name ||
+                  !this.state.time ||
+                  !this.state.location
+                    ? color.grey
+                    : color.darkOrange
+              }
+            ]}
             onPress={this.handlePress}
             disabled={
               !this.state.date ||
@@ -191,7 +202,7 @@ class CreateEvent extends Component {
               !this.state.location
             }
           >
-            <Text style={styles.buttonText}>NEXT</Text>
+            <Text style={[styles.buttonText]}>NEXT</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.containerView]}
@@ -258,6 +269,13 @@ let styles = StyleSheet.create({
   button: {
     width: 300,
     backgroundColor: color.darkOrange,
+    borderRadius: 25,
+    marginVertical: 10,
+    paddingVertical: 13
+  },
+  nextButton: {
+    width: 300,
+    // backgroundColor: color.darkOrange,
     borderRadius: 25,
     marginVertical: 10,
     paddingVertical: 13
