@@ -110,7 +110,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     console.error(err);
   }
 };
-export const declineEvent = uid => dispatch => {
+export const declineEvent = uid => async dispatch => {
   try {
     // grab reference to the event
     const eventRef = database.ref(`Events/${uid}`);
@@ -131,6 +131,10 @@ export const declineEvent = uid => dispatch => {
       await dispatch(fetchAllEvents(myEmail));
       // re-initialize store with default store.setSelectedEvent
       await dispatch(setSelectedEvent({}));
+
+      // remove from my list of events
+      // remove from selected
+      // remove email from invites
     });
   } catch (err) {
     console.error(err);

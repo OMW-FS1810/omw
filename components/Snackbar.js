@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import React from 'react';
 import { Notifications, Audio } from 'expo';
 import { View, StyleSheet, AppState, Text } from 'react-native';
