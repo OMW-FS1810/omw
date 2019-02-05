@@ -24,6 +24,20 @@ const reducer = combineReducers({
   animate: animateReducer,
   messaging: messagingReducer
 });
+/*
+  ***********
+  event:
+    store.event.allEvents: {},
+    store.event.selectedEvent: {},
+    store.event.pendingCreateEventDeets: {},
+    store.event.pendingCreateEventInvites: []
+  ***********
+  user:
+  
+  ***********
+  ***********
+  
+*/
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',
