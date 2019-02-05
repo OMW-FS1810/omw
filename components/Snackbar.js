@@ -1,6 +1,6 @@
 import React from 'react';
 import { Notifications, Audio } from 'expo';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, AppState } from 'react-native';
 import { Snackbar, Button } from 'react-native-paper';
 
 export default class Notify extends React.Component {
@@ -16,12 +16,15 @@ export default class Notify extends React.Component {
   }
   _handleNotification = async notification => {
     this.setState({ incoming: notification.data, visible: true });
-    const soundObject = new Audio.Sound();
-    try {
-      await soundObject.loadAsync(require('../assets/sounds/bamboo.mp3'));
-      await soundObject.playAsync();
-    } catch (err) {
-      console.error(err);
+    console.log(AppState.cuurentState);
+    if (AppState.cuurentState === 'active') {
+      const soundObject = new Audio.Sound();
+      try {
+        await soundObject.loadAsync(require('../assets/sounds/bamboo.mp3'));
+        await soundObject.playAsync();
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
