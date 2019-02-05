@@ -42,7 +42,11 @@ export default class AllEventsMapCards extends React.Component {
           >
             <View style={styles.card}>
               <View style={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>
+                <Text
+                  adjustsFontSizeToFit={true}
+                  numberOfLines={1}
+                  style={styles.cardtitle}
+                >
                   {title}
                 </Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
@@ -93,16 +97,17 @@ const styles = StyleSheet.create({
     flex: 3,
     width: '100%',
     height: '80%',
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   textContent: {
     flex: 1,
-    padding: padding
+    padding: padding,
   },
   cardtitle: {
-    fontSize: 12,
-    marginTop: 5,
-    fontWeight: 'bold'
+    fontFamily: fontFamily.bold,
+    fontSize: fontSize.regular,
+    color: color.darkBlue,
+    alignSelf: 'center'
   },
   cardDescription: {
     fontSize: 12,

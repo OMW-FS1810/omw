@@ -37,6 +37,8 @@ import { fetchAllEvents, setSelectedEvent } from '../redux/store';
 import { database } from '../config/firebase';
 
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 class EventMap extends React.Component {
   state = {
@@ -255,7 +257,7 @@ class EventMap extends React.Component {
                     <SimpleLineIcons
                       name="location-pin"
                       size={30}
-                      color="red"
+                      color= {color.darkOrange}
                     />
                     <MapView.Callout style={styles.selectedEvent}>
                       <View style={styles.card}>
@@ -350,7 +352,7 @@ class EventMap extends React.Component {
                   }}
                 >
                   <AntDesign name="pluscircleo" size={45} color="teal" />
-                  <Text>Create an event</Text>
+                  <Text>Create Event</Text>
                 </TouchableOpacity>
               </MapView.Callout>
             )}
@@ -438,10 +440,10 @@ let styles = StyleSheet.create({
   scrollView: {
     position: 'absolute',
     bottom: 50,
-    left: 0,
-    right: 0,
-    paddingVertical: 10
+    paddingVertical: 10,
+    paddingHorizontal: padding
   },
+
   endPadding: {
     paddingRight: width - CARD_WIDTH
   },
@@ -508,7 +510,7 @@ let styles = StyleSheet.create({
   textContent: {
     flex: 1,
     padding: 5
-  }
+  },
 });
 
 const mapStateToProps = state => ({
