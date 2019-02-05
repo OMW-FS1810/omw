@@ -16,8 +16,8 @@ export default class Notify extends React.Component {
   }
   _handleNotification = async notification => {
     this.setState({ incoming: notification.data, visible: true });
-    console.log(AppState);
-    if (AppState.cuurentState === 'active') {
+    console.log(AppState.currentState);
+    if (AppState.currentState === 'active') {
       const soundObject = new Audio.Sound();
       try {
         await soundObject.loadAsync(require('../assets/sounds/bamboo.mp3'));
