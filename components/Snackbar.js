@@ -24,6 +24,7 @@ class Notify extends React.Component {
       try {
         await soundObject.loadAsync(require('../assets/sounds/bamboo.mp3'));
         await soundObject.playAsync();
+        this.props.addEvent(this.state.incoming.newEventObject);
       } catch (err) {
         console.error(err);
       }
@@ -40,7 +41,6 @@ class Notify extends React.Component {
         action={{
           label: 'View',
           onPress: () => {
-            this.props.addEvent(this.state.incoming.newEventObject);
             this.props.selectEvent(this.state.incoming.newEventObject);
             //below is if we want to jump to details page
             // this.props.navigation.navigate('SingleEvent')

@@ -110,14 +110,20 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     console.error(err);
   }
 };
-export const declineEvent = uid => dispatch => {
+export const declineEvent = uid => async dispatch => {
   try {
     // grab reference to the event
-    const eventRef = database.ref(`Events/${uid}`);
+    let eventUid;
+    if (uid[0] === '-') {
+      eventUid = String(uid);
+    } else {
+      eventUid = '-' + uid;
+    }
+    const eventRef = database.ref(`Events/${eventUid}`);
     // find *my* email
     const myEmail = store.getState().user.user.email;
     // update the invites list to remove *my* email
-    eventRef.child('invites').once('value', async snapshot => {
+    await eventRef.child('invites').once('value', async snapshot => {
       let oldInvitesArr = snapshot.val();
       // filter out *my* email from the invites array
       let newInvitesArr = oldInvitesArr.filter(
