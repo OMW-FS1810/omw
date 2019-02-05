@@ -13,6 +13,8 @@ import {
   View,
   WebView
 } from 'react-native';
+import { Icon } from 'react-native-elements';
+import {DrawerActions} from 'react-navigation'
 
 import { MapView } from 'expo';
 import {
@@ -47,9 +49,25 @@ class EventMap extends React.Component {
     eventMembers: {}
   };
 
-  // static navigationOptions = {
-  //   header: false
-  // };
+  static navigationOptions = ({ navigation }) => ({
+    title: 'OMW',
+    headerRight: (
+      <Icon
+        name="menu"
+        color={color.blue}
+        containerStyle={{ paddingRight: 10 }}
+        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+      />
+    ),
+    headerLeft: (
+      <Icon
+        name="add"
+        color={color.blue}
+        containerStyle={{ paddingLeft: 10 }}
+        onPress={() => navigation.navigate('CREATE EVENT')}
+      />
+    )
+  });
 
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
@@ -355,7 +373,7 @@ class EventMap extends React.Component {
               <MapView.Callout style={styles.allEventsButton}>
                 <TouchableOpacity
                   onPress={() => {
-                    this.props.navigation.navigate('Create an Event');
+                    this.props.navigation.navigate('CREATE EVENT');
                   }}
                 >
                   <AntDesign name="pluscircleo" size={45} color="teal" />

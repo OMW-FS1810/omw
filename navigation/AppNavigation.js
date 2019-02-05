@@ -7,7 +7,6 @@ import {
   createSwitchNavigator
 } from 'react-navigation';
 import { Text } from 'react-native';
-import { Icon } from 'react-native-elements';
 import { color } from '../styles/theme';
 import { Snackbar } from '../components';
 
@@ -31,11 +30,9 @@ const LoginStack = createStackNavigator({
 //MAP STACK
 const mapStack = createStackNavigator(
   {
-    eventMapScreen: { screen: EventMap }
+    eventMapScreen: { screen: EventMap },
+    SingleEvent: { screen: SingleEvent }
   },
-  {
-    navigationOptions: () => {}
-  }
 );
 
 //CREATE EVENT STACK
@@ -60,27 +57,15 @@ const CreateEventStack = createStackNavigator(
 //DRAWER STACK
 const DrawerStack = createDrawerNavigator(
   {
-    'Event Map': { screen: mapStack },
-    'Create an Event': { screen: CreateEventStack },
-    Profile: { screen: Profile },
-    SingleEvent: { screen: SingleEvent }
+    'EVENT MAP': { screen: mapStack },
+    'CREATE EVENT': { screen: CreateEventStack },
+    'PROFILE': { screen: Profile },
+    // SingleEvent: { screen: SingleEvent }
   },
   {
     drawerPosition: 'right',
-    navigationOptions: () => null
-    // navigationOptions: ({ navigation }) => ({
-    //   headerStyle: { backgroundColor: 'transparent' },
-    //   title: navigation.state.routeName,
-    //   // title: 'Logged in!',
-    //   headerRight: (
-    //     <Icon
-    //       name="menu"
-    //       color={color.blue}
-    //       containerStyle={{ paddingRight: 10 }}
-    //       onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-    //     />
-    //   )
-    // })
+    navigationOptions: ({ navigation }) => ({
+    })
   }
 );
 

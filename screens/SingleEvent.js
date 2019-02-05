@@ -118,12 +118,12 @@ class SingleEvent extends Component {
   };
 
   handlePressBack = () => {
-    this.props.navigation.navigate('Event Map');
+    this.props.navigation.navigate('EVENT MAP');
   };
 
   handlePressDecline = () => {
     this.props.decline(this.state.uid);
-    this.props.navigation.navigate('Event Map');
+    this.props.navigation.navigate('EVENT MAP');
   };
 
   async componentDidMount() {
@@ -155,7 +155,7 @@ class SingleEvent extends Component {
               <Text style={styles.subtitle}>Location:</Text>
               <Text style={styles.text}>{event.location.locationName}</Text>
               {/*
-              add image with src of event.location.locationPhoto 
+              add image with src of event.location.locationPhoto
               i.e...
               {locationPhoto !== '' && (
                 <View style={styles.textContent}>
@@ -168,8 +168,8 @@ class SingleEvent extends Component {
                   />
                 </View>
               )}
-              
-              
+
+
               */}
               <Text style={styles.subtitle}>Date:</Text>
               <Text style={styles.text}>{event.date}</Text>
