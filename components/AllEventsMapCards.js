@@ -4,6 +4,9 @@ import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
 
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
+
 export default class AllEventsMapCards extends React.Component {
   render() {
     //creates the individual event cards
@@ -56,7 +59,7 @@ export default class AllEventsMapCards extends React.Component {
                       uri: locationPhoto
                     }}
                     style={styles.cardImage}
-                    resizeMode="cover"
+                    resizeMode="contain"
                   />
                 </View>
               )}
@@ -72,30 +75,29 @@ export default class AllEventsMapCards extends React.Component {
 
 const styles = StyleSheet.create({
   card: {
-    // padding: 10,
     elevation: 2,
-    backgroundColor: '#FFF',
-    marginHorizontal: 10,
-    shadowColor: '#000',
-    shadowRadius: 5,
-    shadowOpacity: 0.3,
-    shadowOffset: { x: 2, y: -2 },
+    backgroundColor: color.orange,
+    marginHorizontal: 5,
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
     overflow: 'hidden',
-    borderColor: 'teal',
-    borderWidth: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    borderRadius: 4
   },
+
+  focused: {
+    backgroundColor: color.darkOrange
+  },
+
   cardImage: {
     flex: 3,
     width: '100%',
     height: '80%',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   textContent: {
     flex: 1,
-    padding: 5
+    padding: padding
   },
   cardtitle: {
     fontSize: 12,
@@ -104,6 +106,7 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     fontSize: 12,
-    color: '#444'
+    color: '#444',
+    overflow: 'visible'
   }
 });
