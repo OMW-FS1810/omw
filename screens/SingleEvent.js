@@ -6,8 +6,10 @@ import {
   Text,
   Button,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  KeyboardAvoidingView
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 import { addEmailToEvent } from '../redux/store';
 import * as theme from '../styles/theme';
@@ -109,7 +111,12 @@ class SingleEvent extends Component {
       event = Object.values(this.props.selectedEvent)[0];
       return (
         { event } && (
-          <View style={styles.container}>
+          <KeyboardAwareScrollView
+            resetScrollToCoords={{ x: 0, y: 0 }}
+            // contentContainerStyle={styles.container}
+            scrollEnabled={false}
+            style={styles.container}
+          >
             <View style={styles.detailsContainer}>
               <View style={styles.titleBox}>
                 <Text style={styles.titleText}>DETAILS</Text>
@@ -182,7 +189,7 @@ class SingleEvent extends Component {
                 )}
               </View>
             </View>
-          </View>
+          </KeyboardAwareScrollView>
         )
       );
     } else {
@@ -192,7 +199,8 @@ class SingleEvent extends Component {
 }
 
 const mapState = ({ event }) => ({
-  selectedEvent: event.selectedEvent
+  selectedEvent: event.selectedEvent,
+  allEvents: event.allEvents
 });
 
 const mapDispatch = dispatch => ({

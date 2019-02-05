@@ -1,9 +1,19 @@
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Button } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Button,
+  KeyboardAvoidingView
+} from 'react-native';
 import { connect } from 'react-redux';
 import { populateEventEmails, createEvent } from '../redux/event';
 import { NavigationActions, StackActions } from 'react-navigation';
+import * as theme from '../styles/theme';
+
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 class Invite extends Component {
   state = {
@@ -15,6 +25,7 @@ class Invite extends Component {
     let emailsToInvite = this.state.emails;
     // add the user (host) to the emails to invite
     emailsToInvite = [...emailsToInvite, this.props.user.email];
+
     await this.props.populateEmails(this.state.emails);
     await this.props.createTheEvent(this.props.eventDeets, emailsToInvite);
     await this.setState({
@@ -28,10 +39,10 @@ class Invite extends Component {
 
   handleAddToInviteList = () => {
     const email = this.state.input.toLowerCase();
-    const emails = this.state.emails;
-    emails.push(email);
-    this.setState({ emails });
-    this.setState({ input: '' });
+    this.setState(prevState => ({
+      emails: [...prevState.emails, email],
+      input: ''
+    }));
   };
 
   render() {
@@ -40,14 +51,21 @@ class Invite extends Component {
         <View style={styles.titleView}>
           <Text style={styles.title}>Invite Your Friends!</Text>
         </View>
-        <View style={styles.inputContainer}>
+        <View
+        // style={styles.inputContainer}
+        >
           <TextInput
             value={this.state.input}
+            style={styles.newInputContainer}
             label="Email"
-            style={styles.input}
+            placeholder="Email"
+            clearButtonMode="whilte-editing"
             onChangeText={input => this.setState({ input })}
           />
-          <Button title="invite" onPress={this.handleAddToInviteList}>
+          <Button
+            title="add to invite list"
+            onPress={this.handleAddToInviteList}
+          >
             <Text>invite this friendo!</Text>
           </Button>
         </View>
@@ -78,12 +96,24 @@ let styles = StyleSheet.create({
     width: '95%',
     top: 0
   },
+  newInputContainer: {
+    width: windowWidth - 33,
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    fontSize: 18,
+    fontFamily: fontFamily.light,
+    color: color.darkBlue,
+    marginVertical: 15,
+    alignSelf: 'center',
+    borderColor: '#98B1C4',
+    borderWidth: 1,
+    height: 20
+  },
   titleView: {
     marginTop: 80,
     flex: 1
   },
   input: {
-    borderColor: '#98B1C4',
     marginLeft: 20,
     marginRight: 20,
     marginTop: 5,
