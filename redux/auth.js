@@ -1,30 +1,21 @@
 import { database } from '../config/firebase';
+import { AsyncStorage } from 'react-native';
 import { Constants } from 'expo';
 import { registerForPushNotificationsAsync } from '../helpers/notificationSetup';
 import { setBackgroundLocationOn } from '../helpers/location';
 
 const deviceId = Constants.installationId;
 
-const initialState = {
-  user: {
-    uid: null,
-    email: '',
-    firstName: '',
-    lastName: '',
-    pictureUrl: '',
-    deviceId: null,
-    token: null
-  }
-};
-import { AsyncStorage } from 'react-native';
-
+// ACTIONS
 const SET_USER = 'SET_USER';
 
+// ACTION CREATORS
 export const setUser = user => ({
   type: SET_USER,
   payload: user
 });
 
+// THUNK CREATORS
 export const setUserAndDevice = user => async dispatch => {
   try {
     //turn on background location
@@ -65,6 +56,20 @@ export const setUserAndDevice = user => async dispatch => {
   }
 };
 
+// DEFAULT STATE
+const initialState = {
+  user: {
+    uid: null,
+    email: '',
+    firstName: '',
+    lastName: '',
+    pictureUrl: '',
+    deviceId: null,
+    token: null
+  }
+};
+
+// REDUCER
 const AuthReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER: {

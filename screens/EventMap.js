@@ -116,13 +116,20 @@ class EventMap extends React.Component {
           .orderByChild('email')
           .equalTo(memberEmail.toLowerCase())
           .on('value', snapshot => {
-            this.setState({
+            // this.setState({
+            //   eventMembers: {
+            //     ...this.state.eventMembers,
+            //     [memberEmail.toLowerCase()]:
+            //       snapshot.val() && Object.values(snapshot.val())[0]
+            //   }
+            // });
+            this.setState(prevState => ({
               eventMembers: {
-                ...this.state.eventMembers,
+                ...prevState.eventMembers,
                 [memberEmail.toLowerCase()]:
                   snapshot.val() && Object.values(snapshot.val())[0]
               }
-            });
+            }));
           });
       });
     } catch (err) {
@@ -406,7 +413,7 @@ class EventMap extends React.Component {
                 <Ionicons name="md-locate" size={40} color="teal" />
               </TouchableOpacity>
             </MapView.Callout>
-            <Snackbar navigation={navigation} />
+            <Snackbar navigation={navigation} selectEvent={this.selectEvent} />
           </>
         )}
       </View>

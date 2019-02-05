@@ -24,6 +24,36 @@ const reducer = combineReducers({
   animate: animateReducer,
   messaging: messagingReducer
 });
+/*
+  *********** THESE ARE OUR VALUES ON STORE ***********
+  event:
+    store.event.allEvents: {},
+    store.event.selectedEvent: {},
+    store.event.pendingCreateEventDeets: {},
+    store.event.pendingCreateEventInvites: []
+  ____________
+  
+  user:
+    store.user: {
+      store.user.user.uid: null,
+      store.user.user.email: '',
+      store.user.user.firstName: '',
+      store.user.user.lastName: '',
+      store.user.user.pictureUrl: '',
+      store.user.user.deviceId: null,
+      store.user.user.token: null
+    }
+  ____________
+  
+  animate:
+    store.animate.allEventsAnimate: new Animated.Value(0)
+  ____________
+  
+  messaging:
+    store.messaging.sent: []
+    store.messaging.received: []
+  ____________
+*/
 
 const middleware = createReactNavigationReduxMiddleware(
   'root',

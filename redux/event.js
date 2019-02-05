@@ -31,7 +31,7 @@ export const setSelectedEvent = event => ({
   type: SET_SELECTED_EVENT,
   event
 });
-const addEventToList = event => ({
+export const addEventToList = event => ({
   type: ADD_EVENT_TO_LIST,
   event
 });
@@ -49,12 +49,14 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     });
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
-    await dispatch(addEventToList({ [newUID]: newEvent }));
-    dispatch(setSelectedEvent({ [newUID]: newEvent }));
+    const newEventObject = { [newUID]: newEvent };
+    await dispatch(addEventToList(newEventObject));
+    dispatch(setSelectedEvent(newEventObject));
     //first we send the invitations
     const host = store.getState().user.user;
     const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
-    sendInvites(invitesNotUser, eventDeets, host);
+
+    sendInvites(invitesNotUser, eventDeets, host, newEventObject);
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);
@@ -63,7 +65,7 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
 export const fetchAllEvents = email => dispatch => {
   try {
     // query all events where this email is in invites
-    const eventRef = database.ref('/Events/');
+    const eventRef = database.ref('Events/');
     let invitedEvents = [];
     eventRef.once('value', async snapshot => {
       let snappy = await snapshot.val();
@@ -91,9 +93,9 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       eventRef.update({
         invites: newInvitesArr
       });
-      // grab logged in email to refetch all events
+      // grab *my* logged in email to refetch all events
       const myEmail = store.getState().user.user.email;
-      // grab current event to update invites
+      // grab current event to update invites in store.selectedEvent
       const currEvent = store.getState().event.selectedEvent;
       const key = Object.keys(currEvent)[0];
       // push new email into old emails arr
@@ -102,7 +104,43 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       await dispatch(setSelectedEvent(currEvent));
 
       const host = store.getState().user.user;
-      sendInvites([email], currEvent[key], host);
+      sendInvites([email], currEvent[key], host, currEvent);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const declineEvent = uid => dispatch => {
+  try {
+    // grab reference to the event
+    const eventRef = database.ref(`Events/${uid}`);
+    // find *my* email
+    const myEmail = store.getState().user.user.email.toLowerCase();
+    // update the invites list to remove *my* email
+    eventRef.child('invites').once('value', async snapshot => {
+      let oldInvitesArr = snapshot.val();
+      // filter out *my* email from the invites array
+      let newInvitesArr = oldInvitesArr.filter(
+        snapshotEmail => snapshotEmail.toLowerCase() !== myEmail
+      );
+      if (!newInvitesArr.length) {
+        await eventRef.update({
+          invites: []
+        });
+      } else {
+        await eventRef.update({
+          invites: newInvitesArr
+        });
+      }
+
+      // refetch all events to trigger re-render
+      await dispatch(fetchAllEvents(myEmail));
+      // re-initialize store with default store.setSelectedEvent
+      await dispatch(setSelectedEvent({}));
+
+      // remove from my list of events
+      // remove from selected
+      // remove email from invites
     });
   } catch (err) {
     console.error(err);

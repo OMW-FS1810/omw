@@ -31,7 +31,8 @@ export const setBackgroundLocationOn = async () => {
     await Location.startLocationUpdatesAsync(SEND_LOCATION, {
       accuracy: Location.Accuracy.Balanced,
       distanceInterval: 50,
-      timeInterval: 60000
+      timeInterval: 60000,
+      showsBackgroundLocationIndicator: false
     });
   } catch (err) {
     console.error(err);

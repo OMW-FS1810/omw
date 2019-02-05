@@ -196,7 +196,7 @@ class Profile extends Component {
         resolve(xhr.response);
       };
       xhr.onerror = function(e) {
-        console.log(e);
+        console.error(e);
         reject(new TypeError('Network request failed'));
       };
       xhr.responseType = 'blob';

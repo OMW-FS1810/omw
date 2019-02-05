@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  StyleSheet,
   View,
   Text,
+  Image,
   Button,
   TextInput,
+  StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
-import { addEmailToEvent } from '../redux/store';
+import { addEmailToEvent, declineEvent } from '../redux/store';
 import * as theme from '../styles/theme';
 
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
@@ -71,6 +72,25 @@ const styles = StyleSheet.create({
   },
   addButton: {
     padding: padding * 2
+  },
+  button: {
+    width: 300,
+    backgroundColor: color.darkOrange,
+    borderRadius: 25,
+    marginVertical: 10,
+    paddingVertical: 13
+  },
+  buttonText: {
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold,
+    color: '#FFFFFF',
+    textAlign: 'center'
+  },
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 36,
+    alignItems: 'center'
   }
 });
 
@@ -95,6 +115,15 @@ class SingleEvent extends Component {
   handleSubmitEmail = () => {
     this.props.addEmail(this.state.uid, this.state.emailInput);
     this.setState({ emailInput: '', editing: false });
+  };
+
+  handlePressBack = () => {
+    this.props.navigation.navigate('Event Map');
+  };
+
+  handlePressDecline = () => {
+    this.props.decline(this.state.uid);
+    this.props.navigation.navigate('Event Map');
   };
 
   async componentDidMount() {
@@ -125,6 +154,23 @@ class SingleEvent extends Component {
               <Text style={styles.text}>{event.name}</Text>
               <Text style={styles.subtitle}>Location:</Text>
               <Text style={styles.text}>{event.location.locationName}</Text>
+              {/*
+              add image with src of event.location.locationPhoto 
+              i.e...
+              {locationPhoto !== '' && (
+                <View style={styles.textContent}>
+                  <Image
+                    source={{
+                      uri: locationPhoto
+                    }}
+                    style={styles.cardImage}
+                    resizeMode="cover"
+                  />
+                </View>
+              )}
+              
+              
+              */}
               <Text style={styles.subtitle}>Date:</Text>
               <Text style={styles.text}>{event.date}</Text>
               <Text style={styles.subtitle}>Time:</Text>
@@ -187,6 +233,20 @@ class SingleEvent extends Component {
                     </Text>
                   </TouchableOpacity>
                 )}
+                <View style={styles.bottom}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.bottom]}
+                    onPress={this.handlePressDecline}
+                  >
+                    <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.bottom]}
+                    onPress={this.handlePressBack}
+                  >
+                    <Text style={styles.buttonText}>BACK</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </KeyboardAwareScrollView>
@@ -204,7 +264,8 @@ const mapState = ({ event }) => ({
 });
 
 const mapDispatch = dispatch => ({
-  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email))
+  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email)),
+  decline: uid => dispatch(declineEvent(uid))
 });
 
 export default connect(
