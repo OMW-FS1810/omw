@@ -15,6 +15,10 @@ const color = {
   orange: '#E8A389'
 };
 
+const colors = {
+  accent: color.orange
+};
+
 const fontSize = {
   small: normalize(12),
   regular: normalize(14),
@@ -29,6 +33,8 @@ const fontFamily = {
   regular: 'RobotoRegular',
   light: 'RobotoLight'
 };
+
+const fonts = fontFamily;
 
 const padding = 8;
 const navbarHeight = Platform.OS === 'ios' ? 64 : 54;
@@ -48,7 +54,9 @@ const navTitleStyle = {
 
 export {
   color,
+  colors,
   fontSize,
+  fonts,
   fontFamily,
   padding,
   navbarHeight,

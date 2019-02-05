@@ -50,12 +50,16 @@ class CreateEvent extends Component {
     });
   };
 
+  handlePress2 = () => {
+    this.props.navigation.navigate('Event Map')
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.titleView}>
+        {/* <View style={styles.titleView}>
           <Text style={styles.title}>Create Event</Text>
-        </View>
+        </View> */}
 
         <TextInput
           style={styles.inputContainer}
@@ -189,6 +193,12 @@ class CreateEvent extends Component {
           >
             <Text style={styles.buttonText}>NEXT</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.containerView]}
+            onPress={this.handlePress2}
+          >
+            <Text style={styles.buttonText}>BACK</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -205,6 +215,7 @@ let styles = StyleSheet.create({
   inputContainer: {
     width: windowWidth - 33,
     borderRadius: 25,
+    paddingTop: 20,
     paddingHorizontal: 16,
     fontSize: 18,
     fontFamily: fontFamily.light,
