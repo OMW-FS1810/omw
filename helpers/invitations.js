@@ -38,9 +38,10 @@ export const sendInvites = async (inviteesArr, eventDetails, host) => {
           sendPushNotification(
             token,
             eventDetails.name,
-            `${host.email} has invited you to an event at ${
-              eventDetails.location.locationName
-            } on ${eventDetails.date} at ${eventDetails.time}`,
+            `${host.email} has invited you to a new event`,
+            // at ${
+            //   eventDetails.location.locationName
+            // } on ${eventDetails.date} at ${eventDetails.time}`,
             host.token
           );
       });

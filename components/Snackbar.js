@@ -1,6 +1,6 @@
 import React from 'react';
 import { Notifications, Audio } from 'expo';
-import { View, StyleSheet, AppState } from 'react-native';
+import { View, StyleSheet, AppState, Text } from 'react-native';
 import { Snackbar, Button } from 'react-native-paper';
 
 export default class Notify extends React.Component {
@@ -30,13 +30,13 @@ export default class Notify extends React.Component {
 
   render() {
     return (
-      // <View style={styles.container}>
       <Snackbar
+        style={styles.snackbar}
         visible={this.state.visible}
         onDismiss={() => this.setState({ visible: false })}
-        duration="10000"
+        duration="7000"
         action={{
-          label: 'Open',
+          label: 'View',
           onPress: () => {
             // Do something
             // this.props.navigation.navigate('Notifications');
@@ -45,16 +45,10 @@ export default class Notify extends React.Component {
       >
         {this.state.incoming.message}
       </Snackbar>
-      // </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // justifyContent: 'space-between',
-    position: 'absolute',
-    top: 10
-  }
+  snackbar: {}
 });
