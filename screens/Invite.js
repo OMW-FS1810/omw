@@ -7,7 +7,7 @@ import { NavigationActions, StackActions } from 'react-navigation';
 
 class Invite extends Component {
   state = {
-    emails: ['macbook@apple.com'],
+    emails: [],
     input: ''
   };
 
