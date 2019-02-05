@@ -93,7 +93,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       });
       // grab *my* logged in email to refetch all events
       const myEmail = store.getState().user.user.email;
-      // grab current event to update invites
+      // grab current event to update invites in store.selectedEvent
       const currEvent = store.getState().event.selectedEvent;
       const key = Object.keys(currEvent)[0];
       // push new email into old emails arr

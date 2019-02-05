@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
-import { addEmailToEvent } from '../redux/store';
+import { addEmailToEvent, declineEvent } from '../redux/store';
 import * as theme from '../styles/theme';
 
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
@@ -235,7 +235,8 @@ const mapState = ({ event }) => ({
 });
 
 const mapDispatch = dispatch => ({
-  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email))
+  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email)),
+  decline: uid => dispatch(declineEvent(uid))
 });
 
 export default connect(
