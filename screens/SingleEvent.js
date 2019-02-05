@@ -122,8 +122,9 @@ class SingleEvent extends Component {
   };
 
   handlePressDecline = () => {
-    this.props.decline(this.state.uid);
-    this.props.navigation.navigate('EVENT MAP');
+    const uid = Object.keys(this.props.selectedEvent)[0];
+    this.props.decline(uid);
+    this.props.navigation.navigate('Event Map');
   };
 
   async componentDidMount() {
@@ -178,7 +179,7 @@ class SingleEvent extends Component {
             </View>
             <View style={styles.emailsContainer}>
               <View style={styles.titleBox}>
-                <Text style={styles.titleText}>FRIENDS</Text>
+                <Text style={styles.titleText}>WHO'S GOING</Text>
               </View>
               <View style={styles.emailList}>
                 {event.invites.map(invitee => (
