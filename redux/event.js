@@ -65,7 +65,7 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
 export const fetchAllEvents = email => dispatch => {
   try {
     // query all events where this email is in invites
-    const eventRef = database.ref('/Events/');
+    const eventRef = database.ref('Events/');
     let invitedEvents = [];
     eventRef.once('value', async snapshot => {
       let snappy = await snapshot.val();
@@ -110,22 +110,28 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     console.error(err);
   }
 };
-export const declineEvent = uid => async dispatch => {
+export const declineEvent = uid => dispatch => {
   try {
     // grab reference to the event
     const eventRef = database.ref(`Events/${uid}`);
     // find *my* email
-    const myEmail = store.getState().user.user.email;
+    const myEmail = store.getState().user.user.email.toLowerCase();
     // update the invites list to remove *my* email
     eventRef.child('invites').once('value', async snapshot => {
       let oldInvitesArr = snapshot.val();
       // filter out *my* email from the invites array
       let newInvitesArr = oldInvitesArr.filter(
-        snapshotEmail => snapshotEmail !== myEmail
+        snapshotEmail => snapshotEmail.toLowerCase() !== myEmail
       );
-      await eventRef.update({
-        invites: newInvitesArr
-      });
+      if (!newInvitesArr.length) {
+        await eventRef.update({
+          invites: []
+        });
+      } else {
+        await eventRef.update({
+          invites: newInvitesArr
+        });
+      }
 
       // refetch all events to trigger re-render
       await dispatch(fetchAllEvents(myEmail));
