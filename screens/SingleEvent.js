@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  StyleSheet,
   View,
   Text,
+  Image,
   Button,
   TextInput,
+  StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
-import { addEmailToEvent } from '../redux/store';
+import { addEmailToEvent, declineEvent } from '../redux/store';
 import * as theme from '../styles/theme';
 
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
@@ -120,6 +121,11 @@ class SingleEvent extends Component {
     this.props.navigation.navigate('Event Map');
   };
 
+  handlePressDecline = () => {
+    this.props.decline(this.state.uid);
+    this.props.navigation.navigate('Event Map');
+  };
+
   async componentDidMount() {
     if (this.props.selectedEvent) {
       const uid = Object.keys(this.props.selectedEvent)[0];
@@ -148,6 +154,23 @@ class SingleEvent extends Component {
               <Text style={styles.text}>{event.name}</Text>
               <Text style={styles.subtitle}>Location:</Text>
               <Text style={styles.text}>{event.location.locationName}</Text>
+              {/*
+              add image with src of event.location.locationPhoto 
+              i.e...
+              {locationPhoto !== '' && (
+                <View style={styles.textContent}>
+                  <Image
+                    source={{
+                      uri: locationPhoto
+                    }}
+                    style={styles.cardImage}
+                    resizeMode="cover"
+                  />
+                </View>
+              )}
+              
+              
+              */}
               <Text style={styles.subtitle}>Date:</Text>
               <Text style={styles.text}>{event.date}</Text>
               <Text style={styles.subtitle}>Time:</Text>
@@ -213,6 +236,12 @@ class SingleEvent extends Component {
                 <View style={styles.bottom}>
                   <TouchableOpacity
                     style={[styles.button, styles.bottom]}
+                    onPress={this.handlePressDecline}
+                  >
+                    <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.bottom]}
                     onPress={this.handlePressBack}
                   >
                     <Text style={styles.buttonText}>BACK</Text>
@@ -235,7 +264,8 @@ const mapState = ({ event }) => ({
 });
 
 const mapDispatch = dispatch => ({
-  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email))
+  addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email)),
+  decline: uid => dispatch(declineEvent(uid))
 });
 
 export default connect(
