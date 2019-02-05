@@ -109,14 +109,16 @@ const styles = StyleSheet.create({
   },
 
   imageContent: {
-    flex: 1,
+    flex: 2,
     paddingTop: padding /2,
     paddingHorizontal: padding/2,
+
   },
 
   textContent: {
     flex: 2,
-    paddingVertical: padding
+    paddingVertical: padding,
+    justifyContent: 'flex-end',
   },
   cardtitle: {
     fontFamily: fontFamily.bold,
