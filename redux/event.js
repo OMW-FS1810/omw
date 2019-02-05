@@ -131,7 +131,6 @@ export const declineEvent = uid => dispatch => {
       await dispatch(setSelectedEvent({}));
     });
 
-    //! in single event page push back to map
   } catch (err) {
     console.error(err);
   }
