@@ -6,7 +6,12 @@ import { sendPushNotification } from './notificationSetup';
 //NOTE: the app url link will be changed when the project is published -- in dev it will need to be the developer's own tunnel
 const appUrl = 'exp://ez-94f.apoyando.omw.exp.direct:80';
 
-export const sendInvites = async (inviteesArr, eventDetails, host) => {
+export const sendInvites = async (
+  inviteesArr,
+  eventDetails,
+  host,
+  newEventObject
+) => {
   // need to invite unregistered users, notify registered users, and notify host
   const currUsers = database.ref('/Users/');
   const allUsers = await currUsers
@@ -42,7 +47,8 @@ export const sendInvites = async (inviteesArr, eventDetails, host) => {
             // at ${
             //   eventDetails.location.locationName
             // } on ${eventDetails.date} at ${eventDetails.time}`,
-            host.token
+            host.token,
+            newEventObject
           );
       });
       //send emails

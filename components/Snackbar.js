@@ -37,8 +37,9 @@ export default class Notify extends React.Component {
         action={{
           label: 'View',
           onPress: () => {
-            // Do something
-            // this.props.navigation.navigate('Notifications');
+            this.props.selectEvent(this.state.incoming.newEventObject);
+            //below is if we want to jump to details page
+            // this.props.navigation.navigate('SingleEvent')
           }
         }}
       >

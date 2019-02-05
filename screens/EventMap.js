@@ -411,7 +411,7 @@ class EventMap extends React.Component {
                 <Ionicons name="md-locate" size={40} color="teal" />
               </TouchableOpacity>
             </MapView.Callout>
-            <Snackbar navigation={navigation} />
+            <Snackbar navigation={navigation} selectEvent={this.selectEvent} />
           </>
         )}
       </View>

@@ -49,12 +49,14 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     });
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
-    await dispatch(addEventToList({ [newUID]: newEvent }));
-    dispatch(setSelectedEvent({ [newUID]: newEvent }));
+    const newEventObject = {[newUID]: newEvent}
+    await dispatch(addEventToList(newEventObject));
+    dispatch(setSelectedEvent(newEventObject));
     //first we send the invitations
     const host = store.getState().user.user;
     const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
-    sendInvites(invitesNotUser, eventDeets, host);
+
+    sendInvites(invitesNotUser, eventDeets, host, newEventObject);
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);
