@@ -104,7 +104,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       await dispatch(setSelectedEvent(currEvent));
 
       const host = store.getState().user.user;
-      sendInvites([email], currEvent[key], host);
+      sendInvites([email], currEvent[key], host, currEvent);
     });
   } catch (err) {
     console.error(err);
