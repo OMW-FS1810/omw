@@ -38,7 +38,7 @@ export const sendPushNotification = (
       body: JSON.stringify({
         to: token,
         sound: 'default',
-        title: title,
+        title: `OMW - ${title}`,
         body: body,
         data: { message: `${title} - ${body}`, newEventObject }
       }),

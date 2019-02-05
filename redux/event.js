@@ -10,6 +10,9 @@ const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
 const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
 const ADD_EVENT_TO_LIST = 'ADD_EVENT_TO_LIST';
+const JUST_MADE_EVENT_TOGGLE = 'JUST_MADE_EVENT_TOGGLE';
+const START_EVENT_MEMBER_TRACKING = 'START_EVENT_MEMBER_TRACKING';
+const STOP_EVENT_MEMBER_TRACKING = 'STOP_EVENT_MEMBER_TRACKING';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -34,6 +37,17 @@ export const setSelectedEvent = event => ({
 export const addEventToList = event => ({
   type: ADD_EVENT_TO_LIST,
   event
+});
+export const justMadeEventToggle = () => ({
+  type: JUST_MADE_EVENT_TOGGLE
+});
+const startMemberTracking = (memberEmail, member) => ({
+  type: START_EVENT_MEMBER_TRACKING,
+  memberEmail,
+  member
+});
+const stopMemberTracking = () => ({
+  type: STOP_EVENT_MEMBER_TRACKING
 });
 
 // THUNK CREATORS
@@ -147,12 +161,52 @@ export const declineEvent = uid => dispatch => {
   }
 };
 
+export const trackMembersStart = members => dispatch => {
+  try {
+    const userLocationsDB = database.ref(`/Devices/`);
+    members.forEach(async memberEmail => {
+      await userLocationsDB
+        .orderByChild('email')
+        .equalTo(memberEmail.toLowerCase())
+        .on('value', snapshot => {
+          dispatch(
+            startMemberTracking(
+              memberEmail.toLowerCase(),
+              snapshot.val() && Object.values(snapshot.val())[0]
+            )
+          );
+        });
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const trackMembersStop = members => dispatch => {
+  try {
+    console.log('in store', members)
+    const userLocationsDB = database.ref(`/Devices/`);
+
+    members.forEach(async memberEmail => {
+      await userLocationsDB
+        .orderByChild('email')
+        .equalTo(memberEmail.toLowerCase())
+        .off('value');
+    });
+    dispatch(stopMemberTracking());
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 // DEFAULT STATE
 const defaultEvent = {
   allEvents: {},
   selectedEvent: {},
   pendingCreateEventDeets: {},
-  pendingCreateEventInvites: []
+  pendingCreateEventInvites: [],
+  eventJustMade: false,
+  eventMembers: {}
 };
 
 // REDUCER
@@ -195,6 +249,28 @@ const eventReducer = (state = defaultEvent, action) => {
         allEvents: [...state.allEvents, action.event]
       };
     }
+    case JUST_MADE_EVENT_TOGGLE: {
+      return {
+        ...state,
+        eventJustMade: !state.eventJustMade
+      };
+    }
+    case START_EVENT_MEMBER_TRACKING: {
+      return {
+        ...state,
+        eventMembers: {
+          ...state.eventMembers,
+          [action.memberEmail]: action.member
+        }
+      };
+    }
+    case STOP_EVENT_MEMBER_TRACKING: {
+      return {
+        ...state,
+        eventMembers: {}
+      };
+    }
+
     default:
       return state;
   }
