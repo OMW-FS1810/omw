@@ -15,6 +15,7 @@ export default class AllEventsMapCards extends React.Component {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
       return allEvents.map(eventData => {
+//*********** ,index)
         //this is a trick to get the objects out -- there's only one 'uid' for each event
         let event, title, time, date, description, locationPhoto;
         for (let uid in eventData) {
@@ -32,6 +33,11 @@ export default class AllEventsMapCards extends React.Component {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.043
         };
+
+        // const opacityStyle = {
+        //   opacity: this.props.interpolations[index].opacity
+        // };
+
         return (
           <TouchableOpacity
             key={thisId}
@@ -41,7 +47,9 @@ export default class AllEventsMapCards extends React.Component {
               // this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}
           >
-            <View style={styles.card}>
+            <View style={[styles.card]
+//************** opacityStyle
+            }>
               {locationPhoto !== '' && (
                 <View style={styles.imageContent}>
                   <Image

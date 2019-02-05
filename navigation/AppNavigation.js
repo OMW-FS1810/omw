@@ -63,7 +63,7 @@ const DrawerStack = createDrawerNavigator(
     // SingleEvent: { screen: SingleEvent }
   },
   {
-    drawerPosition: 'right',
+    drawerPosition: 'left',
     navigationOptions: ({ navigation }) => ({
     })
   }

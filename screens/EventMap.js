@@ -14,7 +14,7 @@ import {
   WebView
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import {DrawerActions} from 'react-navigation'
+import { DrawerActions } from 'react-navigation';
 
 import { MapView } from 'expo';
 import {
@@ -51,19 +51,19 @@ class EventMap extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
     title: 'OMW',
-    headerRight: (
+    headerLeft: (
       <Icon
         name="menu"
         color={color.blue}
-        containerStyle={{ paddingRight: 10 }}
+        containerStyle={{ paddingLeft: 10 }}
         onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
       />
     ),
-    headerLeft: (
+    headerRight: (
       <Icon
         name="add"
         color={color.blue}
-        containerStyle={{ paddingLeft: 10 }}
+        containerStyle={{ paddingRight: 10 }}
         onPress={() => navigation.navigate('CREATE EVENT')}
       />
     )
@@ -279,10 +279,11 @@ class EventMap extends React.Component {
                       Object.values(this.props.selectedEvent)[0].locationPhoto
                     }
                   >
-                    <SimpleLineIcons
-                      name="location-pin"
+                    <Icon
+                      name="location"
+                      type="entypo"
                       size={30}
-                      color= {color.darkOrange}
+                      color={color.darkOrange}
                     />
                     <MapView.Callout style={styles.selectedEvent}>
                       <View style={styles.card}>
@@ -417,6 +418,7 @@ class EventMap extends React.Component {
                 <AllEventsMapCards
                   allEvents={allEvents}
                   selectEvent={this.selectEvent}
+                  interpolations={interpolations}
                   // animateToMapPosition={this.animateToMapPosition}
                 />
               )}
@@ -535,7 +537,7 @@ let styles = StyleSheet.create({
   textContent: {
     flex: 1,
     padding: 5
-  },
+  }
 });
 
 const mapStateToProps = state => ({
