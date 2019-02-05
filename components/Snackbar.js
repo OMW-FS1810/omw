@@ -2,8 +2,10 @@ import React from 'react';
 import { Notifications, Audio } from 'expo';
 import { View, StyleSheet, AppState, Text } from 'react-native';
 import { Snackbar, Button } from 'react-native-paper';
+import { connect } from 'react-redux';
+import { addEventToList } from '../redux/event';
 
-export default class Notify extends React.Component {
+class Notify extends React.Component {
   state = {
     incoming: {},
     visible: false
@@ -37,6 +39,7 @@ export default class Notify extends React.Component {
         action={{
           label: 'View',
           onPress: () => {
+            this.props.addEvent(this.state.incoming.newEventObject);
             this.props.selectEvent(this.state.incoming.newEventObject);
             //below is if we want to jump to details page
             // this.props.navigation.navigate('SingleEvent')
@@ -52,3 +55,12 @@ export default class Notify extends React.Component {
 const styles = StyleSheet.create({
   snackbar: {}
 });
+
+const mapDispatch = dispatch => ({
+  addEvent: event => dispatch(addEventToList(event))
+});
+
+export default connect(
+  null,
+  mapDispatch
+)(Notify);

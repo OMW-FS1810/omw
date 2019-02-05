@@ -31,7 +31,7 @@ export const setSelectedEvent = event => ({
   type: SET_SELECTED_EVENT,
   event
 });
-const addEventToList = event => ({
+export const addEventToList = event => ({
   type: ADD_EVENT_TO_LIST,
   event
 });
@@ -50,7 +50,7 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
     const newEventObject = { [newUID]: newEvent };
-    // await dispatch(addEventToList(newEventObject));
+    await dispatch(addEventToList(newEventObject));
     dispatch(setSelectedEvent(newEventObject));
     //first we send the invitations
     const host = store.getState().user.user;
@@ -67,7 +67,7 @@ export const fetchAllEvents = email => dispatch => {
     // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
     let invitedEvents = [];
-    eventRef.on('value', async snapshot => {
+    eventRef.once('value', async snapshot => {
       let snappy = await snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {
@@ -132,7 +132,6 @@ export const declineEvent = uid => dispatch => {
       // re-initialize store with default store.setSelectedEvent
       await dispatch(setSelectedEvent({}));
     });
-
   } catch (err) {
     console.error(err);
   }
