@@ -31,7 +31,9 @@ const reducer = combineReducers({
     store.event.selectedEvent: {},
     store.event.pendingCreateEventDeets: {},
     store.event.pendingCreateEventInvites: []
+    
   ***********
+  
   user:
     store.user: {
       store.user.uid: null,
@@ -42,9 +44,19 @@ const reducer = combineReducers({
       store.user.deviceId: null,
       store.user.token: null
     }
-  ***********
+    
   ***********
   
+  animate:
+    store.animate.allEventsAnimate: new Animated.Value(0)
+    
+  ***********
+  
+  messaging:
+    store.messaging.sent: []
+    store.messaging.received: []
+    
+  ***********
 */
 
 const middleware = createReactNavigationReduxMiddleware(
