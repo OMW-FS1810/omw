@@ -33,7 +33,15 @@ const reducer = combineReducers({
     store.event.pendingCreateEventInvites: []
   ***********
   user:
-  
+    store.user: {
+      store.user.uid: null,
+      store.user.email: '',
+      store.user.firstName: '',
+      store.user.lastName: '',
+      store.user.pictureUrl: '',
+      store.user.deviceId: null,
+      store.user.token: null
+    }
   ***********
   ***********
   
