@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable guard-for-in */
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
@@ -12,7 +13,6 @@ export default class SingleEventMapCards extends React.Component {
     const memberArr = Object.keys(this.props.eventMembers).map(memberEmail => {
       return [memberEmail, this.props.eventMembers[memberEmail]];
     });
-    console.log('member arr in card component', memberArr);
     return memberArr.map(member => {
       let markerName;
       if (member[0] && member[1]) {

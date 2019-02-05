@@ -54,15 +54,13 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     //first we send the invitations
     const host = store.getState().user.user;
     const invitesNotUser = eventInvites.filter(invite => invite !== host.email);
-    // const mailedInvites =
     sendInvites(invitesNotUser, eventDeets, host);
-    // }
     // do we need an error message here if the user cancels the invitations (or there's another issue)?
   } catch (err) {
     console.error(err);
   }
 };
-export const fetchAllEvents = email => async dispatch => {
+export const fetchAllEvents = email => dispatch => {
   try {
     // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
@@ -78,27 +76,34 @@ export const fetchAllEvents = email => async dispatch => {
       }
       dispatch(requestEvents(invitedEvents));
     });
-    // setTimeout(() => {
-    //   dispatch(requestEvents(invitedEvents));
-    // }, 100);
   } catch (err) {
     console.error(err);
   }
 };
-export const addEmailToEvent = (uid, email) => async dispatch => {
+export const addEmailToEvent = (uid, email) => dispatch => {
   try {
-    // const eventRef = database.ref(`Events/${uid}`);
-    // console.log(eventRef.child('invites'));
-
-    await database.ref(`Events/${uid}/invites`).push(email);
-  } catch (err) {
-    console.error(err);
-  }
-};
-export const editEvent = (uid, info) => async dispatch => {
-  try {
+    // grab reference to this event
     const eventRef = database.ref(`Events/${uid}`);
-    await eventRef.update({ ...info });
+    // update the invites arr in database to match new array with spread invites
+    eventRef.child('invites').once('value', async snapshot => {
+      let oldInvitesArr = snapshot.val();
+      let newInvitesArr = [...oldInvitesArr, email];
+      eventRef.update({
+        invites: newInvitesArr
+      });
+      // grab logged in email to refetch all events
+      const myEmail = store.getState().user.user.email;
+      // grab current event to update invites
+      const currEvent = store.getState().event.selectedEvent;
+      const key = Object.keys(currEvent)[0];
+      // push new email into old emails arr
+      currEvent[key].invites.push(email);
+      await dispatch(fetchAllEvents(myEmail));
+      await dispatch(setSelectedEvent(currEvent));
+
+      const host = store.getState().user.user;
+      sendInvites([email], currEvent[key], host);
+    });
   } catch (err) {
     console.error(err);
   }
@@ -144,7 +149,6 @@ const eventReducer = (state = defaultEvent, action) => {
       return {
         ...state,
         selectedEvent: action.event
-        // state.allEvents.filter(x => x[action.uid])[0]
       };
     }
     case ADD_EVENT_TO_LIST: {

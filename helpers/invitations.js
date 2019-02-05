@@ -76,6 +76,5 @@ const findContacts = async () => {
 
   if (data.length > 0) {
     const contact = data[0];
-    // console.log(contact);
   }
 };
