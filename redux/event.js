@@ -49,8 +49,8 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     });
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
-    const newEventObject = {[newUID]: newEvent}
-    await dispatch(addEventToList(newEventObject));
+    const newEventObject = { [newUID]: newEvent };
+    // await dispatch(addEventToList(newEventObject));
     dispatch(setSelectedEvent(newEventObject));
     //first we send the invitations
     const host = store.getState().user.user;
