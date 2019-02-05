@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import React from 'react';
 import { Text, StyleSheet, Animated, View } from 'react-native';
 import { MapView } from 'expo';
@@ -6,7 +7,6 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 
 export default class EventMarkers extends React.Component {
   render() {
-    console.log(this.props.allEvents);
     return this.props.allEvents.map((eventData, index) => {
       for (let uid in eventData) {
         const event = eventData[uid];
