@@ -59,7 +59,7 @@ class Invite extends Component {
             style={styles.newInputContainer}
             label="Email"
             placeholder="Email"
-            clearButtonMode="whilte-editing"
+            clearButtonMode="while-editing"
             onChangeText={input => this.setState({ input })}
           />
           <Button

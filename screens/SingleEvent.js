@@ -71,6 +71,25 @@ const styles = StyleSheet.create({
   },
   addButton: {
     padding: padding * 2
+  },
+  button: {
+    width: 300,
+    backgroundColor: color.darkOrange,
+    borderRadius: 25,
+    marginVertical: 10,
+    paddingVertical: 13
+  },
+  buttonText: {
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold,
+    color: '#FFFFFF',
+    textAlign: 'center'
+  },
+  bottom: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 36,
+    alignItems: 'center'
   }
 });
 
@@ -95,6 +114,10 @@ class SingleEvent extends Component {
   handleSubmitEmail = () => {
     this.props.addEmail(this.state.uid, this.state.emailInput);
     this.setState({ emailInput: '', editing: false });
+  };
+
+  handlePressBack = () => {
+    this.props.navigation.navigate('Event Map');
   };
 
   async componentDidMount() {
@@ -187,6 +210,14 @@ class SingleEvent extends Component {
                     </Text>
                   </TouchableOpacity>
                 )}
+                <View style={styles.bottom}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.bottom]}
+                    onPress={this.handlePressBack}
+                  >
+                    <Text style={styles.buttonText}>BACK</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </KeyboardAwareScrollView>
