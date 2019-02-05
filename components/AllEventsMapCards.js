@@ -41,6 +41,17 @@ export default class AllEventsMapCards extends React.Component {
             }}
           >
             <View style={styles.card}>
+              {locationPhoto !== '' && (
+                <View style={styles.imageContent}>
+                  <Image
+                    source={{
+                      uri: locationPhoto
+                    }}
+                    style={styles.cardImage}
+                    resizeMode='cover'
+                  />
+                </View>
+              )}
               <View style={styles.textContent}>
                 <Text
                   adjustsFontSizeToFit={true}
@@ -49,24 +60,20 @@ export default class AllEventsMapCards extends React.Component {
                 >
                   {title}
                 </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
+                <Text
+                  adjustsFontSizeToFit={true}
+                  numberOfLines={1}
+                  style={styles.cardDescription}
+                >
                   {description}
                 </Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
-                  {date} {time}
+                  {date}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {time}
                 </Text>
               </View>
-              {locationPhoto !== '' && (
-                <View style={styles.textContent}>
-                  <Image
-                    source={{
-                      uri: locationPhoto
-                    }}
-                    style={styles.cardImage}
-                    resizeMode="contain"
-                  />
-                </View>
-              )}
             </View>
           </TouchableOpacity>
         );
@@ -81,6 +88,7 @@ const styles = StyleSheet.create({
   card: {
     elevation: 2,
     backgroundColor: color.orange,
+    opacity: 0.6,
     marginHorizontal: 5,
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
@@ -90,18 +98,25 @@ const styles = StyleSheet.create({
   },
 
   focused: {
-    backgroundColor: color.darkOrange
+    backgroundColor: color.orange
   },
 
   cardImage: {
-    flex: 3,
-    width: '100%',
-    height: '80%',
-    alignSelf: 'center'
-  },
-  textContent: {
     flex: 1,
-    padding: padding,
+    width: '100%',
+    alignSelf: 'center',
+    borderRadius: 4,
+  },
+
+  imageContent: {
+    flex: 1,
+    paddingTop: padding /2,
+    paddingHorizontal: padding/2,
+  },
+
+  textContent: {
+    flex: 2,
+    paddingVertical: padding
   },
   cardtitle: {
     fontFamily: fontFamily.bold,
@@ -110,8 +125,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   cardDescription: {
-    fontSize: 12,
-    color: '#444',
-    overflow: 'visible'
+    fontSize: fontSize.small,
+    fontFamily: fontFamily.regular,
+    color: color.blue,
+    alignSelf: 'center'
   }
 });
