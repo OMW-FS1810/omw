@@ -26,7 +26,13 @@ export const registerForPushNotificationsAsync = async () => {
   return token;
 };
 
-export const sendPushNotification = (token, title, body, sender) => {
+export const sendPushNotification = (
+  token,
+  title,
+  body,
+  sender,
+  newEventObject = {}
+) => {
   try {
     fetch('https://exp.host/--/api/v2/push/send', {
       body: JSON.stringify({
@@ -34,7 +40,7 @@ export const sendPushNotification = (token, title, body, sender) => {
         sound: 'default',
         title: title,
         body: body,
-        data: { message: `${title} - ${body}` }
+        data: { message: `${title} - ${body}`, newEventObject }
       }),
       headers: {
         'Content-Type': 'application/json'

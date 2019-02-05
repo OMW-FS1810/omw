@@ -1,9 +1,12 @@
+/* eslint-disable no-use-before-define */
 import React from 'react';
 import { Notifications, Audio } from 'expo';
-import { View, StyleSheet, AppState } from 'react-native';
+import { View, StyleSheet, AppState, Text } from 'react-native';
 import { Snackbar, Button } from 'react-native-paper';
+import { connect } from 'react-redux';
+import { addEventToList } from '../redux/event';
 
-export default class Notify extends React.Component {
+class Notify extends React.Component {
   state = {
     incoming: {},
     visible: false
@@ -29,31 +32,36 @@ export default class Notify extends React.Component {
 
   render() {
     return (
-      // <View style={styles.container}>
       <Snackbar
+        style={styles.snackbar}
         visible={this.state.visible}
         onDismiss={() => this.setState({ visible: false })}
-        duration="10000"
+        duration="7000"
         action={{
-          label: 'Open',
+          label: 'View',
           onPress: () => {
-            // Do something
-            // this.props.navigation.navigate('Notifications');
+            this.props.addEvent(this.state.incoming.newEventObject);
+            this.props.selectEvent(this.state.incoming.newEventObject);
+            //below is if we want to jump to details page
+            // this.props.navigation.navigate('SingleEvent')
           }
         }}
       >
         {this.state.incoming.message}
       </Snackbar>
-      // </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // justifyContent: 'space-between',
-    position: 'absolute',
-    top: 10
-  }
+  snackbar: {}
 });
+
+const mapDispatch = dispatch => ({
+  addEvent: event => dispatch(addEventToList(event))
+});
+
+export default connect(
+  null,
+  mapDispatch
+)(Notify);
