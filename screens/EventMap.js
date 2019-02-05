@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Animated,
   Text,
-  Image
+  Image,
+  WebView
 } from 'react-native';
 
 import { MapView } from 'expo';
@@ -244,6 +245,9 @@ class EventMap extends React.Component {
                     description={
                       Object.values(this.props.selectedEvent)[0].date
                     }
+                    image={
+                      Object.values(this.props.selectedEvent)[0].locationPhoto
+                    }
                   >
                     <SimpleLineIcons
                       name="location-pin"
@@ -251,13 +255,30 @@ class EventMap extends React.Component {
                       color="red"
                     />
                     <MapView.Callout style={styles.selectedEvent}>
-                      <Text>
-                        {Object.values(this.props.selectedEvent)[0].name}
-                      </Text>
-                      <Text>
-                        {Object.values(this.props.selectedEvent)[0].date}{' '}
-                        {Object.values(this.props.selectedEvent)[0].time}
-                      </Text>
+                      <View style={styles.card}>
+                        <View style={styles.textContent}>
+                          <Text>
+                            {Object.values(this.props.selectedEvent)[0].name}
+                          </Text>
+                          <Text>
+                            {Object.values(this.props.selectedEvent)[0].date}{' '}
+                            {Object.values(this.props.selectedEvent)[0].time}
+                          </Text>
+                        </View>
+                        {Object.values(this.props.selectedEvent)[0]
+                          .locationPhoto !== '' && (
+                          <View style={styles.textContent}>
+                            <Image
+                              source={{
+                                uri: Object.values(this.props.selectedEvent)[0]
+                                  .locationPhoto
+                              }}
+                              style={styles.cardImage}
+                              resizeMode="cover"
+                            />
+                          </View>
+                        )}
+                      </View>
                     </MapView.Callout>
                   </MapView.Marker>
                 </>
@@ -458,8 +479,32 @@ let styles = StyleSheet.create({
     alignItems: 'center'
   },
   selectedEvent: {
-    width: 100,
-    height: 50
+    flex: 1,
+    flexDirection: 'row'
+  },
+  card: {
+    // padding: 10,
+    elevation: 2,
+    backgroundColor: '#FFF',
+    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowRadius: 5,
+    shadowOpacity: 0.3,
+    shadowOffset: { x: 2, y: -2 },
+    height: CARD_HEIGHT / 1.3,
+    width: CARD_WIDTH / 1.3,
+    overflow: 'hidden',
+    flexDirection: 'column'
+  },
+  cardImage: {
+    flex: 3,
+    width: '100%',
+    height: '80%',
+    alignSelf: 'center'
+  },
+  textContent: {
+    flex: 1,
+    padding: 5
   }
 });
 
