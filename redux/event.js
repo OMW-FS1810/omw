@@ -91,7 +91,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       eventRef.update({
         invites: newInvitesArr
       });
-      // grab logged in email to refetch all events
+      // grab *my* logged in email to refetch all events
       const myEmail = store.getState().user.user.email;
       // grab current event to update invites
       const currEvent = store.getState().event.selectedEvent;
@@ -104,6 +104,34 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       const host = store.getState().user.user;
       sendInvites([email], currEvent[key], host);
     });
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const declineEvent = uid => dispatch => {
+  try {
+    // grab reference to the event
+    const eventRef = database.ref(`Events/${uid}`);
+    // find *my* email
+    const myEmail = store.getState().user.user.email;
+    // update the invites list to remove *my* email
+    eventRef.child('invites').once('value', async snapshot => {
+      let oldInvitesArr = snapshot.val();
+      // filter out *my* email from the invites array
+      let newInvitesArr = oldInvitesArr.filter(
+        snapshotEmail => snapshotEmail !== myEmail
+      );
+      await eventRef.update({
+        invites: newInvitesArr
+      });
+
+      // refetch all events to trigger re-render
+      await dispatch(fetchAllEvents(myEmail));
+      // re-initialize store with default store.setSelectedEvent
+      await dispatch(setSelectedEvent({}));
+    });
+
+    //! in single event page push back to map
   } catch (err) {
     console.error(err);
   }
