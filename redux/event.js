@@ -65,7 +65,7 @@ export const fetchAllEvents = email => dispatch => {
     // query all events where this email is in invites
     const eventRef = database.ref('/Events/');
     let invitedEvents = [];
-    eventRef.once('value', async snapshot => {
+    eventRef.on('value', async snapshot => {
       let snappy = await snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {

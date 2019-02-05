@@ -35,13 +35,13 @@ const reducer = combineReducers({
   
   user:
     store.user: {
-      store.user.uid: null,
-      store.user.email: '',
-      store.user.firstName: '',
-      store.user.lastName: '',
-      store.user.pictureUrl: '',
-      store.user.deviceId: null,
-      store.user.token: null
+      store.user.user.uid: null,
+      store.user.user.email: '',
+      store.user.user.firstName: '',
+      store.user.user.lastName: '',
+      store.user.user.pictureUrl: '',
+      store.user.user.deviceId: null,
+      store.user.user.token: null
     }
   ____________
   
