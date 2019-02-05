@@ -41,6 +41,10 @@ class EventMap extends React.Component {
     eventMembers: {}
   };
 
+  // static navigationOptions = {
+  //   header: false
+  // };
+
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
     this.setState({ localMapRegion: region });
