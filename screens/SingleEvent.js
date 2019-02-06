@@ -12,8 +12,13 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
-import { addEmailToEvent, declineEvent } from '../redux/store';
+import {
+  addEmailToEvent,
+  declineEvent,
+  updateMyEventStatus
+} from '../redux/store';
 import * as theme from '../styles/theme';
+import { RadioButton } from 'react-native-paper';
 
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
@@ -98,7 +103,8 @@ class SingleEvent extends Component {
   state = {
     editing: false,
     emailInput: '',
-    uid: ''
+    uid: '',
+    myStatus: ''
   };
 
   handleAddToInviteList = () => {
@@ -118,7 +124,9 @@ class SingleEvent extends Component {
   };
 
   handlePressBack = () => {
-    this.props.navigation.navigate('EVENT MAP');
+    // this.props.navigation.navigate('EVENT MAP');
+
+    this.props.navigation.navigate('eventMapScreen');
   };
 
   handlePressDecline = () => {
@@ -130,7 +138,12 @@ class SingleEvent extends Component {
   async componentDidMount() {
     if (this.props.selectedEvent) {
       const uid = Object.keys(this.props.selectedEvent)[0];
-      await this.setState({ uid });
+      await this.setState({
+        uid,
+        myStatus: Object.values(this.props.selectedEvent)[0].invites.filter(
+          invite => invite.email === this.props.myEmail
+        )[0].status
+      });
     }
   }
 
@@ -139,6 +152,7 @@ class SingleEvent extends Component {
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
       event = Object.values(this.props.selectedEvent)[0];
+
       return (
         { event } && (
           <KeyboardAwareScrollView
@@ -155,6 +169,7 @@ class SingleEvent extends Component {
               <Text style={styles.text}>{event.name}</Text>
               <Text style={styles.subtitle}>Location:</Text>
               <Text style={styles.text}>{event.location.locationName}</Text>
+
               {/*
               add image with src of event.location.locationPhoto
               i.e...
@@ -177,14 +192,41 @@ class SingleEvent extends Component {
               <Text style={styles.subtitle}>Time:</Text>
               <Text style={styles.text}>{event.time}</Text>
             </View>
+
+            <RadioButton.Group
+              onValueChange={value => {
+                this.setState({ myStatus: value });
+                this.props.updateMyEventStatus(this.state.uid, value);
+              }}
+              value={this.state.myStatus}
+              style={{
+                marginLeft: 20,
+                padding: 5,
+                borderWidth: 1,
+                borderColor: 'black'
+              }}
+            >
+              <View style={{ flexDirection: 'row' }}>
+                <RadioButton value="invited" />
+                <Text>Invited</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <RadioButton value="on the way" />
+                <Text>On the Way</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <RadioButton value="arrived" />
+                <Text>Arrived</Text>
+              </View>
+            </RadioButton.Group>
             <View style={styles.emailsContainer}>
               <View style={styles.titleBox}>
                 <Text style={styles.titleText}>WHO'S GOING</Text>
               </View>
               <View style={styles.emailList}>
                 {event.invites.map(invitee => (
-                  <Text key={invitee} style={styles.emailText}>
-                    {invitee}
+                  <Text key={invitee.email} style={styles.emailText}>
+                    {invitee.email}
                   </Text>
                 ))}
                 {this.state.editing ? (
@@ -241,12 +283,6 @@ class SingleEvent extends Component {
                   >
                     <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.button, styles.bottom]}
-                    onPress={this.handlePressBack}
-                  >
-                    <Text style={styles.buttonText}>BACK</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -259,14 +295,17 @@ class SingleEvent extends Component {
   }
 }
 
-const mapState = ({ event }) => ({
+const mapState = ({ event, user }) => ({
   selectedEvent: event.selectedEvent,
-  allEvents: event.allEvents
+  allEvents: event.allEvents,
+  myEmail: user.user.email
 });
 
 const mapDispatch = dispatch => ({
   addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email)),
-  decline: uid => dispatch(declineEvent(uid))
+  decline: uid => dispatch(declineEvent(uid)),
+  updateMyEventStatus: (uid, status) =>
+    dispatch(updateMyEventStatus(uid, status))
 });
 
 export default connect(

@@ -2,6 +2,7 @@
 import { database } from '../config/firebase';
 import { sendInvites } from '../helpers/invitations';
 import { store } from './store';
+import distance from '../helpers/distance';
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
@@ -10,6 +11,9 @@ const CLEAR_PENDING_INFO = 'CLEAR_PENDING_INFO';
 const REQUEST_EVENTS = 'FETCH_EVENTS';
 const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
 const ADD_EVENT_TO_LIST = 'ADD_EVENT_TO_LIST';
+const JUST_MADE_EVENT_TOGGLE = 'JUST_MADE_EVENT_TOGGLE';
+const START_EVENT_MEMBER_TRACKING = 'START_EVENT_MEMBER_TRACKING';
+const STOP_EVENT_MEMBER_TRACKING = 'STOP_EVENT_MEMBER_TRACKING';
 
 // ACTION CREATORS
 export const populateEventDeets = event => ({
@@ -35,6 +39,17 @@ export const addEventToList = event => ({
   type: ADD_EVENT_TO_LIST,
   event
 });
+export const justMadeEventToggle = () => ({
+  type: JUST_MADE_EVENT_TOGGLE
+});
+const startMemberTracking = (memberEmail, member) => ({
+  type: START_EVENT_MEMBER_TRACKING,
+  memberEmail,
+  member
+});
+const stopMemberTracking = () => ({
+  type: STOP_EVENT_MEMBER_TRACKING
+});
 
 // THUNK CREATORS
 export const createEvent = (eventDeets, eventInvites) => async dispatch => {
@@ -42,11 +57,13 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     let newEvent;
     const eventRef = await database.ref('Events/').push({
       ...eventDeets,
-      invites: eventInvites
+      invites: eventInvites.map(email => ({ email, status: 'invited' }))
     });
+
     await eventRef.once('value', snapshot => {
       newEvent = snapshot.val();
     });
+    console.log(newEvent);
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
     const newEventObject = { [newUID]: newEvent };
@@ -71,7 +88,7 @@ export const fetchAllEvents = email => dispatch => {
       let snappy = await snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {
-          if (value.toLowerCase() === email.toLowerCase()) {
+          if (value.email.toLowerCase() === email.toLowerCase()) {
             invitedEvents.push({ [uid]: snappy[uid] });
           }
         });
@@ -89,7 +106,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     // update the invites arr in database to match new array with spread invites
     eventRef.child('invites').once('value', async snapshot => {
       let oldInvitesArr = snapshot.val();
-      let newInvitesArr = [...oldInvitesArr, email];
+      let newInvitesArr = [...oldInvitesArr, { email, status: 'invited' }];
       eventRef.update({
         invites: newInvitesArr
       });
@@ -99,7 +116,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       const currEvent = store.getState().event.selectedEvent;
       const key = Object.keys(currEvent)[0];
       // push new email into old emails arr
-      currEvent[key].invites.push(email);
+      currEvent[key].invites.push({ email, status: 'invited' });
       await dispatch(fetchAllEvents(myEmail));
       await dispatch(setSelectedEvent(currEvent));
 
@@ -127,7 +144,8 @@ export const declineEvent = uid => async dispatch => {
       let oldInvitesArr = snapshot.val();
       // filter out *my* email from the invites array
       let newInvitesArr = oldInvitesArr.filter(
-        snapshotEmail => snapshotEmail.toLowerCase() !== myEmail.toLowerCase()
+        snapshotEmail =>
+          snapshotEmail.email.toLowerCase() !== myEmail.toLowerCase()
       );
       if (!newInvitesArr.length) {
         await eventRef.update({
@@ -152,13 +170,100 @@ export const declineEvent = uid => async dispatch => {
     console.error(err);
   }
 };
+export const updateMyEventStatus = (uid, status) => async dispatch => {
+  try {
+    // grab reference to the event
+    let eventUid;
+    if (uid[0] === '-') {
+      eventUid = String(uid);
+    } else {
+      eventUid = '-' + uid;
+    }
+    const eventRef = database.ref(`Events/${eventUid}/invites`);
+    // find *my* email
+    const myEmail = store.getState().user.user.email;
+    // update the invites list to UPDATE *my* email
+    await eventRef
+      .orderByChild('email')
+      .equalTo(myEmail)
+      .once('value', async snapshot => {
+        let thisIndex = Object.keys(snapshot.val())[0];
+        const updateRef = database.ref(
+          `Events/${eventUid}/invites/${thisIndex}`
+        );
+        await updateRef.update({ email: myEmail, status });
+        await dispatch(fetchAllEvents(myEmail));
+        const eventsToUpdate = store.getState().event.allEvents;
+        const updatedEvent = eventsToUpdate[eventUid];
+
+        //NEED TO UPDATE SINGLE EVENT PAGE AND MAP!!!
+        // await dispatch(setSelectedEvent({}))
+        // await dispatch(setSelectedEvent(updatedEvent));
+      });
+
+    // refetch all events to trigger re-render
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const trackMembersStart = (members, newRegion) => dispatch => {
+  try {
+    const userLocationsDB = database.ref(`/Devices/`);
+    members.forEach(async member => {
+      await userLocationsDB
+        .orderByChild('email')
+        .equalTo(member.email.toLowerCase())
+        .on('value', snapshot => {
+          let thisMember = Object.values(snapshot.val())[0];
+          let memberDistance = distance(
+            thisMember.coords.latitude,
+            thisMember.coords.longitude,
+            newRegion.latitude,
+            newRegion.longitude
+          );
+
+          dispatch(
+            startMemberTracking(
+              member.email.toLowerCase(),
+              snapshot.val() && {
+                ...thisMember,
+                status: member.status,
+                distance: memberDistance
+              }
+            )
+          );
+        });
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const trackMembersStop = members => dispatch => {
+  try {
+    const userLocationsDB = database.ref(`/Devices/`);
+
+    members.forEach(async member => {
+      await userLocationsDB
+        .orderByChild('email')
+        .equalTo(member.email.toLowerCase())
+        .off('value');
+    });
+    dispatch(stopMemberTracking());
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 // DEFAULT STATE
 const defaultEvent = {
   allEvents: {},
   selectedEvent: {},
   pendingCreateEventDeets: {},
-  pendingCreateEventInvites: []
+  pendingCreateEventInvites: [],
+  eventJustMade: false,
+  eventMembers: {}
 };
 
 // REDUCER
@@ -201,6 +306,28 @@ const eventReducer = (state = defaultEvent, action) => {
         allEvents: [...state.allEvents, action.event]
       };
     }
+    case JUST_MADE_EVENT_TOGGLE: {
+      return {
+        ...state,
+        eventJustMade: !state.eventJustMade
+      };
+    }
+    case START_EVENT_MEMBER_TRACKING: {
+      return {
+        ...state,
+        eventMembers: {
+          ...state.eventMembers,
+          [action.memberEmail]: action.member
+        }
+      };
+    }
+    case STOP_EVENT_MEMBER_TRACKING: {
+      return {
+        ...state,
+        eventMembers: {}
+      };
+    }
+
     default:
       return state;
   }
