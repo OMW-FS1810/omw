@@ -156,10 +156,6 @@ export const declineEvent = uid => async dispatch => {
       );
       if (!newInvitesArr.length) {
         await eventRef.remove();
-
-        // await eventRef.update({
-        //   invites: []
-        // });
       } else {
         await eventRef.update({
           invites: newInvitesArr
