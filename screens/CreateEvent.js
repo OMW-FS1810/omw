@@ -115,7 +115,7 @@ class CreateEvent extends Component {
                 borderRadius: 4
               },
               textInputContainer: {
-                backgroundColor: color.whiteBlue,
+                backgroundColor: 'ffffff',
                 padding: 0,
                 borderTopWidth: 0
               },
@@ -125,7 +125,7 @@ class CreateEvent extends Component {
                 paddingRight: 3,
                 fontSize: 18,
                 fontFamily: fontFamily.light,
-                backgroundColor: color.whiteBlue,
+                // backgroundColor: 'ffffff',
                 color: color.darkBlue
               },
 
@@ -190,7 +190,7 @@ class CreateEvent extends Component {
                   !this.state.name ||
                   !this.state.time ||
                   !this.state.location
-                    ? color.grey
+                    ? color.whiteGrey
                     : color.darkOrange
               }
             ]}
@@ -218,7 +218,6 @@ class CreateEvent extends Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: color.whiteBlue
   },
   titleView: {
     padding: 10
@@ -248,7 +247,8 @@ let styles = StyleSheet.create({
     marginTop: 10,
     width: windowWidth - 40,
     justifyContent: 'center',
-    borderRadius: 5
+    borderRadius: 5,
+    borderColor: color.whiteBlue,
   },
   bottom: {
     flex: 1,

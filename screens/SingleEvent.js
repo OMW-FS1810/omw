@@ -241,12 +241,6 @@ class SingleEvent extends Component {
                   >
                     <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.button, styles.bottom]}
-                    onPress={this.handlePressBack}
-                  >
-                    <Text style={styles.buttonText}>BACK</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </View>

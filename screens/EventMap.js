@@ -51,10 +51,17 @@ class EventMap extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
     title: 'OMW',
+    headerStyle: {
+      backgroundColor: color.whiteBlue,
+      headerTintColor: color.whiteBlue,
+      headerTitleStyle: {
+        fontFamily: fontFamily.bold,
+      }
+    },
     headerLeft: (
       <Icon
         name="menu"
-        color={color.blue}
+        color={color.whiteblue}
         containerStyle={{ paddingLeft: 10 }}
         onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
       />
@@ -62,7 +69,7 @@ class EventMap extends React.Component {
     headerRight: (
       <Icon
         name="add"
-        color={color.blue}
+        color={color.whiteblue}
         containerStyle={{ paddingRight: 10 }}
         onPress={() => navigation.navigate('CREATE EVENT')}
       />

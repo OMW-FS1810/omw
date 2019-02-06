@@ -120,11 +120,11 @@ let styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 40,
+    fontSize: fontSize.xLarge,
+    fontFamily: fontFamily.light,
     paddingBottom: 20,
     marginBottom: 20,
-    color: '#2F4E6F',
-    fontWeight: '500'
+    color: color.darkBlue,
   },
 
   button: {
