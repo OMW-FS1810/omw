@@ -188,7 +188,7 @@ export const declineEvent = uid => async dispatch => {
     console.error(err);
   }
 };
-export const updateMyEventStatus = (uid, status) => async dispatch => {
+export const updateMyEventStatus = (uid, status, event) => async dispatch => {
   try {
     // grab reference to the event
     let eventUid;
@@ -213,7 +213,8 @@ export const updateMyEventStatus = (uid, status) => async dispatch => {
         await dispatch(fetchAllEvents(myEmail));
         const eventsToUpdate = store.getState().event.allEvents;
         const updatedEvent = eventsToUpdate[eventUid];
-
+        const myName = store.getState().user.user.firstName;
+        sendInvites(event.invites, event, myName, status, true);
         //NEED TO UPDATE SINGLE EVENT PAGE AND MAP!!!
         // await dispatch(setSelectedEvent({}))
         // await dispatch(setSelectedEvent(updatedEvent));
