@@ -45,7 +45,6 @@ export const sendInvites = async (
         }
       });
       if (isUpdate) {
-        console.log('made it here', messageInvites);
         messageInvites.forEach(token => {
           if (token)
             sendPushNotification(
