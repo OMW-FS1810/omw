@@ -214,7 +214,7 @@ export const updateMyEventStatus = (uid, status, event) => async dispatch => {
         const eventsToUpdate = store.getState().event.allEvents;
         const updatedEvent = eventsToUpdate[eventUid];
         const myName = store.getState().user.user.firstName;
-        sendInvites(event.invites, event, myName, status, true);
+        sendInvites(event.invites, event, myName, status, true, thisIndex, myEmail);
         //NEED TO UPDATE SINGLE EVENT PAGE AND MAP!!!
         // await dispatch(setSelectedEvent({}))
         // await dispatch(setSelectedEvent(updatedEvent));

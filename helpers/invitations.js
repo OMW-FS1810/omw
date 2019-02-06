@@ -11,7 +11,9 @@ export const sendInvites = async (
   eventDetails,
   host,
   newEventObject,
-  isUpdate
+  isUpdate,
+  thisIndex,
+  myEmail
 ) => {
   // need to invite unregistered users, notify registered users, and notify host
   const currUsers = database.ref('/Users/');
@@ -58,7 +60,9 @@ export const sendInvites = async (
 
               '',
               'update',
-              newEventObject
+              newEventObject,
+              thisIndex,
+              myEmail
             );
         });
       } else {
