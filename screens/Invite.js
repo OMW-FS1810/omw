@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable no-use-before-define */
 import React, { Component } from 'react';
 import {
@@ -6,13 +7,14 @@ import {
   Text,
   TextInput,
   Button,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 import { populateEventEmails, createEvent } from '../redux/event';
 import { NavigationActions, StackActions } from 'react-navigation';
-import * as theme from '../styles/theme';
 
+import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 class Invite extends Component {
@@ -51,34 +53,41 @@ class Invite extends Component {
         <View style={styles.titleView}>
           <Text style={styles.title}>Invite Your Friends!</Text>
         </View>
-        <View
-        // style={styles.inputContainer}
-        >
+        <View>
           <TextInput
             value={this.state.input}
-            style={styles.newInputContainer}
+            style={styles.inputContainer}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
             label="Email"
             placeholder="Email"
-            clearButtonMode="while-editing"
+            placeholderTextColor="#aaa"
             onChangeText={input => this.setState({ input })}
           />
-          <Button
-            title="add to invite list"
+          <TouchableOpacity
+            style={[styles.button, styles.containerView]}
             onPress={this.handleAddToInviteList}
           >
-            <Text>invite this friendo!</Text>
-          </Button>
+            <Text style={styles.buttonText}>ADD TO INVITE LIST</Text>
+          </TouchableOpacity>
         </View>
-        <View>
-          {!!this.state.emails.length && <Text>Currently inviting:</Text>}
+        <View style={styles.inviteContainer}>
+          {!!this.state.emails.length && (
+            <Text style={styles.inviteList}>Invite List</Text>
+          )}
           {this.state.emails.map(email => (
-            <Text key={email}>{email}</Text>
+            <Text key={email} style={styles.emailList}>
+              {email}
+            </Text>
           ))}
         </View>
-        <View style={styles.button}>
-          <Button title="create" onPress={this.handleCreateEvent}>
-            <Text>create event!</Text>
-          </Button>
+        <View style={styles.bottom}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this.handleCreateEvent}
+          >
+            <Text style={[styles.buttonText]}>CREATE EVENT</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -89,36 +98,27 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: color.whiteBlue
+  },
+  containerView: {
+    width: windowWidth - 40
   },
   inputContainer: {
-    flex: 1,
-    width: '95%',
-    top: 0
-  },
-  newInputContainer: {
-    width: windowWidth - 33,
+    width: windowWidth - 40,
     borderRadius: 25,
     paddingHorizontal: 16,
-    fontSize: 18,
-    fontFamily: fontFamily.light,
+    fontSize: fontSize.regular,
     color: color.darkBlue,
-    marginVertical: 15,
-    alignSelf: 'center',
-    borderColor: '#98B1C4',
-    borderWidth: 1,
-    height: 20
+    marginVertical: 10,
+    backgroundColor: color.whiteBlue
   },
+
   titleView: {
     marginTop: 80,
     flex: 1
   },
-  input: {
-    marginLeft: 20,
-    marginRight: 20,
-    marginTop: 5,
-    width: '95%'
-  },
+
   title: {
     fontSize: 40,
     paddingBottom: 20,
@@ -126,13 +126,47 @@ let styles = StyleSheet.create({
     color: '#2F4E6F',
     fontWeight: '500'
   },
+
   button: {
+    width: 300,
+    backgroundColor: color.darkOrange,
+    borderRadius: 25,
+    marginVertical: 10,
+    paddingVertical: 13
+  },
+
+  buttonText: {
+    fontSize: fontSize.regular + 2,
+    fontFamily: fontFamily.bold,
+    color: '#FFFFFF',
+    textAlign: 'center'
+  },
+
+  inviteContainer: {
+    flex: 2,
+    width: windowWidth - 40,
+    marginTop: padding * 2
+  },
+
+  inviteList: {
+    fontFamily: fontFamily.light,
+    fontSize: fontSize.large,
+    color: color.blue
+  },
+
+  emailList: {
+    fontFamily: fontFamily.light,
+    fontSize: fontSize.regular,
+    paddingHorizontal: padding,
+    marginTop: padding,
+    color: color.darkBlue
+  },
+
+  bottom: {
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: 36
-  },
-  buttonText: {
-    fontSize: 20
+    marginBottom: 36,
+    alignItems: 'center'
   }
 });
 
