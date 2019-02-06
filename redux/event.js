@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable complexity */
 /* eslint-disable guard-for-in */
 import { database } from '../config/firebase';
@@ -130,6 +131,11 @@ export const addEmailToEvent = (uid, email) => dispatch => {
 export const declineEvent = uid => async dispatch => {
   try {
     let eventUid;
+    // dispatch trackMembersStop to stop tracking members for an event we're no longer watching
+    const currEvent = store.getState().event.selectedEvent;
+    const currEventMembers = Object.values(currEvent)[0].invites;
+    await dispatch(trackMembersStop(currEventMembers));
+
     // this is annoying.. >:[ the event snapshot UID we're sending into our store from firebase has a '-' at the front of it, but elsewhere it doesnt.. so check to make sure we have a '-' infront of the UID before the request is sent to firebase.
     if (uid[0] === '-') {
       eventUid = String(uid);
@@ -149,9 +155,11 @@ export const declineEvent = uid => async dispatch => {
           snapshotEmail.email.toLowerCase() !== myEmail.toLowerCase()
       );
       if (!newInvitesArr.length) {
-        await eventRef.update({
-          invites: []
-        });
+        await eventRef.remove();
+
+        // await eventRef.update({
+        //   invites: []
+        // });
       } else {
         await eventRef.update({
           invites: newInvitesArr
