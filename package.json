@@ -21,6 +21,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-paper": "^2.6.1",
     "react-native-size-matters": "^0.1.6",
+    "react-native-timeago": "^0.4.0",
     "react-navigation": "^3.0.9",
     "react-navigation-redux-helpers": "^2.0.9",
     "react-redux": "^6.0.0",
