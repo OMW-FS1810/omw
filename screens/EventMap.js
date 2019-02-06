@@ -35,7 +35,13 @@ import {
   AntDesign
 } from '@expo/vector-icons';
 import { getMyLocationNow } from '../helpers/location';
-import { fetchAllEvents, setSelectedEvent } from '../redux/store';
+import {
+  fetchAllEvents,
+  setSelectedEvent,
+  justMadeEventToggle,
+  trackMembersStart,
+  trackMembersStop
+} from '../redux/store';
 import { database } from '../config/firebase';
 
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
@@ -45,8 +51,8 @@ const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 class EventMap extends React.Component {
   state = {
     loading: false,
-    localMapRegion: null,
-    eventMembers: {}
+    localMapRegion: null
+    // eventMembers: {}
   };
 
   static navigationOptions = ({ navigation }) => ({
@@ -98,10 +104,10 @@ class EventMap extends React.Component {
       if (this.index !== index) {
         this.index = index;
         let latitude, longitude;
-        if (Object.keys(this.state.eventMembers).length) {
-          const memberArr = Object.keys(this.state.eventMembers)
+        if (Object.keys(this.props.eventMembers).length) {
+          const memberArr = Object.keys(this.props.eventMembers)
             .map(memberEmail => {
-              return [memberEmail, this.state.eventMembers[memberEmail]];
+              return [memberEmail, this.props.eventMembers[memberEmail]];
             })
             .filter(member => member[1]);
           //exit on empty members array
@@ -126,50 +132,50 @@ class EventMap extends React.Component {
     }, 10);
   };
 
-  trackMembersStart = members => {
-    try {
-      const userLocationsDB = database.ref(`/Devices/`);
-      members.forEach(async memberEmail => {
-        await userLocationsDB
-          .orderByChild('email')
-          .equalTo(memberEmail.toLowerCase())
-          .on('value', snapshot => {
-            // this.setState({
-            //   eventMembers: {
-            //     ...this.state.eventMembers,
-            //     [memberEmail.toLowerCase()]:
-            //       snapshot.val() && Object.values(snapshot.val())[0]
-            //   }
-            // });
-            this.setState(prevState => ({
-              eventMembers: {
-                ...prevState.eventMembers,
-                [memberEmail.toLowerCase()]:
-                  snapshot.val() && Object.values(snapshot.val())[0]
-              }
-            }));
-          });
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // trackMembersStart = members => {
+  //   try {
+  //     const userLocationsDB = database.ref(`/Devices/`);
+  //     members.forEach(async memberEmail => {
+  //       await userLocationsDB
+  //         .orderByChild('email')
+  //         .equalTo(memberEmail.toLowerCase())
+  //         .on('value', snapshot => {
+  //           // this.setState({
+  //           //   eventMembers: {
+  //           //     ...this.state.eventMembers,
+  //           //     [memberEmail.toLowerCase()]:
+  //           //       snapshot.val() && Object.values(snapshot.val())[0]
+  //           //   }
+  //           // });
+  //           this.setState(prevState => ({
+  //             eventMembers: {
+  //               ...prevState.eventMembers,
+  //               [memberEmail.toLowerCase()]:
+  //                 snapshot.val() && Object.values(snapshot.val())[0]
+  //             }
+  //           }));
+  //         });
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
-  trackMembersStop = members => {
-    try {
-      const userLocationsDB = database.ref(`/Devices/`);
+  // trackMembersStop = members => {
+  //   try {
+  //     const userLocationsDB = database.ref(`/Devices/`);
 
-      members.forEach(async memberEmail => {
-        await userLocationsDB
-          .orderByChild('email')
-          .equalTo(memberEmail.toLowerCase())
-          .off('value');
-      });
-      this.setState({ eventMembers: {} });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //     members.forEach(async memberEmail => {
+  //       await userLocationsDB
+  //         .orderByChild('email')
+  //         .equalTo(memberEmail.toLowerCase())
+  //         .off('value');
+  //     });
+  //     this.setState({ eventMembers: {} });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   selectEvent = async event => {
     await this.props.setSelectedEvent(event);
@@ -183,21 +189,24 @@ class EventMap extends React.Component {
       latitudeDelta: 0.1226,
       longitudeDelta: 0.0467
     };
-    await this.trackMembersStart(Object.values(event)[0].invites);
+    await this.animateToMapPosition(newRegion);
+
+    setTimeout(() => {
+      this.props.trackMembersStart(Object.values(event)[0].invites, newRegion );
+    }, 500);
 
     //for some reason i can't get a smooth transition here
     // setTimeout(() => {
-    // this.animateToMapPosition(newRegion);
     // }, 50);
 
-    this.setState({ localMapRegion: newRegion });
+    // this.setState({ localMapRegion: newRegion });
   };
 
-  clearEvent = async () => {
-    await this.trackMembersStop(
+  clearEvent = () => {
+    this.props.setSelectedEvent({});
+    this.props.trackMembersStop(
       Object.values(this.props.selectedEvent)[0].invites
     );
-    await this.props.setSelectedEvent({});
   };
 
   async componentDidMount() {
@@ -213,7 +222,11 @@ class EventMap extends React.Component {
   }
 
   render() {
-    const { navigation, allEvents, selectedEvent } = this.props;
+    const { navigation, allEvents, selectedEvent, eventJustMade } = this.props;
+    // if (eventJustMade && Object.keys(selectedEvent).length) {
+    //   this.trackMembersStart(Object.values(selectedEvent)[0].invites);
+    //   this.props.justMadeEventToggle();
+    // }
     let interpolations;
     if (allEvents.length) {
       interpolations = allEvents.map((event, index) => {
@@ -242,7 +255,7 @@ class EventMap extends React.Component {
           animating={this.state.loading}
           color="darkgrey"
           size="large"
-          style={{ margin: 15 }}
+          style={{ margin: 15, zIndex: 50 }}
         />
         {this.state.localMapRegion && (
           <>
@@ -261,8 +274,9 @@ class EventMap extends React.Component {
               {Object.keys(selectedEvent).length ? (
                 <>
                   <MemberMarkers
-                    eventMembers={this.state.eventMembers}
+                    eventMembers={this.props.eventMembers}
                     me={this.props.user.email}
+                    selectedEvent={selectedEvent}
                   />
                   <MapView.Marker
                     coordinate={{
@@ -326,7 +340,9 @@ class EventMap extends React.Component {
                 <MapView.Callout style={styles.allEventsButton}>
                   <TouchableOpacity
                     onPress={() => {
+                      // this.setState({ loading: true });
                       this.clearEvent();
+                      // this.setState({ loading: false });
                     }}
                   >
                     <MaterialCommunityIcons
@@ -400,7 +416,9 @@ class EventMap extends React.Component {
                 ],
                 {
                   listener: event => {
-                    this.mapAnimation(event.nativeEvent.contentOffset.x);
+                    if (!Object.keys(selectedEvent).length) {
+                      this.mapAnimation(event.nativeEvent.contentOffset.x);
+                    }
                   }
                 },
                 { useNativeDriver: true }
@@ -410,7 +428,7 @@ class EventMap extends React.Component {
             >
               {Object.keys(selectedEvent).length ? (
                 <SingleEventMapCards
-                  eventMembers={this.state.eventMembers}
+                  eventMembers={this.props.eventMembers}
                   me={this.props.user.email}
                   animateToMapPosition={this.animateToMapPosition}
                 />
@@ -543,13 +561,16 @@ let styles = StyleSheet.create({
 const mapStateToProps = state => ({
   allEvents: state.event.allEvents,
   selectedEvent: state.event.selectedEvent,
+  eventMembers: state.event.eventMembers,
   user: state.user.user,
   animation: state.animate.allEventsAnimate
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email)),
-  setSelectedEvent: event => dispatch(setSelectedEvent(event))
+  setSelectedEvent: event => dispatch(setSelectedEvent(event)),
+  trackMembersStart: (members, newRegion) => dispatch(trackMembersStart(members, newRegion)),
+  trackMembersStop: members => dispatch(trackMembersStop(members))
 });
 
 export default connect(

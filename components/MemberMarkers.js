@@ -1,13 +1,13 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, Image } from 'react-native';
 import { MapView } from 'expo';
 import { convertTimestamp } from '../helpers/convertTimestamp';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default class MemberMarkers extends React.Component {
   render() {
-    const memberArr = Object.keys(this.props.eventMembers).map(memberEmail => {
-      return [memberEmail, this.props.eventMembers[memberEmail]];
+    const memberArr = Object.keys(this.props.eventMembers).map(member => {
+      return [member, this.props.eventMembers[member]];
     });
     return memberArr.map(member => {
       let markerName;
@@ -39,6 +39,8 @@ export default class MemberMarkers extends React.Component {
               <MapView.Callout style={styles.callout}>
                 <Text>{markerName}</Text>
                 <Text>{convertTimestamp(member[1].timestamp)}</Text>
+                {/* <Text>Status: {member[1].status}</Text>
+                <Text>Distance to event: {member[1].distance}</Text> */}
               </MapView.Callout>
             </MapView.Marker>
           )

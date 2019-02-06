@@ -31,30 +31,32 @@ export const sendPushNotification = (
   title,
   body,
   sender,
-  newEventObject = {}
+  messageType,
+  newEventObject = null
 ) => {
   try {
     fetch('https://exp.host/--/api/v2/push/send', {
       body: JSON.stringify({
         to: token,
         sound: 'default',
-        title: title,
+        title: `OMW - ${title}`,
         body: body,
-        data: { message: `${title} - ${body}`, newEventObject }
+        data: { message: `${title} - ${body}`, messageType, newEventObject }
       }),
       headers: {
         'Content-Type': 'application/json'
       },
       method: 'POST'
     });
-    //add message to db
-    database.ref('/Messages/').push({
-      sender,
-      recipient: token,
-      title,
-      body,
-      read: false
-    });
+    //add message to db -- DISABLED
+    // database.ref('/Messages/').push({
+    //   sender,
+    //   recipient: token,
+    //   title,
+    //   body,
+    //   messageType,
+    //   read: false
+    // });
   } catch (err) {
     console.error(err);
   }
