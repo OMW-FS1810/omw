@@ -38,11 +38,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start'
   },
   titleBox: {
-    backgroundColor: color.blue,
-    alignItems: 'center'
+    backgroundColor: color.grey,
   },
   inputContainer: {
-    width: windowWidth - 33,
+    width: windowWidth - 40,
     borderRadius: 25,
     paddingHorizontal: 16,
     fontSize: 18,
@@ -52,26 +51,26 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   titleText: {
-    fontFamily: fontFamily.bold,
+    fontFamily: fontFamily.light,
     color: color.whiteGrey,
     padding,
     fontSize: fontSize.xLarge
   },
   subtitle: {
-    fontFamily: fontFamily.light,
-    fontSize: fontSize.large,
+    fontFamily: fontFamily.bold,
+    fontSize: fontSize.regular,
     color: color.darkBlue,
-    padding
+    paddingHorizontal: padding
   },
   text: {
     flex: 1,
-    color: color.indigoBlue,
+    color: color.darkOrange,
     fontFamily: fontFamily.regular,
     fontSize: fontSize.large,
     paddingLeft: padding * 2
   },
   emailText: {
-    color: color.indigoBlue,
+    color: color.darkBlue,
     fontFamily: fontFamily.regular,
     fontSize: fontSize.large,
     paddingLeft: padding * 2
@@ -108,6 +107,17 @@ class SingleEvent extends Component {
     myStatus: ''
   };
 
+  static navigationOptions= {
+    headerTitle: 'Event',
+    headerStyle: {
+      backgroundColor: color.orange,
+      headerTintColor: color.blue,
+      headerTitleStyle: {
+        fontFamily: fontFamily.bold,
+      }
+    },
+  }
+
   handleAddToInviteList = () => {
     const { uid, emailInput } = this.state;
 
@@ -142,7 +152,7 @@ class SingleEvent extends Component {
     }
   }
 
-  static navigationOptions = { title: 'Single Event' };
+
   render() {
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
@@ -180,8 +190,8 @@ class SingleEvent extends Component {
                 />
                 </View>
                 )}
-                
-                
+
+
               */}
                 <Text style={styles.subtitle}>Date:</Text>
                 <Text style={styles.text}>{event.date}</Text>
@@ -279,7 +289,7 @@ class SingleEvent extends Component {
                       style={[styles.button, styles.bottom]}
                       onPress={this.handlePressDecline}
                     >
-                      <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
+                      <Text style={styles.buttonText}>LEAVE EVENT</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
