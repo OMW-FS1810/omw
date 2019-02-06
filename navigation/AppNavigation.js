@@ -21,7 +21,6 @@ import {
   SingleEvent
 } from '../screens';
 
-
 //LOGIN STACK
 const LoginStack = createStackNavigator({
   loginScreen: { screen: Auth },
@@ -29,43 +28,21 @@ const LoginStack = createStackNavigator({
 });
 
 //MAP STACK
-const mapStack = createStackNavigator(
-  {
-    eventMapScreen: { screen: EventMap },
-    SingleEvent: { screen: SingleEvent }
-  },
-);
+const mapStack = createStackNavigator({
+  eventMapScreen: { screen: EventMap },
+  SingleEvent: { screen: SingleEvent }
+});
 
 //CREATE EVENT STACK
 const CreateEventStack = createStackNavigator(
   {
     createEventScreen: {
-      screen: CreateEvent,
-      navigationOptions: {
-        headerTitle: 'Create Event',
-        headerStyle: {
-          backgroundColor: color.whiteBlue,
-          headerTintColor: color.blue,
-          headerTitleStyle: {
-            fontFamily: fontFamily.bold,
-          }
-        },
-      }
+      screen: CreateEvent
     },
     inviteScreen: {
-      screen: Invite,
-      navigationOptions: {
-        headerTitle: 'Invite',
-        headerStyle: {
-          backgroundColor: color.whiteBlue,
-          headerTintColor: color.blue,
-          headerTitleStyle: {
-            fontFamily: fontFamily.bold,
-          }
-        },
-      }
+      screen: Invite
     }
-  },
+  }
   // s
 );
 
@@ -74,7 +51,7 @@ const DrawerStack = createDrawerNavigator(
   {
     'EVENT MAP': { screen: mapStack },
     'CREATE EVENT': { screen: CreateEventStack },
-    'PROFILE': { screen: Profile },
+    PROFILE: { screen: Profile }
     // SingleEvent: { screen: SingleEvent }
   },
   {
