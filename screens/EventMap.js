@@ -362,7 +362,6 @@ class EventMap extends React.Component {
 
             <Animated.ScrollView
               horizontal
-              overScrollMode="always"
               scrollEventThrottle={1}
               showsHorizontalScrollIndicator={false}
               snapToInterval={CARD_WIDTH}
@@ -395,12 +394,18 @@ class EventMap extends React.Component {
                   animateToMapPosition={this.animateToMapPosition}
                 />
               ) : (
-                <AllEventsMapCards
-                  allEvents={allEvents}
-                  selectEvent={this.selectEvent}
-                  interpolations={interpolations}
-                  // animateToMapPosition={this.animateToMapPosition}
-                />
+                <>
+                  <AllEventsMapCards
+                    allEvents={allEvents}
+                    selectEvent={this.selectEvent}
+                    interpolations={interpolations}
+                    // animateToMapPosition={this.animateToMapPosition}
+                  />
+                  {/* the following is a blank card to fix scrolling issues */}
+                  <TouchableOpacity key={Math.random() * 100}>
+                    <View style={styles.card} opacity=".0" />
+                  </TouchableOpacity>
+                </>
               )}
             </Animated.ScrollView>
 
