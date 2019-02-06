@@ -5,6 +5,7 @@ import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
 import { MEMBER_HEIGHT, MEMBER_WIDTH, height, width } from '../styles/cards';
 import { convertTimestamp } from '../helpers/convertTimestamp';
+import TimeAgo from 'react-native-timeago'
 import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
@@ -39,7 +40,6 @@ export default class SingleEventMapCards extends React.Component {
           }
         }
 
-
         return (
           member[1].coords && (
             <TouchableOpacity
@@ -72,7 +72,8 @@ export default class SingleEventMapCards extends React.Component {
                   </Text>
 
                   <Text numberOfLines={1} style={styles.cardDescription}>
-                    {convertTimestamp(member[1].timestamp)}
+                  {/* {convertTimestamp(member[1].timestamp)} */}
+                    <TimeAgo time= {member[1].timestamp}/>
                   </Text>
                   <Text style={[styles.cardDescription, styles.descriptionBold]}>
                     {member[1].status}
