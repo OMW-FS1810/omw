@@ -117,10 +117,6 @@ class SingleEvent extends Component {
     this.setState({ emailInput: '', editing: false });
   };
 
-  handlePressBack = () => {
-    this.props.navigation.navigate('EVENT MAP');
-  };
-
   handlePressDecline = () => {
     const uid = Object.keys(this.props.selectedEvent)[0];
     this.props.decline(uid);
@@ -240,12 +236,6 @@ class SingleEvent extends Component {
                     onPress={this.handlePressDecline}
                   >
                     <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.button, styles.bottom]}
-                    onPress={this.handlePressBack}
-                  >
-                    <Text style={styles.buttonText}>BACK</Text>
                   </TouchableOpacity>
                 </View>
               </View>
