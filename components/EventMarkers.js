@@ -1,9 +1,12 @@
 /* eslint-disable guard-for-in */
 import React from 'react';
 import { Text, StyleSheet, Animated, View } from 'react-native';
+import { Icon } from 'react-native-elements';
 import { MapView } from 'expo';
 import { convertTimestamp } from '../helpers/convertTimestamp';
-import { SimpleLineIcons } from '@expo/vector-icons';
+
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 export default class EventMarkers extends React.Component {
   render() {
@@ -26,8 +29,7 @@ export default class EventMarkers extends React.Component {
         const opacityStyle = {
           opacity: this.props.interpolations[index].opacity
         };
-        let iconName = 'location-pin';
-        let markerColor = 'red';
+
         return (
           <MapView.Marker
             key={id}
@@ -37,7 +39,12 @@ export default class EventMarkers extends React.Component {
             <Animated.View style={[styles.markerWrap, opacityStyle]}>
               <Animated.View style={[styles.ring, scaleStyle]} />
               {/* <View style={styles.marker} /> */}
-              <SimpleLineIcons name={iconName} size={30} color={markerColor} />
+              <Icon
+                name="location-pin"
+                type="entypo"
+                size={30}
+                color={color.darkOrange}
+              />
             </Animated.View>
           </MapView.Marker>
         );

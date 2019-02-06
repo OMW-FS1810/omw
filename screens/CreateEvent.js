@@ -51,7 +51,7 @@ class CreateEvent extends Component {
   };
 
   handlePress2 = () => {
-    this.props.navigation.navigate('Event Map');
+    this.props.navigation.navigate('EVENT MAP');
   };
 
   render() {

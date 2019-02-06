@@ -13,6 +13,8 @@ import {
   View,
   WebView
 } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { DrawerActions } from 'react-navigation';
 
 import { MapView } from 'expo';
 import {
@@ -37,6 +39,8 @@ import { fetchAllEvents, setSelectedEvent } from '../redux/store';
 import { database } from '../config/firebase';
 
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 class EventMap extends React.Component {
   state = {
@@ -45,9 +49,25 @@ class EventMap extends React.Component {
     eventMembers: {}
   };
 
-  // static navigationOptions = {
-  //   header: false
-  // };
+  static navigationOptions = ({ navigation }) => ({
+    title: 'OMW',
+    headerLeft: (
+      <Icon
+        name="menu"
+        color={color.blue}
+        containerStyle={{ paddingLeft: 10 }}
+        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+      />
+    ),
+    headerRight: (
+      <Icon
+        name="add"
+        color={color.blue}
+        containerStyle={{ paddingRight: 10 }}
+        onPress={() => navigation.navigate('CREATE EVENT')}
+      />
+    )
+  });
 
   //this updates the map region when the user interacts with the map
   updateMapRegion = region => {
@@ -259,10 +279,11 @@ class EventMap extends React.Component {
                       Object.values(this.props.selectedEvent)[0].locationPhoto
                     }
                   >
-                    <SimpleLineIcons
-                      name="location-pin"
+                    <Icon
+                      name="location"
+                      type="entypo"
                       size={30}
-                      color="red"
+                      color={color.darkOrange}
                     />
                     <MapView.Callout style={styles.selectedEvent}>
                       <View style={styles.card}>
@@ -353,11 +374,11 @@ class EventMap extends React.Component {
               <MapView.Callout style={styles.allEventsButton}>
                 <TouchableOpacity
                   onPress={() => {
-                    this.props.navigation.navigate('Create an Event');
+                    this.props.navigation.navigate('CREATE EVENT');
                   }}
                 >
                   <AntDesign name="pluscircleo" size={45} color="teal" />
-                  <Text>Create an event</Text>
+                  <Text>Create Event</Text>
                 </TouchableOpacity>
               </MapView.Callout>
             )}
@@ -397,6 +418,7 @@ class EventMap extends React.Component {
                 <AllEventsMapCards
                   allEvents={allEvents}
                   selectEvent={this.selectEvent}
+                  interpolations={interpolations}
                   // animateToMapPosition={this.animateToMapPosition}
                 />
               )}
@@ -445,10 +467,10 @@ let styles = StyleSheet.create({
   scrollView: {
     position: 'absolute',
     bottom: 50,
-    left: 0,
-    right: 0,
-    paddingVertical: 10
+    paddingVertical: 10,
+    paddingHorizontal: padding
   },
+
   endPadding: {
     paddingRight: width - CARD_WIDTH
   },
