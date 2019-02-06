@@ -4,7 +4,7 @@ import { Notifications, Audio } from 'expo';
 import { View, StyleSheet, AppState, Text } from 'react-native';
 import { Snackbar, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { addEventToList } from '../redux/event';
+import { addEventToList, fetchAllEvents } from '../redux/event';
 
 class Notify extends React.Component {
   state = {
@@ -26,6 +26,8 @@ class Notify extends React.Component {
         await soundObject.playAsync();
         if (this.state.incoming.messageType === 'new-event') {
           this.props.addEvent(this.state.incoming.newEventObject);
+        } else if (this.state.incoming.messageType === 'update') {
+          this.props.fetchAllEvents(this.props.myEmail);
         }
       } catch (err) {
         console.error(err);
@@ -66,12 +68,15 @@ class Notify extends React.Component {
 const styles = StyleSheet.create({
   snackbar: {}
 });
-
+const mapState = ({ user }) => ({
+  myEmail: user.user.email
+});
 const mapDispatch = dispatch => ({
-  addEvent: event => dispatch(addEventToList(event))
+  addEvent: event => dispatch(addEventToList(event)),
+  fetchAllEvents: email => dispatch(fetchAllEvents(email))
 });
 
 export default connect(
-  null,
+  mapState,
   mapDispatch
 )(Notify);
