@@ -42,7 +42,16 @@ class Invite extends Component {
     const eventMembers = await Object.values(this.props.selectedEvent)[0]
       .invites;
 
-    await this.props.trackMembersStart(eventMembers);
+    const location = await Object.values(this.props.selectedEvent)[0].location;
+    const latitude = location.locationGeocode.lat;
+    const longitude = location.locationGeocode.lng;
+    const newRegion = {
+      latitude,
+      longitude,
+      latitudeDelta: 0.1226,
+      longitudeDelta: 0.0467
+    };
+    await this.props.trackMembersStart(eventMembers, newRegion);
     // is this where we want to go?
     // this.props.navigation.navigate('Event Map');
     this.props.navigation.navigate('SingleEvent');
@@ -133,7 +142,7 @@ let styles = StyleSheet.create({
     fontFamily: fontFamily.light,
     paddingBottom: 20,
     marginBottom: 20,
-    color: color.darkBlue,
+    color: color.darkBlue
   },
 
   button: {
@@ -189,7 +198,8 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   populateEmails: emails => dispatch(populateEventEmails(emails)),
   createTheEvent: (deets, emails) => dispatch(createEvent(deets, emails)),
-  trackMembersStart: members => dispatch(trackMembersStart(members))
+  trackMembersStart: (members, newRegion) =>
+    dispatch(trackMembersStart(members, newRegion))
 });
 
 export default connect(

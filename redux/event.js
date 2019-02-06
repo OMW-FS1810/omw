@@ -106,6 +106,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     // update the invites arr in database to match new array with spread invites
     eventRef.child('invites').once('value', async snapshot => {
       let oldInvitesArr = snapshot.val();
+      console.log('invites arr', oldInvitesArr);
       let newInvitesArr = [...oldInvitesArr, { email, status: 'invited' }];
       eventRef.update({
         invites: newInvitesArr
@@ -118,8 +119,19 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       // push new email into old emails arr
       currEvent[key].invites.push({ email, status: 'invited' });
       await dispatch(fetchAllEvents(myEmail));
-      await dispatch(setSelectedEvent(currEvent));
-
+      // await dispatch(setSelectedEvent(currEvent));
+      const location = await currEvent[key].location;
+      const latitude = location.locationGeocode.lat;
+      const longitude = location.locationGeocode.lng;
+      const newRegion = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.1226,
+        longitudeDelta: 0.0467
+      };
+      console.log(currEvent[key], newRegion);
+      trackMembersStop(oldInvitesArr);
+      trackMembersStart(newInvitesArr, newRegion);
       const host = store.getState().user.user;
       sendInvites([email], currEvent[key], host, currEvent);
     });
@@ -210,6 +222,7 @@ export const updateMyEventStatus = (uid, status) => async dispatch => {
 
 export const trackMembersStart = (members, newRegion) => dispatch => {
   try {
+    console.log('new region in store', newRegion);
     const userLocationsDB = database.ref(`/Devices/`);
     members.forEach(async member => {
       await userLocationsDB
