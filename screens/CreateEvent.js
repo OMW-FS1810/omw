@@ -29,6 +29,17 @@ class CreateEvent extends Component {
     host: ''
   };
 
+  static navigationOptions= {
+    headerTitle: 'Create Event',
+    headerStyle: {
+      backgroundColor: color.whiteBlue,
+      headerTintColor: color.blue,
+      headerTitleStyle: {
+        fontFamily: fontFamily.bold,
+      }
+    },
+  }
+
   componentDidMount() {
     if (this.props.user) {
       this.setState({ host: this.props.user.uid });

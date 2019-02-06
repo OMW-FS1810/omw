@@ -27,6 +27,17 @@ class Invite extends Component {
     input: ''
   };
 
+  static navigationOptions= {
+    headerTitle: 'Invite',
+    headerStyle: {
+      backgroundColor: color.whiteBlue,
+      headerTintColor: color.blue,
+      headerTitleStyle: {
+        fontFamily: fontFamily.bold,
+      }
+    },
+  }
+
   handleCreateEvent = async () => {
     let emailsToInvite = this.state.emails;
     // add the user (host) to the emails to invite
