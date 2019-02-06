@@ -24,7 +24,9 @@ class Notify extends React.Component {
       try {
         await soundObject.loadAsync(require('../assets/sounds/bamboo.mp3'));
         await soundObject.playAsync();
-        this.props.addEvent(this.state.incoming.newEventObject);
+        if (this.state.incoming.messageType === 'new-event') {
+          this.props.addEvent(this.state.incoming.newEventObject);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -32,16 +34,24 @@ class Notify extends React.Component {
   };
 
   render() {
+    let label = 'OK';
+    let newEvent = false;
+    if (this.state.incoming.messageType === 'new-event') {
+      label = 'View';
+      newEvent = true;
+    }
     return (
       <Snackbar
         style={styles.snackbar}
         visible={this.state.visible}
-        onDismiss={() => this.setState({ visible: false })}
+        onDismiss={() => this.setState({ visible: false, incoming: {} })}
         duration="7000"
         action={{
-          label: 'View',
+          label: label,
           onPress: () => {
-            this.props.selectEvent(this.state.incoming.newEventObject);
+            if (newEvent) {
+              this.props.selectEvent(this.state.incoming.newEventObject);
+            }
             //below is if we want to jump to details page
             // this.props.navigation.navigate('SingleEvent')
           }

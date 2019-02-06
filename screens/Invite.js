@@ -11,7 +11,11 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
-import { populateEventEmails, createEvent } from '../redux/event';
+import {
+  populateEventEmails,
+  createEvent,
+  trackMembersStart
+} from '../redux/event';
 import { NavigationActions, StackActions } from 'react-navigation';
 
 import * as theme from '../styles/theme';
@@ -34,8 +38,13 @@ class Invite extends Component {
       emails: [],
       input: ''
     });
+
+    const eventMembers = await Object.values(this.props.selectedEvent)[0]
+      .invites;
+
+    await this.props.trackMembersStart(eventMembers);
     // is this where we want to go?
-    // need to populate the new event in the store!
+    // this.props.navigation.navigate('Event Map');
     this.props.navigation.navigate('SingleEvent');
   };
 
@@ -173,12 +182,14 @@ let styles = StyleSheet.create({
 const mapState = state => ({
   eventDeets: state.event.pendingCreateEventDeets,
   user: state.user.user,
-  selectedEvent: state.event.selectedEvent
+  selectedEvent: state.event.selectedEvent,
+  eventJustMade: state.event.eventJustMade
 });
 
 const mapDispatch = dispatch => ({
   populateEmails: emails => dispatch(populateEventEmails(emails)),
-  createTheEvent: (deets, emails) => dispatch(createEvent(deets, emails))
+  createTheEvent: (deets, emails) => dispatch(createEvent(deets, emails)),
+  trackMembersStart: members => dispatch(trackMembersStart(members))
 });
 
 export default connect(
