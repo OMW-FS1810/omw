@@ -5,6 +5,9 @@ import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
 
+import * as theme from '../styles/theme';
+const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
+
 export default class AllEventsMapCards extends React.Component {
   render() {
     //creates the individual event cards
@@ -12,6 +15,7 @@ export default class AllEventsMapCards extends React.Component {
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
       return allEvents.map(eventData => {
+//*********** ,index)
         //this is a trick to get the objects out -- there's only one 'uid' for each event
         let event, title, time, date, description, locationPhoto;
         for (let uid in eventData) {
@@ -29,6 +33,11 @@ export default class AllEventsMapCards extends React.Component {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.043
         };
+
+        // const opacityStyle = {
+        //   opacity: this.props.interpolations[index].opacity
+        // };
+
         return (
           <TouchableOpacity
             key={thisId}
@@ -38,29 +47,42 @@ export default class AllEventsMapCards extends React.Component {
               // this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}
           >
-            <View style={styles.card}>
-              <View style={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>
-                  {title}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {description}
-                </Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {date} {time}
-                </Text>
-              </View>
+            <View style={[styles.card]
+//************** opacityStyle
+            }>
               {locationPhoto !== '' && (
-                <View style={styles.textContent}>
+                <View style={styles.imageContent}>
                   <Image
                     source={{
                       uri: locationPhoto
                     }}
                     style={styles.cardImage}
-                    resizeMode="cover"
+                    resizeMode='cover'
                   />
                 </View>
               )}
+              <View style={styles.textContent}>
+                <Text
+                  adjustsFontSizeToFit={true}
+                  numberOfLines={1}
+                  style={styles.cardtitle}
+                >
+                  {title}
+                </Text>
+                <Text
+                  adjustsFontSizeToFit={true}
+                  numberOfLines={1}
+                  style={styles.cardDescription}
+                >
+                  {description}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {date}
+                </Text>
+                <Text numberOfLines={1} style={styles.cardDescription}>
+                  {time}
+                </Text>
+              </View>
             </View>
           </TouchableOpacity>
         );
@@ -73,38 +95,50 @@ export default class AllEventsMapCards extends React.Component {
 
 const styles = StyleSheet.create({
   card: {
-    // padding: 10,
     elevation: 2,
-    backgroundColor: '#FFF',
-    marginHorizontal: 10,
-    shadowColor: '#000',
-    shadowRadius: 5,
-    shadowOpacity: 0.3,
-    shadowOffset: { x: 2, y: -2 },
+    backgroundColor: color.orange,
+    opacity: 0.6,
+    marginHorizontal: 5,
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
     overflow: 'hidden',
-    borderColor: 'teal',
-    borderWidth: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    borderRadius: 4
   },
+
+  focused: {
+    backgroundColor: color.orange
+  },
+
   cardImage: {
-    flex: 3,
-    width: '100%',
-    height: '80%',
-    alignSelf: 'center'
-  },
-  textContent: {
     flex: 1,
-    padding: 5
+    width: '100%',
+    alignSelf: 'center',
+    borderRadius: 4,
+  },
+
+  imageContent: {
+    flex: 2,
+    paddingTop: padding /2,
+    paddingHorizontal: padding/2,
+
+  },
+
+  textContent: {
+    flex: 2,
+    paddingVertical: padding,
+    justifyContent: 'flex-end',
   },
   cardtitle: {
-    fontSize: 12,
-    marginTop: 5,
-    fontWeight: 'bold'
+    fontFamily: fontFamily.bold,
+    fontSize: fontSize.regular,
+    color: color.darkBlue,
+    alignSelf: 'center'
   },
   cardDescription: {
-    fontSize: 12,
-    color: '#444'
+    fontSize: fontSize.small,
+    fontFamily: fontFamily.regular,
+    color: color.blue,
+    alignSelf: 'center'
   }
 });

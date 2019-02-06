@@ -277,7 +277,7 @@ class Profile extends Component {
             <TouchableOpacity
               style={styles.infoContent}
               color="#ffffff"
-              onPress={() => this.props.navigation.navigate('Event Map')}
+              onPress={() => this.props.navigation.navigate('EVENT MAP')}
             >
               <Text>Home</Text>
             </TouchableOpacity>
@@ -294,7 +294,7 @@ class Profile extends Component {
             </View>
             <TouchableOpacity
               style={styles.infoContent}
-              onPress={() => this.props.navigation.navigate('Create an Event')}
+              onPress={() => this.props.navigation.navigate('CREATE EVENT')}
             >
               <Text>Events</Text>
             </TouchableOpacity>
