@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: windowWidth - 40,
     borderRadius: 25,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     fontSize: 18,
     fontFamily: fontFamily.light,
     color: color.darkBlue,
@@ -241,8 +241,9 @@ class SingleEvent extends Component {
                         style={styles.inputContainer}
                         placeholder="Email"
                         placeholderTextColor="#aaa"
+                        autoCapitalize= 'none'
                         clearButtonMode="while-editing"
-                        borderBottomColor={theme.blue}
+                        borderBottomColor={color.blue}
                         value={this.state.emailInput}
                         onChangeText={emailInput =>
                           this.setState({ emailInput })
@@ -256,7 +257,7 @@ class SingleEvent extends Component {
                           style={{ left: 16 }}
                           name="enter"
                           size={30}
-                          color={theme.orange}
+                          color={color.orange}
                         />
                       </TouchableOpacity>
                     </>
@@ -275,12 +276,13 @@ class SingleEvent extends Component {
                           }
                         ]}
                       >
-                        <MaterialCommunityIcons
-                          name="email-plus"
+                          <AntDesign
+                          style={{ left: 16 }}
+                          name="adduser"
                           size={30}
-                          style={styles.addButton}
-                        />
-                        {'  '}Invite another friendo!
+                          color={color.orange}
+                          />
+                          {'  '}Add More Members
                       </Text>
                     </TouchableOpacity>
                   )}

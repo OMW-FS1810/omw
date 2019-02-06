@@ -98,17 +98,17 @@ const styles = StyleSheet.create({
   card: {
     elevation: 2,
     backgroundColor: color.orange,
-    opacity: 0.9,
+    opacity: 0.875,
     marginHorizontal: 5,
     height: MEMBER_HEIGHT,
     width: MEMBER_WIDTH,
     overflow: 'hidden',
     flexDirection: 'column',
-    borderRadius: 4
+    borderRadius: 4,
   },
   cardImage: {
     flex: 1,
-    // width: '100%',
+    width: 'auto',
     height: '100%',
     alignSelf: 'center',
     borderRadius: 4
@@ -116,10 +116,10 @@ const styles = StyleSheet.create({
   imageContent: {
     flex: 2,
     paddingTop: padding / 2,
-    paddingHorizontal: padding / 2
+    paddingHorizontal: padding / 2,
   },
   textContent: {
-    flex: 3,
+    flex: 2,
     paddingVertical: padding,
     justifyContent: 'flex-end',
   },

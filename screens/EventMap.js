@@ -255,9 +255,8 @@ class EventMap extends React.Component {
                       Object.values(this.props.selectedEvent)[0].locationPhoto
                     }
                   >
-                    <Icon
-                      name="location"
-                      type="entypo"
+                    <MaterialCommunityIcons
+                      name="map-marker-circle"
                       size={30}
                       color={color.darkOrange}
                     />
@@ -465,10 +464,9 @@ let styles = StyleSheet.create({
     width: 80,
     height: 100,
     left: 10,
-    borderRadius: 5,
-    borderColor: 'teal',
+    borderRadius: 4,
     borderWidth: 1,
-    backgroundColor: 'white',
+    backgroundColor: color.blue,
     alignItems: 'center'
   },
   eventDetailsButton: {
@@ -477,10 +475,9 @@ let styles = StyleSheet.create({
     width: 80,
     height: 100,
     left: 100,
-    borderRadius: 5,
-    borderColor: 'teal',
+    borderRadius: 4,
     borderWidth: 1,
-    backgroundColor: 'white',
+    backgroundColor: color.blue,
     alignItems: 'center'
   },
   centerEventButton: {
@@ -489,10 +486,9 @@ let styles = StyleSheet.create({
     width: 80,
     height: 100,
     left: 10,
-    borderRadius: 5,
-    borderColor: 'teal',
+    borderRadius: 4,
     borderWidth: 1,
-    backgroundColor: 'white',
+    backgroundColor: color.blue,
     alignItems: 'center'
   },
   selectedEvent: {
