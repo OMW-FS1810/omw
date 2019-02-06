@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import React from 'react';
 import { Text, StyleSheet, Animated, View } from 'react-native';
 import { MapView } from 'expo';
