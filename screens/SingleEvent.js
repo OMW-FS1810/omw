@@ -6,6 +6,7 @@ import {
   Image,
   Button,
   TextInput,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView
@@ -123,12 +124,6 @@ class SingleEvent extends Component {
     this.setState({ emailInput: '', editing: false });
   };
 
-  handlePressBack = () => {
-    // this.props.navigation.navigate('EVENT MAP');
-
-    this.props.navigation.navigate('eventMapScreen');
-  };
-
   handlePressDecline = () => {
     const uid = Object.keys(this.props.selectedEvent)[0];
     this.props.decline(uid);
@@ -155,138 +150,142 @@ class SingleEvent extends Component {
 
       return (
         { event } && (
-          <KeyboardAwareScrollView
-            resetScrollToCoords={{ x: 0, y: 0 }}
-            // contentContainerStyle={styles.container}
-            scrollEnabled={false}
-            style={styles.container}
-          >
-            <View style={styles.detailsContainer}>
-              <View style={styles.titleBox}>
-                <Text style={styles.titleText}>DETAILS</Text>
-              </View>
-              <Text style={styles.subtitle}>Event:</Text>
-              <Text style={styles.text}>{event.name}</Text>
-              <Text style={styles.subtitle}>Location:</Text>
-              <Text style={styles.text}>{event.location.locationName}</Text>
+          <ScrollView>
+            <KeyboardAwareScrollView
+              resetScrollToCoords={{ x: 0, y: 0 }}
+              // contentContainerStyle={styles.container}
+              scrollEnabled={false}
+              style={styles.container}
+            >
+              <View style={styles.detailsContainer}>
+                <View style={styles.titleBox}>
+                  <Text style={styles.titleText}>DETAILS</Text>
+                </View>
+                <Text style={styles.subtitle}>Event:</Text>
+                <Text style={styles.text}>{event.name}</Text>
+                <Text style={styles.subtitle}>Location:</Text>
+                <Text style={styles.text}>{event.location.locationName}</Text>
 
-              {/*
+                {/*
               add image with src of event.location.locationPhoto
               i.e...
               {locationPhoto !== '' && (
                 <View style={styles.textContent}>
-                  <Image
-                    source={{
-                      uri: locationPhoto
-                    }}
-                    style={styles.cardImage}
-                    resizeMode="cover"
-                  />
+                <Image
+                source={{
+                  uri: locationPhoto
+                }}
+                style={styles.cardImage}
+                resizeMode="cover"
+                />
                 </View>
-              )}
-
-
-              */}
-              <Text style={styles.subtitle}>Date:</Text>
-              <Text style={styles.text}>{event.date}</Text>
-              <Text style={styles.subtitle}>Time:</Text>
-              <Text style={styles.text}>{event.time}</Text>
-            </View>
-
-            <RadioButton.Group
-              onValueChange={value => {
-                this.setState({ myStatus: value });
-                this.props.updateMyEventStatus(this.state.uid, value);
-              }}
-              value={this.state.myStatus}
-              style={{
-                marginLeft: 20,
-                padding: 5,
-                borderWidth: 1,
-                borderColor: 'black'
-              }}
-            >
-              <View style={{ flexDirection: 'row' }}>
-                <RadioButton value="invited" />
-                <Text>Invited</Text>
-              </View>
-              <View style={{ flexDirection: 'row' }}>
-                <RadioButton value="on the way" />
-                <Text>On the Way</Text>
-              </View>
-              <View style={{ flexDirection: 'row' }}>
-                <RadioButton value="arrived" />
-                <Text>Arrived</Text>
-              </View>
-            </RadioButton.Group>
-            <View style={styles.emailsContainer}>
-              <View style={styles.titleBox}>
-                <Text style={styles.titleText}>WHO'S GOING</Text>
-              </View>
-              <View style={styles.emailList}>
-                {event.invites.map(invitee => (
-                  <Text key={invitee.email} style={styles.emailText}>
-                    {invitee.email}
-                  </Text>
-                ))}
-                {this.state.editing ? (
-                  <>
-                    <TextInput
-                      style={styles.inputContainer}
-                      placeholder="Email"
-                      placeholderTextColor="#aaa"
-                      clearButtonMode="while-editing"
-                      borderBottomColor={theme.blue}
-                      value={this.state.emailInput}
-                      onChangeText={emailInput => this.setState({ emailInput })}
-                    />
-                    <TouchableOpacity
-                      disabled={!this.state.emailInput}
-                      onPress={this.handleSubmitEmail}
-                    >
-                      <AntDesign
-                        style={{ left: 16 }}
-                        name="enter"
-                        size={30}
-                        color={theme.orange}
-                      />
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <TouchableOpacity
-                    disabled={this.state.editing}
-                    onPress={this.handlePressAddEmail}
-                  >
-                    <Text
-                      style={[
-                        styles.addButton,
-                        {
-                          color: this.state.editing
-                            ? color.grey
-                            : color.darkOrange
-                        }
-                      ]}
-                    >
-                      <MaterialCommunityIcons
-                        name="email-plus"
-                        size={30}
-                        style={styles.addButton}
-                      />
-                      {'  '}Invite another friendo!
-                    </Text>
-                  </TouchableOpacity>
                 )}
-                <View style={styles.bottom}>
-                  <TouchableOpacity
-                    style={[styles.button, styles.bottom]}
-                    onPress={this.handlePressDecline}
-                  >
-                    <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
-                  </TouchableOpacity>
+                
+                
+              */}
+                <Text style={styles.subtitle}>Date:</Text>
+                <Text style={styles.text}>{event.date}</Text>
+                <Text style={styles.subtitle}>Time:</Text>
+                <Text style={styles.text}>{event.time}</Text>
+              </View>
+
+              <RadioButton.Group
+                onValueChange={value => {
+                  this.setState({ myStatus: value });
+                  this.props.updateMyEventStatus(this.state.uid, value);
+                }}
+                value={this.state.myStatus}
+                style={{
+                  marginLeft: 20,
+                  padding: 5,
+                  borderWidth: 1,
+                  borderColor: 'black'
+                }}
+              >
+                <View style={{ flexDirection: 'row' }}>
+                  <RadioButton value="invited" />
+                  <Text>Invited</Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                  <RadioButton value="on the way" />
+                  <Text>On the Way</Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                  <RadioButton value="arrived" />
+                  <Text>Arrived</Text>
+                </View>
+              </RadioButton.Group>
+              <View style={styles.emailsContainer}>
+                <View style={styles.titleBox}>
+                  <Text style={styles.titleText}>WHO'S GOING</Text>
+                </View>
+                <View style={styles.emailList}>
+                  {event.invites.map(invitee => (
+                    <Text key={invitee.email} style={styles.emailText}>
+                      {invitee.email}
+                    </Text>
+                  ))}
+                  {this.state.editing ? (
+                    <>
+                      <TextInput
+                        style={styles.inputContainer}
+                        placeholder="Email"
+                        placeholderTextColor="#aaa"
+                        clearButtonMode="while-editing"
+                        borderBottomColor={theme.blue}
+                        value={this.state.emailInput}
+                        onChangeText={emailInput =>
+                          this.setState({ emailInput })
+                        }
+                      />
+                      <TouchableOpacity
+                        disabled={!this.state.emailInput}
+                        onPress={this.handleSubmitEmail}
+                      >
+                        <AntDesign
+                          style={{ left: 16 }}
+                          name="enter"
+                          size={30}
+                          color={theme.orange}
+                        />
+                      </TouchableOpacity>
+                    </>
+                  ) : (
+                    <TouchableOpacity
+                      disabled={this.state.editing}
+                      onPress={this.handlePressAddEmail}
+                    >
+                      <Text
+                        style={[
+                          styles.addButton,
+                          {
+                            color: this.state.editing
+                              ? color.grey
+                              : color.darkOrange
+                          }
+                        ]}
+                      >
+                        <MaterialCommunityIcons
+                          name="email-plus"
+                          size={30}
+                          style={styles.addButton}
+                        />
+                        {'  '}Invite another friendo!
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  <View style={styles.bottom}>
+                    <TouchableOpacity
+                      style={[styles.button, styles.bottom]}
+                      onPress={this.handlePressDecline}
+                    >
+                      <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-          </KeyboardAwareScrollView>
+            </KeyboardAwareScrollView>
+          </ScrollView>
         )
       );
     } else {
