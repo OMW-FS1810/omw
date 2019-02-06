@@ -105,8 +105,8 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     const eventRef = database.ref(`Events/${uid}`);
     // update the invites arr in database to match new array with spread invites
     eventRef.child('invites').once('value', async snapshot => {
-      let oldInvitesArr = snapshot.val();
-      console.log('invites arr', oldInvitesArr);
+      let oldInvitesArr = await snapshot.val();
+
       let newInvitesArr = [...oldInvitesArr, { email, status: 'invited' }];
       eventRef.update({
         invites: newInvitesArr
@@ -129,9 +129,10 @@ export const addEmailToEvent = (uid, email) => dispatch => {
         latitudeDelta: 0.1226,
         longitudeDelta: 0.0467
       };
-      console.log(currEvent[key], newRegion);
-      trackMembersStop(oldInvitesArr);
-      trackMembersStart(newInvitesArr, newRegion);
+
+      await dispatch(trackMembersStop(oldInvitesArr));
+
+      await dispatch(trackMembersStart(newInvitesArr, newRegion));
       const host = store.getState().user.user;
       sendInvites([email], currEvent[key], host, currEvent);
     });
