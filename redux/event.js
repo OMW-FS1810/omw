@@ -227,7 +227,6 @@ export const updateMyEventStatus = (uid, status) => async dispatch => {
 
 export const trackMembersStart = (members, newRegion) => dispatch => {
   try {
-    console.log('new region in store', newRegion);
     const userLocationsDB = database.ref(`/Devices/`);
     members.forEach(async member => {
       await userLocationsDB
