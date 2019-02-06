@@ -61,7 +61,7 @@ class EventMap extends React.Component {
       backgroundColor: color.whiteBlue,
       headerTintColor: color.whiteBlue,
       headerTitleStyle: {
-        fontFamily: fontFamily.bold,
+        fontFamily: fontFamily.bold
       }
     },
     headerLeft: (
@@ -155,7 +155,7 @@ class EventMap extends React.Component {
     await this.animateToMapPosition(newRegion);
 
     setTimeout(() => {
-      this.props.trackMembersStart(Object.values(event)[0].invites, newRegion );
+      this.props.trackMembersStart(Object.values(event)[0].invites, newRegion);
     }, 500);
 
     //for some reason i can't get a smooth transition here
@@ -349,18 +349,17 @@ class EventMap extends React.Component {
                   </TouchableOpacity>
                 </MapView.Callout>
               </>
-            ) : (
-              <MapView.Callout style={styles.allEventsButton}>
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.navigation.navigate('CREATE EVENT');
-                  }}
-                >
-                  <AntDesign name="pluscircleo" size={45} color="teal" />
-                  <Text>Create Event</Text>
-                </TouchableOpacity>
-              </MapView.Callout>
-            )}
+            ) : // <MapView.Callout style={styles.allEventsButton}>
+            //   <TouchableOpacity
+            //     onPress={() => {
+            //       this.props.navigation.navigate('CREATE EVENT');
+            //     }}
+            //   >
+            //     <AntDesign name="pluscircleo" size={45} color="teal" />
+            //     <Text>Create Event</Text>
+            //   </TouchableOpacity>
+            // </MapView.Callout>
+            null}
 
             <Animated.ScrollView
               horizontal
@@ -532,7 +531,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email)),
   setSelectedEvent: event => dispatch(setSelectedEvent(event)),
-  trackMembersStart: (members, newRegion) => dispatch(trackMembersStart(members, newRegion)),
+  trackMembersStart: (members, newRegion) =>
+    dispatch(trackMembersStart(members, newRegion)),
   trackMembersStop: members => dispatch(trackMembersStop(members))
 });
 

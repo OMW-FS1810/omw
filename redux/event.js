@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable guard-for-in */
 import { database } from '../config/firebase';
 import { sendInvites } from '../helpers/invitations';
@@ -63,7 +64,6 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     await eventRef.once('value', snapshot => {
       newEvent = snapshot.val();
     });
-    console.log(newEvent);
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
     const newEventObject = { [newUID]: newEvent };
@@ -129,13 +129,14 @@ export const addEmailToEvent = (uid, email) => dispatch => {
 };
 export const declineEvent = uid => async dispatch => {
   try {
-    // grab reference to the event
     let eventUid;
+    // this is annoying.. >:[ the event snapshot UID we're sending into our store from firebase has a '-' at the front of it, but elsewhere it doesnt.. so check to make sure we have a '-' infront of the UID before the request is sent to firebase.
     if (uid[0] === '-') {
       eventUid = String(uid);
     } else {
       eventUid = '-' + uid;
     }
+    // grab reference to the event
     const eventRef = database.ref(`Events/${eventUid}`);
     // find *my* email
     const myEmail = store.getState().user.user.email;
