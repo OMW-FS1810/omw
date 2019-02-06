@@ -34,6 +34,7 @@ export const sendPushNotification = (
   messageType,
   newEventObject = null
 ) => {
+  console.log(token, title, body, sender, messageType, newEventObject);
   try {
     fetch('https://exp.host/--/api/v2/push/send', {
       body: JSON.stringify({
