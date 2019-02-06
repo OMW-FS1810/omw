@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable guard-for-in */
 import React from 'react';
 import { Text, StyleSheet, Animated, View } from 'react-native';
