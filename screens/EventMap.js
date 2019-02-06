@@ -139,50 +139,6 @@ class EventMap extends React.Component {
     }, 10);
   };
 
-  // trackMembersStart = members => {
-  //   try {
-  //     const userLocationsDB = database.ref(`/Devices/`);
-  //     members.forEach(async memberEmail => {
-  //       await userLocationsDB
-  //         .orderByChild('email')
-  //         .equalTo(memberEmail.toLowerCase())
-  //         .on('value', snapshot => {
-  //           // this.setState({
-  //           //   eventMembers: {
-  //           //     ...this.state.eventMembers,
-  //           //     [memberEmail.toLowerCase()]:
-  //           //       snapshot.val() && Object.values(snapshot.val())[0]
-  //           //   }
-  //           // });
-  //           this.setState(prevState => ({
-  //             eventMembers: {
-  //               ...prevState.eventMembers,
-  //               [memberEmail.toLowerCase()]:
-  //                 snapshot.val() && Object.values(snapshot.val())[0]
-  //             }
-  //           }));
-  //         });
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-  // trackMembersStop = members => {
-  //   try {
-  //     const userLocationsDB = database.ref(`/Devices/`);
-
-  //     members.forEach(async memberEmail => {
-  //       await userLocationsDB
-  //         .orderByChild('email')
-  //         .equalTo(memberEmail.toLowerCase())
-  //         .off('value');
-  //     });
-  //     this.setState({ eventMembers: {} });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   selectEvent = async event => {
     await this.props.setSelectedEvent(event);
