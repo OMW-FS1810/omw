@@ -309,9 +309,9 @@ class EventMap extends React.Component {
                     <MaterialCommunityIcons
                       name="map-marker-multiple"
                       size={24}
-                      color="teal"
+                      color={color.lightBlue}
                     />
-                    <Text>Show all events</Text>
+                    <Text>Show All Events</Text>
                   </TouchableOpacity>
                 </MapView.Callout>
                 <MapView.Callout style={styles.eventDetailsButton}>
@@ -320,8 +320,8 @@ class EventMap extends React.Component {
                       this.props.navigation.navigate('SingleEvent');
                     }}
                   >
-                    <MaterialIcons name="event-note" size={24} color="teal" />
-                    <Text>Event details</Text>
+                    <MaterialIcons name="event-note" size={24} color={color.lightBlue} />
+                    <Text>Event Details</Text>
                   </TouchableOpacity>
                 </MapView.Callout>
                 <MapView.Callout style={styles.centerEventButton}>
@@ -342,8 +342,8 @@ class EventMap extends React.Component {
                       });
                     }}
                   >
-                    <Entypo name="location" size={24} color="teal" />
-                    <Text>Center event</Text>
+                    <Entypo name="location" size={24} color={color.lightBlue} />
+                    <Text>Center Event</Text>
                   </TouchableOpacity>
                 </MapView.Callout>
               </>
@@ -422,7 +422,7 @@ class EventMap extends React.Component {
                   this.recenterMap();
                 }}
               >
-                <Ionicons name="md-locate" size={40} color="teal" />
+                <Ionicons name="md-locate" size={40} color={color.lightBlue} />
               </TouchableOpacity>
             </MapView.Callout>
             <Snackbar navigation={navigation} selectEvent={this.selectEvent} />
