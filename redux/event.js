@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable complexity */
 /* eslint-disable guard-for-in */
 import { database } from '../config/firebase';
@@ -105,7 +106,8 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     const eventRef = database.ref(`Events/${uid}`);
     // update the invites arr in database to match new array with spread invites
     eventRef.child('invites').once('value', async snapshot => {
-      let oldInvitesArr = snapshot.val();
+      let oldInvitesArr = await snapshot.val();
+
       let newInvitesArr = [...oldInvitesArr, { email, status: 'invited' }];
       eventRef.update({
         invites: newInvitesArr
@@ -118,8 +120,20 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       // push new email into old emails arr
       currEvent[key].invites.push({ email, status: 'invited' });
       await dispatch(fetchAllEvents(myEmail));
-      await dispatch(setSelectedEvent(currEvent));
+      // await dispatch(setSelectedEvent(currEvent));
+      const location = await currEvent[key].location;
+      const latitude = location.locationGeocode.lat;
+      const longitude = location.locationGeocode.lng;
+      const newRegion = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.1226,
+        longitudeDelta: 0.0467
+      };
 
+      await dispatch(trackMembersStop(oldInvitesArr));
+
+      await dispatch(trackMembersStart(newInvitesArr, newRegion));
       const host = store.getState().user.user;
       sendInvites([email], currEvent[key], host, currEvent);
     });
@@ -130,6 +144,11 @@ export const addEmailToEvent = (uid, email) => dispatch => {
 export const declineEvent = uid => async dispatch => {
   try {
     let eventUid;
+    // dispatch trackMembersStop to stop tracking members for an event we're no longer watching
+    const currEvent = store.getState().event.selectedEvent;
+    const currEventMembers = Object.values(currEvent)[0].invites;
+    await dispatch(trackMembersStop(currEventMembers));
+
     // this is annoying.. >:[ the event snapshot UID we're sending into our store from firebase has a '-' at the front of it, but elsewhere it doesnt.. so check to make sure we have a '-' infront of the UID before the request is sent to firebase.
     if (uid[0] === '-') {
       eventUid = String(uid);
@@ -149,9 +168,7 @@ export const declineEvent = uid => async dispatch => {
           snapshotEmail.email.toLowerCase() !== myEmail.toLowerCase()
       );
       if (!newInvitesArr.length) {
-        await eventRef.update({
-          invites: []
-        });
+        await eventRef.remove();
       } else {
         await eventRef.update({
           invites: newInvitesArr
@@ -171,7 +188,7 @@ export const declineEvent = uid => async dispatch => {
     console.error(err);
   }
 };
-export const updateMyEventStatus = (uid, status) => async dispatch => {
+export const updateMyEventStatus = (uid, status, event) => async dispatch => {
   try {
     // grab reference to the event
     let eventUid;
@@ -196,7 +213,8 @@ export const updateMyEventStatus = (uid, status) => async dispatch => {
         await dispatch(fetchAllEvents(myEmail));
         const eventsToUpdate = store.getState().event.allEvents;
         const updatedEvent = eventsToUpdate[eventUid];
-
+        const myName = store.getState().user.user.firstName;
+        sendInvites(event.invites, event, myName, status, true);
         //NEED TO UPDATE SINGLE EVENT PAGE AND MAP!!!
         // await dispatch(setSelectedEvent({}))
         // await dispatch(setSelectedEvent(updatedEvent));

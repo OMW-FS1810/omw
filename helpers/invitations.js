@@ -10,7 +10,8 @@ export const sendInvites = async (
   inviteesArr,
   eventDetails,
   host,
-  newEventObject
+  newEventObject,
+  isUpdate
 ) => {
   // need to invite unregistered users, notify registered users, and notify host
   const currUsers = database.ref('/Users/');
@@ -28,7 +29,13 @@ export const sendInvites = async (
       let emailInvites = [];
       let messageInvites = [];
       inviteesArr.forEach(invitee => {
-        let thisInvitee = invitee.toLowerCase();
+        let thisInvitee;
+        if (isUpdate) {
+          thisInvitee = invitee.email.toLowerCase();
+        } else {
+          thisInvitee = invitee.toLowerCase();
+        }
+
         if (thisInvitee in userByEmail) {
           if (userByEmail[thisInvitee].token) {
             messageInvites.push(userByEmail[thisInvitee].token);
@@ -37,25 +44,40 @@ export const sendInvites = async (
           emailInvites.push(invitee);
         }
       });
-      //send push notifications
-      messageInvites.forEach(token => {
-        if (token)
-          sendPushNotification(
-            token,
-            eventDetails.name,
-            `${host.email} has invited you to a new event`,
-            // at ${
-            //   eventDetails.location.locationName
-            // } on ${eventDetails.date} at ${eventDetails.time}`,
-            host.token,
-            'new-event',
-            newEventObject
-          );
-      });
-      //send emails
+      if (isUpdate) {
+        messageInvites.forEach(token => {
+          if (token)
+            sendPushNotification(
+              token,
+              eventDetails.name,
+              `${host} has changed their status to ${newEventObject}`,
 
-      if (emailInvites.length > 0) {
-        await composeMail(messageInvites, eventDetails, host.email);
+              '',
+              'update',
+              newEventObject
+            );
+        });
+      } else {
+        //send push notifications
+        messageInvites.forEach(token => {
+          if (token)
+            sendPushNotification(
+              token,
+              eventDetails.name,
+              `${host.email} has invited you to a new event`,
+              // at ${
+              //   eventDetails.location.locationName
+              // } on ${eventDetails.date} at ${eventDetails.time}`,
+              host.token,
+              'new-event',
+              newEventObject
+            );
+        });
+        //send emails
+
+        if (emailInvites.length > 0) {
+          await composeMail(messageInvites, eventDetails, host.email);
+        }
       }
     });
 

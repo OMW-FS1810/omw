@@ -387,11 +387,19 @@ class EventMap extends React.Component {
               contentContainerStyle={styles.endPadding}
             >
               {Object.keys(selectedEvent).length ? (
-                <SingleEventMapCards
-                  eventMembers={this.props.eventMembers}
-                  me={this.props.user.email}
-                  animateToMapPosition={this.animateToMapPosition}
-                />
+                <>
+                  <SingleEventMapCards
+                    eventMembers={this.props.eventMembers}
+                    me={this.props.user.email}
+                    animateToMapPosition={this.animateToMapPosition}
+                  />
+                  <TouchableOpacity key={Math.random() * 100}>
+                    <View style={styles.card} opacity=".0" />
+                  </TouchableOpacity>
+                  <TouchableOpacity key={Math.random() * 100}>
+                    <View style={styles.card} opacity=".0" />
+                  </TouchableOpacity>
+                </>
               ) : (
                 <>
                   <AllEventsMapCards

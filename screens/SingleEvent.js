@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start'
   },
   titleBox: {
-    backgroundColor: color.grey,
+    backgroundColor: color.grey
   },
   inputContainer: {
     width: windowWidth - 40,
@@ -107,16 +107,16 @@ class SingleEvent extends Component {
     myStatus: ''
   };
 
-  static navigationOptions= {
+  static navigationOptions = {
     headerTitle: 'Event',
     headerStyle: {
       backgroundColor: color.orange,
       headerTintColor: color.blue,
       headerTitleStyle: {
-        fontFamily: fontFamily.bold,
+        fontFamily: fontFamily.bold
       }
-    },
-  }
+    }
+  };
 
   handleAddToInviteList = () => {
     const { uid, emailInput } = this.state;
@@ -151,7 +151,6 @@ class SingleEvent extends Component {
       });
     }
   }
-
 
   render() {
     let event = false;
@@ -202,7 +201,7 @@ class SingleEvent extends Component {
               <RadioButton.Group
                 onValueChange={value => {
                   this.setState({ myStatus: value });
-                  this.props.updateMyEventStatus(this.state.uid, value);
+                  this.props.updateMyEventStatus(this.state.uid, value, event);
                 }}
                 value={this.state.myStatus}
                 style={{
@@ -315,8 +314,8 @@ const mapState = ({ event, user }) => ({
 const mapDispatch = dispatch => ({
   addEmail: (uid, email) => dispatch(addEmailToEvent(uid, email)),
   decline: uid => dispatch(declineEvent(uid)),
-  updateMyEventStatus: (uid, status) =>
-    dispatch(updateMyEventStatus(uid, status))
+  updateMyEventStatus: (uid, status, event) =>
+    dispatch(updateMyEventStatus(uid, status, event))
 });
 
 export default connect(
