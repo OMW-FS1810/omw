@@ -1,7 +1,14 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable guard-for-in */
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Image,
+  Animated
+} from 'react-native';
 import { MapView } from 'expo';
 import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
 
@@ -14,8 +21,8 @@ export default class AllEventsMapCards extends React.Component {
 
     if (this.props.allEvents.length) {
       const allEvents = this.props.allEvents;
-      return allEvents.map(eventData => {
-//*********** ,index)
+      return allEvents.map((eventData, index) => {
+        //*********** ,index)
         //this is a trick to get the objects out -- there's only one 'uid' for each event
         let event, title, time, date, description, locationPhoto;
         for (let uid in eventData) {
@@ -34,9 +41,9 @@ export default class AllEventsMapCards extends React.Component {
           longitudeDelta: 0.043
         };
 
-        // const opacityStyle = {
-        //   opacity: this.props.interpolations[index].opacity
-        // };
+        const opacityStyle = {
+          opacity: this.props.interpolations[index].opacity
+        };
 
         return (
           <TouchableOpacity
@@ -47,9 +54,14 @@ export default class AllEventsMapCards extends React.Component {
               // this.props.navigation.navigate('SingleEvent', { eventDetails });
             }}
           >
-            <View style={[styles.card]
-//************** opacityStyle
-            }>
+            <View
+              style={
+                [styles.card]
+                //************** opacityStyle
+              }
+              // opacity={opacityStyle}
+              // opacity=".875"
+            >
               {locationPhoto !== '' && (
                 <View style={styles.imageContent}>
                   <Image
@@ -57,7 +69,7 @@ export default class AllEventsMapCards extends React.Component {
                       uri: locationPhoto
                     }}
                     style={styles.cardImage}
-                    resizeMode='cover'
+                    resizeMode="cover"
                   />
                 </View>
               )}
@@ -97,7 +109,7 @@ const styles = StyleSheet.create({
   card: {
     elevation: 2,
     backgroundColor: color.orange,
-    opacity: 0.9,
+    opacity: 0.875,
     marginHorizontal: 5,
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
@@ -114,20 +126,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     alignSelf: 'center',
-    borderRadius: 4,
+    borderRadius: 4
   },
 
   imageContent: {
     flex: 2,
-    paddingTop: padding /2,
-    paddingHorizontal: padding/2,
-
+    paddingTop: padding / 2,
+    paddingHorizontal: padding / 2
   },
 
   textContent: {
     flex: 2,
     paddingVertical: padding,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   cardtitle: {
     fontFamily: fontFamily.bold,

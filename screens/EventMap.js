@@ -139,7 +139,6 @@ class EventMap extends React.Component {
     }, 10);
   };
 
-
   selectEvent = async event => {
     await this.props.setSelectedEvent(event);
 
@@ -395,12 +394,18 @@ class EventMap extends React.Component {
                   animateToMapPosition={this.animateToMapPosition}
                 />
               ) : (
-                <AllEventsMapCards
-                  allEvents={allEvents}
-                  selectEvent={this.selectEvent}
-                  interpolations={interpolations}
-                  // animateToMapPosition={this.animateToMapPosition}
-                />
+                <>
+                  <AllEventsMapCards
+                    allEvents={allEvents}
+                    selectEvent={this.selectEvent}
+                    interpolations={interpolations}
+                    // animateToMapPosition={this.animateToMapPosition}
+                  />
+                  {/* the following is a blank card to fix scrolling issues */}
+                  <TouchableOpacity key={Math.random() * 100}>
+                    <View style={styles.card} opacity=".0" />
+                  </TouchableOpacity>
+                </>
               )}
             </Animated.ScrollView>
 
