@@ -37,8 +37,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start'
   },
   titleBox: {
-    backgroundColor: color.blue,
-    alignItems: 'center'
+    backgroundColor: color.grey,
   },
   inputContainer: {
     width: windowWidth - 33,
@@ -51,26 +50,25 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   titleText: {
-    fontFamily: fontFamily.bold,
+    fontFamily: fontFamily.light,
     color: color.whiteGrey,
     padding,
     fontSize: fontSize.xLarge
   },
   subtitle: {
     fontFamily: fontFamily.light,
-    fontSize: fontSize.large,
+    fontSize: fontSize.regular,
     color: color.darkBlue,
-    padding
   },
   text: {
     flex: 1,
-    color: color.indigoBlue,
+    color: color.darkOrange,
     fontFamily: fontFamily.regular,
     fontSize: fontSize.large,
     paddingLeft: padding * 2
   },
   emailText: {
-    color: color.indigoBlue,
+    color: color.darkBlue,
     fontFamily: fontFamily.regular,
     fontSize: fontSize.large,
     paddingLeft: padding * 2
@@ -106,6 +104,17 @@ class SingleEvent extends Component {
     uid: '',
     myStatus: ''
   };
+
+  static navigationOptions= {
+    headerTitle: 'Event',
+    headerStyle: {
+      backgroundColor: color.orange,
+      headerTintColor: color.blue,
+      headerTitleStyle: {
+        fontFamily: fontFamily.bold,
+      }
+    },
+  }
 
   handleAddToInviteList = () => {
     const { uid, emailInput } = this.state;
@@ -147,7 +156,7 @@ class SingleEvent extends Component {
     }
   }
 
-  static navigationOptions = { title: 'Single Event' };
+
   render() {
     let event = false;
     if (Object.keys(this.props.selectedEvent).length) {
