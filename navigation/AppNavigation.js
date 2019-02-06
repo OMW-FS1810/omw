@@ -7,7 +7,7 @@ import {
   createSwitchNavigator
 } from 'react-navigation';
 import { Text } from 'react-native';
-import { color } from '../styles/theme';
+import { color, fontFamily } from '../styles/theme';
 import { Snackbar } from '../components';
 
 import {
@@ -20,6 +20,7 @@ import {
   AuthLoading,
   SingleEvent
 } from '../screens';
+
 
 //LOGIN STACK
 const LoginStack = createStackNavigator({
@@ -41,13 +42,27 @@ const CreateEventStack = createStackNavigator(
     createEventScreen: {
       screen: CreateEvent,
       navigationOptions: {
-        headerTitle: 'Create Event'
+        headerTitle: 'Create Event',
+        headerStyle: {
+          backgroundColor: color.whiteBlue,
+          headerTintColor: color.blue,
+          headerTitleStyle: {
+            fontFamily: fontFamily.bold,
+          }
+        },
       }
     },
     inviteScreen: {
       screen: Invite,
       navigationOptions: {
-        headerTitle: 'Invite'
+        headerTitle: 'Invite',
+        headerStyle: {
+          backgroundColor: color.whiteBlue,
+          headerTintColor: color.blue,
+          headerTitleStyle: {
+            fontFamily: fontFamily.bold,
+          }
+        },
       }
     }
   },
@@ -64,8 +79,13 @@ const DrawerStack = createDrawerNavigator(
   },
   {
     drawerPosition: 'left',
-    navigationOptions: ({ navigation }) => ({
-    })
+    drawerBackgroundColor: color.lightBlue,
+    drawerType: 'slide',
+    contentOptions: {
+      activeTintColor: color.whiteBlue,
+      activeBackgroundColor: color.blue,
+      inactiveTintColor: color.indigoBlue
+    }
   }
 );
 
