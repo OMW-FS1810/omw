@@ -64,7 +64,6 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     await eventRef.once('value', snapshot => {
       newEvent = snapshot.val();
     });
-    console.log(newEvent);
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
     const newEventObject = { [newUID]: newEvent };
