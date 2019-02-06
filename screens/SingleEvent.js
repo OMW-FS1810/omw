@@ -127,7 +127,7 @@ class SingleEvent extends Component {
   handlePressDecline = () => {
     const uid = Object.keys(this.props.selectedEvent)[0];
     this.props.decline(uid);
-    this.props.navigation.navigate('Event Map');
+    this.props.navigation.navigate('eventMapScreen');
   };
 
   async componentDidMount() {

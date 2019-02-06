@@ -139,7 +139,6 @@ class EventMap extends React.Component {
     }, 10);
   };
 
-
   selectEvent = async event => {
     await this.props.setSelectedEvent(event);
 
@@ -363,6 +362,7 @@ class EventMap extends React.Component {
 
             <Animated.ScrollView
               horizontal
+              overScrollMode="always"
               scrollEventThrottle={1}
               showsHorizontalScrollIndicator={false}
               snapToInterval={CARD_WIDTH}
