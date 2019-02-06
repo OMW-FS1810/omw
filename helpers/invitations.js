@@ -48,6 +48,7 @@ export const sendInvites = async (
             //   eventDetails.location.locationName
             // } on ${eventDetails.date} at ${eventDetails.time}`,
             host.token,
+            'new-event',
             newEventObject
           );
       });

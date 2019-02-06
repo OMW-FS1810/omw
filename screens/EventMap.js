@@ -189,25 +189,24 @@ class EventMap extends React.Component {
       latitudeDelta: 0.1226,
       longitudeDelta: 0.0467
     };
-    await this.props.trackMembersStart(Object.values(event)[0].invites);
+    await this.animateToMapPosition(newRegion);
+
+    setTimeout(() => {
+      this.props.trackMembersStart(Object.values(event)[0].invites, newRegion );
+    }, 500);
 
     //for some reason i can't get a smooth transition here
     // setTimeout(() => {
-    this.animateToMapPosition(newRegion);
     // }, 50);
 
     // this.setState({ localMapRegion: newRegion });
   };
 
-  clearEvent = async () => {
-    console.log(
-      'call from map',
+  clearEvent = () => {
+    this.props.setSelectedEvent({});
+    this.props.trackMembersStop(
       Object.values(this.props.selectedEvent)[0].invites
     );
-    const currMembers = await Object.values(this.props.selectedEvent)[0]
-      .invites;
-    await this.props.trackMembersStop(currMembers);
-    await this.props.setSelectedEvent({});
   };
 
   async componentDidMount() {
@@ -256,7 +255,7 @@ class EventMap extends React.Component {
           animating={this.state.loading}
           color="darkgrey"
           size="large"
-          style={{ margin: 15 }}
+          style={{ margin: 15, zIndex: 50 }}
         />
         {this.state.localMapRegion && (
           <>
@@ -277,6 +276,7 @@ class EventMap extends React.Component {
                   <MemberMarkers
                     eventMembers={this.props.eventMembers}
                     me={this.props.user.email}
+                    selectedEvent={selectedEvent}
                   />
                   <MapView.Marker
                     coordinate={{
@@ -339,10 +339,10 @@ class EventMap extends React.Component {
               <>
                 <MapView.Callout style={styles.allEventsButton}>
                   <TouchableOpacity
-                    onPress={async () => {
-                      this.setState({ loading: true })
-                      await this.clearEvent();
-                      this.setState({ loading: false })
+                    onPress={() => {
+                      // this.setState({ loading: true });
+                      this.clearEvent();
+                      // this.setState({ loading: false });
                     }}
                   >
                     <MaterialCommunityIcons
@@ -563,13 +563,13 @@ const mapStateToProps = state => ({
   selectedEvent: state.event.selectedEvent,
   eventMembers: state.event.eventMembers,
   user: state.user.user,
-  animation: state.animate.allEventsAnimate,
+  animation: state.animate.allEventsAnimate
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchEvents: email => dispatch(fetchAllEvents(email)),
   setSelectedEvent: event => dispatch(setSelectedEvent(event)),
-  trackMembersStart: members => dispatch(trackMembersStart(members)),
+  trackMembersStart: (members, newRegion) => dispatch(trackMembersStart(members, newRegion)),
   trackMembersStop: members => dispatch(trackMembersStop(members))
 });
 

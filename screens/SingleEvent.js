@@ -118,7 +118,9 @@ class SingleEvent extends Component {
   };
 
   handlePressBack = () => {
-    this.props.navigation.navigate('EVENT MAP');
+    // this.props.navigation.navigate('EVENT MAP');
+
+    this.props.navigation.navigate('eventMapScreen');
   };
 
   handlePressDecline = () => {
@@ -183,8 +185,8 @@ class SingleEvent extends Component {
               </View>
               <View style={styles.emailList}>
                 {event.invites.map(invitee => (
-                  <Text key={invitee} style={styles.emailText}>
-                    {invitee}
+                  <Text key={invitee.email} style={styles.emailText}>
+                    {invitee.email}
                   </Text>
                 ))}
                 {this.state.editing ? (

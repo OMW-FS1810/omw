@@ -2,6 +2,7 @@
 import { database } from '../config/firebase';
 import { sendInvites } from '../helpers/invitations';
 import { store } from './store';
+import distance from '../helpers/distance';
 
 // ACTION TYPES
 const POPULATE_EVENT_DEETS = 'POPULATE_EVENT_DEETS';
@@ -56,11 +57,13 @@ export const createEvent = (eventDeets, eventInvites) => async dispatch => {
     let newEvent;
     const eventRef = await database.ref('Events/').push({
       ...eventDeets,
-      invites: eventInvites
+      invites: eventInvites.map(email => ({ email, status: 'invited' }))
     });
+
     await eventRef.once('value', snapshot => {
       newEvent = snapshot.val();
     });
+    console.log(newEvent);
     const newUID = String(eventRef).slice(-19);
     dispatch(clearPendingInfo);
     const newEventObject = { [newUID]: newEvent };
@@ -85,7 +88,7 @@ export const fetchAllEvents = email => dispatch => {
       let snappy = await snapshot.val();
       for (let uid in snappy) {
         snappy[uid].invites.map(value => {
-          if (value.toLowerCase() === email.toLowerCase()) {
+          if (value.email.toLowerCase() === email.toLowerCase()) {
             invitedEvents.push({ [uid]: snappy[uid] });
           }
         });
@@ -103,7 +106,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
     // update the invites arr in database to match new array with spread invites
     eventRef.child('invites').once('value', async snapshot => {
       let oldInvitesArr = snapshot.val();
-      let newInvitesArr = [...oldInvitesArr, email];
+      let newInvitesArr = [...oldInvitesArr, { email, status: 'invited' }];
       eventRef.update({
         invites: newInvitesArr
       });
@@ -113,7 +116,7 @@ export const addEmailToEvent = (uid, email) => dispatch => {
       const currEvent = store.getState().event.selectedEvent;
       const key = Object.keys(currEvent)[0];
       // push new email into old emails arr
-      currEvent[key].invites.push(email);
+      currEvent[key].invites.push({ email, status: 'invited' });
       await dispatch(fetchAllEvents(myEmail));
       await dispatch(setSelectedEvent(currEvent));
 
@@ -141,7 +144,8 @@ export const declineEvent = uid => async dispatch => {
       let oldInvitesArr = snapshot.val();
       // filter out *my* email from the invites array
       let newInvitesArr = oldInvitesArr.filter(
-        snapshotEmail => snapshotEmail.toLowerCase() !== myEmail.toLowerCase()
+        snapshotEmail =>
+          snapshotEmail.email.toLowerCase() !== myEmail.toLowerCase()
       );
       if (!newInvitesArr.length) {
         await eventRef.update({
@@ -167,18 +171,30 @@ export const declineEvent = uid => async dispatch => {
   }
 };
 
-export const trackMembersStart = members => dispatch => {
+export const trackMembersStart = (members, newRegion) => dispatch => {
   try {
     const userLocationsDB = database.ref(`/Devices/`);
-    members.forEach(async memberEmail => {
+    members.forEach(async member => {
       await userLocationsDB
         .orderByChild('email')
-        .equalTo(memberEmail.toLowerCase())
+        .equalTo(member.email.toLowerCase())
         .on('value', snapshot => {
+          let thisMember = Object.values(snapshot.val())[0];
+          let memberDistance = distance(
+            thisMember.coords.latitude,
+            thisMember.coords.longitude,
+            newRegion.latitude,
+            newRegion.longitude
+          );
+
           dispatch(
             startMemberTracking(
-              memberEmail.toLowerCase(),
-              snapshot.val() && Object.values(snapshot.val())[0]
+              member.email.toLowerCase(),
+              snapshot.val() && {
+                ...thisMember,
+                status: member.status,
+                distance: memberDistance
+              }
             )
           );
         });
@@ -190,13 +206,12 @@ export const trackMembersStart = members => dispatch => {
 
 export const trackMembersStop = members => dispatch => {
   try {
-    console.log('in store', members)
     const userLocationsDB = database.ref(`/Devices/`);
 
-    members.forEach(async memberEmail => {
+    members.forEach(async member => {
       await userLocationsDB
         .orderByChild('email')
-        .equalTo(memberEmail.toLowerCase())
+        .equalTo(member.email.toLowerCase())
         .off('value');
     });
     dispatch(stopMemberTracking());
