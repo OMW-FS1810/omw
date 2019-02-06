@@ -21,8 +21,11 @@ export const sendInvites = async (
       const userObj = snapshot.val();
       //rearrange users by email
       const userByEmail = {};
+      console.log(userObj);
       for (let key in userObj) {
-        let thisEmail = userObj[key]['email'].toLowerCase();
+        let thisEmail = await userObj[key].email;
+        console.log(thisEmail);
+        //.toLowerCase();
         userByEmail[thisEmail] = userObj[key];
       }
       //sort invitees into emails and messages

@@ -10,16 +10,31 @@ import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 export default class SingleEventMapCards extends React.Component {
+  state = {
+    imagesLoaded: false
+  };
   async componentDidMount() {
     const memberArr = Object.keys(this.props.eventMembers).map(member => {
       return [member, this.props.eventMembers[member]];
     });
-
-    await memberArr.forEach(async member => {
+    console.log(memberArr);
+  }
+  loadImages = memberArr => {
+    memberArr.forEach(async member => {
+      console.log(member[1].user.pictureUrl);
       if (member[1].user.pictureUrl) {
         await Image.prefetch(member[1].user.pictureUrl);
       }
     });
+    this.setState({ imagesLoaded: true });
+  };
+  componentDidUpdate() {
+    const memberArr = Object.keys(this.props.eventMembers).map(member => {
+      return [member, this.props.eventMembers[member]];
+    });
+    if (!this.state.imagesLoaded && memberArr.length) {
+      this.loadImages(memberArr);
+    }
   }
   render() {
     //creates the individual member cards
@@ -38,11 +53,10 @@ export default class SingleEventMapCards extends React.Component {
             markerName += ` ${member[1].user.lastName}`;
           }
         }
-        console.log(member[1]);
-        if (member[1].user.pictureUrl) {
-          console.log('image!');
-          Image.prefetch(member[1].user.pictureUrl);
-        }
+
+        // if (member[1].user.pictureUrl) {
+        //   Image.prefetch(member[1].user.pictureUrl);
+        // }
         return (
           member[1].coords && (
             <TouchableOpacity
@@ -57,7 +71,7 @@ export default class SingleEventMapCards extends React.Component {
               }}
             >
               <View style={styles.card}>
-                {member[1].user.pictureUrl && (
+                {member[1].user.pictureUrl && this.state.imagesLoaded && (
                   <View style={styles.imageContent}>
                     <Image
                       source={{
@@ -113,7 +127,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     flex: 1,
-    // width: '100%',
+    width: '100%',
     height: '100%',
     alignSelf: 'center',
     borderRadius: 4

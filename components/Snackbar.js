@@ -73,7 +73,7 @@ const mapState = ({ user }) => ({
 });
 const mapDispatch = dispatch => ({
   addEvent: event => dispatch(addEventToList(event)),
-  fetchEvents: email => dispatch(fetchAllEvents(email))
+  fetchAllEvents: email => dispatch(fetchAllEvents(email))
 });
 
 export default connect(
