@@ -64,8 +64,13 @@ const DrawerStack = createDrawerNavigator(
   },
   {
     drawerPosition: 'left',
-    navigationOptions: ({ navigation }) => ({
-    })
+    drawerBackgroundColor: color.blue,
+    drawerType: 'slide',
+    contentOptions: {
+      activeTintColor: color.whiteBlue,
+      activeBackgroundColor: color.lightBlue,
+      inactiveTintColor: color.indigoBlue
+    }
   }
 );
 
