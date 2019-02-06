@@ -170,6 +170,42 @@ export const declineEvent = uid => async dispatch => {
     console.error(err);
   }
 };
+export const updateMyEventStatus = (uid, status) => async dispatch => {
+  try {
+    // grab reference to the event
+    let eventUid;
+    if (uid[0] === '-') {
+      eventUid = String(uid);
+    } else {
+      eventUid = '-' + uid;
+    }
+    const eventRef = database.ref(`Events/${eventUid}/invites`);
+    // find *my* email
+    const myEmail = store.getState().user.user.email;
+    // update the invites list to UPDATE *my* email
+    await eventRef
+      .orderByChild('email')
+      .equalTo(myEmail)
+      .once('value', async snapshot => {
+        let thisIndex = Object.keys(snapshot.val())[0];
+        const updateRef = database.ref(
+          `Events/${eventUid}/invites/${thisIndex}`
+        );
+        await updateRef.update({ email: myEmail, status });
+        await dispatch(fetchAllEvents(myEmail));
+        const eventsToUpdate = store.getState().event.allEvents;
+        const updatedEvent = eventsToUpdate[eventUid];
+
+        //NEED TO UPDATE SINGLE EVENT PAGE AND MAP!!!
+        // await dispatch(setSelectedEvent({}))
+        // await dispatch(setSelectedEvent(updatedEvent));
+      });
+
+    // refetch all events to trigger re-render
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 export const trackMembersStart = (members, newRegion) => dispatch => {
   try {
