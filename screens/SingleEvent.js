@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: color.grey,
   },
   inputContainer: {
-    width: windowWidth - 33,
+    width: windowWidth - 40,
     borderRadius: 25,
     paddingHorizontal: 16,
     fontSize: 18,
@@ -56,9 +56,10 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xLarge
   },
   subtitle: {
-    fontFamily: fontFamily.light,
+    fontFamily: fontFamily.bold,
     fontSize: fontSize.regular,
     color: color.darkBlue,
+    paddingHorizontal: padding
   },
   text: {
     flex: 1,
@@ -290,7 +291,7 @@ class SingleEvent extends Component {
                     style={[styles.button, styles.bottom]}
                     onPress={this.handlePressDecline}
                   >
-                    <Text style={styles.buttonText}>DECLINE THIS EVENT</Text>
+                    <Text style={styles.buttonText}>LEAVE EVENT</Text>
                   </TouchableOpacity>
                 </View>
               </View>

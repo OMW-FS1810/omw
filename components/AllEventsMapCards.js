@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   card: {
     elevation: 2,
     backgroundColor: color.orange,
-    opacity: 0.6,
+    opacity: 0.9,
     marginHorizontal: 5,
     height: CARD_HEIGHT,
     width: CARD_WIDTH,

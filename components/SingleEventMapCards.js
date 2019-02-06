@@ -3,7 +3,7 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
-import { CARD_HEIGHT, CARD_WIDTH, height, width } from '../styles/cards';
+import { MEMBER_HEIGHT, MEMBER_WIDTH, height, width } from '../styles/cards';
 import { convertTimestamp } from '../helpers/convertTimestamp';
 import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
@@ -74,12 +74,12 @@ export default class SingleEventMapCards extends React.Component {
                   <Text numberOfLines={1} style={styles.cardDescription}>
                     {convertTimestamp(member[1].timestamp)}
                   </Text>
-                  <Text style={styles.cardDescription}>
-                    Status: {member[1].status}
+                  <Text style={[styles.cardDescription, styles.descriptionBold]}>
+                    {member[1].status}
                   </Text>
-                  <Text style={styles.cardDescription}>Distance to event:</Text>
+                  {/* <Text style={styles.cardDescription}>Distance to event:</Text> */}
                   <Text style={styles.cardDescription}>
-                    {member[1].distance.toFixed(3)} miles
+                    {member[1].distance.toFixed(3)} miles away
                   </Text>
                 </View>
               </View>
@@ -95,26 +95,22 @@ export default class SingleEventMapCards extends React.Component {
 
 const styles = StyleSheet.create({
   card: {
-    padding: 10,
     elevation: 2,
-    backgroundColor: '#FFF',
-    marginHorizontal: 10,
-    shadowColor: '#000',
-    shadowRadius: 5,
-    shadowOpacity: 0.3,
-    shadowOffset: { x: 2, y: -2 },
-    height: CARD_HEIGHT,
-    width: CARD_WIDTH,
+    backgroundColor: color.orange,
+    opacity: 0.9,
+    marginHorizontal: 5,
+    height: MEMBER_HEIGHT,
+    width: MEMBER_WIDTH,
     overflow: 'hidden',
-    borderColor: 'teal',
-    borderWidth: 1,
-    flexDirection: 'row'
+    flexDirection: 'column',
+    borderRadius: 4
   },
   cardImage: {
     flex: 1,
-    width: '100%',
+    // width: '100%',
     height: '100%',
-    alignSelf: 'center'
+    alignSelf: 'center',
+    borderRadius: 4
   },
   imageContent: {
     flex: 2,
@@ -122,16 +118,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: padding / 2
   },
   textContent: {
-    flex: 3
+    flex: 3,
+    paddingVertical: padding,
+    justifyContent: 'flex-end',
   },
   cardtitle: {
-    fontSize: 12,
-    marginTop: 5,
-    fontWeight: 'bold',
-    paddingBottom: 2
+    fontFamily: fontFamily.bold,
+    fontSize: fontSize.regular,
+    color: color.darkBlue,
+    alignSelf: 'center'
   },
   cardDescription: {
-    fontSize: 12,
-    color: '#444'
+    fontSize: fontSize.small,
+    fontFamily: fontFamily.regular,
+    color: color.blue,
+    alignSelf: 'center'
+  },
+  descriptionBold:{
+    fontFamily: fontFamily.extrabold
   }
 });
