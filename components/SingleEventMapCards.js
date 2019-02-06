@@ -9,6 +9,18 @@ import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 export default class SingleEventMapCards extends React.Component {
+  async componentDidMount(){
+    const memberArr = Object.keys(this.props.eventMembers).map(member => {
+      return [member, this.props.eventMembers[member]];
+    });
+
+    await memberArr.forEach(async member => {
+
+    if (member[1].user.pictureUrl) {
+      await Image.prefetch(member[1].user.pictureUrl);
+     }
+    })
+  }
   render() {
     //creates the individual member cards
 
@@ -16,7 +28,7 @@ export default class SingleEventMapCards extends React.Component {
       return [member, this.props.eventMembers[member]];
     });
 
-    return memberArr.map(member => {
+    return memberArr.map( member => {
       let markerName;
       if (member[0] && member[1]) {
         markerName = member[0];
@@ -26,9 +38,7 @@ export default class SingleEventMapCards extends React.Component {
             markerName += ` ${member[1].user.lastName}`;
           }
         }
-        if (member[1].user.pictureUrl) {
-          Image.prefetch(member[1].user.pictureUrl);
-        }
+
 
         return (
           member[1].coords && (
