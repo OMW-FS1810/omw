@@ -222,7 +222,7 @@ class SingleEvent extends Component {
                 <View style={styles.emailList}>
                   {event.invites.map(invitee => (
                     <Text key={invitee.email} style={styles.emailText}>
-                      {invitee.email}
+                      {invitee.email.toLowerCase()}
                     </Text>
                   ))}
                   {this.state.editing ? (
