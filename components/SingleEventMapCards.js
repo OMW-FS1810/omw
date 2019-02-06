@@ -3,24 +3,30 @@
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
-import { MEMBER_HEIGHT, MEMBER_WIDTH, height, width } from '../styles/cards';
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  MEMBER_HEIGHT,
+  MEMBER_WIDTH,
+  height,
+  width
+} from '../styles/cards';
 import { convertTimestamp } from '../helpers/convertTimestamp';
-import TimeAgo from 'react-native-timeago'
+import TimeAgo from 'react-native-timeago';
 import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 export default class SingleEventMapCards extends React.Component {
-  async componentDidMount(){
+  async componentDidMount() {
     const memberArr = Object.keys(this.props.eventMembers).map(member => {
       return [member, this.props.eventMembers[member]];
     });
 
     await memberArr.forEach(async member => {
-
-    if (member[1].user.pictureUrl) {
-      await Image.prefetch(member[1].user.pictureUrl);
-     }
-    })
+      if (member[1].user.pictureUrl) {
+        await Image.prefetch(String(member[1].user.pictureUrl));
+      }
+    });
   }
   render() {
     //creates the individual member cards
@@ -29,7 +35,7 @@ export default class SingleEventMapCards extends React.Component {
       return [member, this.props.eventMembers[member]];
     });
 
-    return memberArr.map( member => {
+    return memberArr.map(member => {
       let markerName;
       if (member[0] && member[1]) {
         markerName = member[0];
@@ -39,7 +45,7 @@ export default class SingleEventMapCards extends React.Component {
             markerName += ` ${member[1].user.lastName}`;
           }
         }
-
+        const memberImage = member[1].user.pictureUrl;
         return (
           member[1].coords && (
             <TouchableOpacity
@@ -54,17 +60,19 @@ export default class SingleEventMapCards extends React.Component {
               }}
             >
               <View style={styles.card}>
-                {member[1].user.pictureUrl && (
+                {/* {member[1].user.pictureUrl && (
                   <View style={styles.imageContent}>
+                    {console.log(member[1].user.pictureUrl)}
                     <Image
-                      source={{
-                        uri: member[1].user.pictureUrl
-                      }}
+                      source={memberImage}
+                      // source={{
+                      //   uri: member[1].user.pictureUrl
+                      // }}
                       style={styles.cardImage}
                       resizeMode="cover"
                     />
                   </View>
-                )}
+                )} */}
 
                 <View style={styles.textContent}>
                   <Text numberOfLines={1} style={styles.cardtitle}>
@@ -72,10 +80,12 @@ export default class SingleEventMapCards extends React.Component {
                   </Text>
 
                   <Text numberOfLines={1} style={styles.cardDescription}>
-                  {/* {convertTimestamp(member[1].timestamp)} */}
-                    <TimeAgo time= {member[1].timestamp}/>
+                    {/* {convertTimestamp(member[1].timestamp)} */}
+                    <TimeAgo time={member[1].timestamp} />
                   </Text>
-                  <Text style={[styles.cardDescription, styles.descriptionBold]}>
+                  <Text
+                    style={[styles.cardDescription, styles.descriptionBold]}
+                  >
                     {member[1].status}
                   </Text>
                   {/* <Text style={styles.cardDescription}>Distance to event:</Text> */}
@@ -100,8 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: color.orange,
     opacity: 0.875,
     marginHorizontal: 5,
-    height: MEMBER_HEIGHT,
-    width: MEMBER_WIDTH,
+    height: CARD_HEIGHT,
+    width: CARD_WIDTH,
     overflow: 'hidden',
     flexDirection: 'column',
     borderRadius: 4,
@@ -121,7 +131,7 @@ const styles = StyleSheet.create({
   textContent: {
     flex: 2,
     paddingVertical: padding,
-    justifyContent: 'flex-end',
+    justifyContent: 'center'
   },
   cardtitle: {
     fontFamily: fontFamily.bold,
@@ -135,7 +145,7 @@ const styles = StyleSheet.create({
     color: color.blue,
     alignSelf: 'center'
   },
-  descriptionBold:{
+  descriptionBold: {
     fontFamily: fontFamily.extrabold
   }
 });
