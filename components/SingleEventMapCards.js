@@ -5,22 +5,34 @@ import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import { MapView } from 'expo';
 import { MEMBER_HEIGHT, MEMBER_WIDTH, height, width } from '../styles/cards';
 import { convertTimestamp } from '../helpers/convertTimestamp';
-import TimeAgo from 'react-native-timeago'
+import TimeAgo from 'react-native-timeago';
 import * as theme from '../styles/theme';
 const { padding, color, fontFamily, fontSize, windowWidth, normalize } = theme;
 
 export default class SingleEventMapCards extends React.Component {
-  async componentDidMount(){
+  state = {
+    imagesLoaded: false
+  };
+  async componentDidMount() {
     const memberArr = Object.keys(this.props.eventMembers).map(member => {
       return [member, this.props.eventMembers[member]];
     });
-
-    await memberArr.forEach(async member => {
-
-    if (member[1].user.pictureUrl) {
-      await Image.prefetch(member[1].user.pictureUrl);
-     }
-    })
+  }
+  loadImages = memberArr => {
+    memberArr.forEach(async member => {
+      if (member[1].user.pictureUrl) {
+        await Image.prefetch(member[1].user.pictureUrl);
+      }
+    });
+    this.setState({ imagesLoaded: true });
+  };
+  componentDidUpdate() {
+    const memberArr = Object.keys(this.props.eventMembers).map(member => {
+      return [member, this.props.eventMembers[member]];
+    });
+    if (!this.state.imagesLoaded && memberArr.length) {
+      this.loadImages(memberArr);
+    }
   }
   render() {
     //creates the individual member cards
@@ -29,7 +41,7 @@ export default class SingleEventMapCards extends React.Component {
       return [member, this.props.eventMembers[member]];
     });
 
-    return memberArr.map( member => {
+    return memberArr.map(member => {
       let markerName;
       if (member[0] && member[1]) {
         markerName = member[0];
@@ -40,6 +52,9 @@ export default class SingleEventMapCards extends React.Component {
           }
         }
 
+        // if (member[1].user.pictureUrl) {
+        //   Image.prefetch(member[1].user.pictureUrl);
+        // }
         return (
           member[1].coords && (
             <TouchableOpacity
@@ -54,7 +69,7 @@ export default class SingleEventMapCards extends React.Component {
               }}
             >
               <View style={styles.card}>
-                {member[1].user.pictureUrl && (
+                {member[1].user.pictureUrl && this.state.imagesLoaded && (
                   <View style={styles.imageContent}>
                     <Image
                       source={{
@@ -72,10 +87,12 @@ export default class SingleEventMapCards extends React.Component {
                   </Text>
 
                   <Text numberOfLines={1} style={styles.cardDescription}>
-                  {/* {convertTimestamp(member[1].timestamp)} */}
-                    <TimeAgo time= {member[1].timestamp}/>
+                    {/* {convertTimestamp(member[1].timestamp)} */}
+                    <TimeAgo time={member[1].timestamp} />
                   </Text>
-                  <Text style={[styles.cardDescription, styles.descriptionBold]}>
+                  <Text
+                    style={[styles.cardDescription, styles.descriptionBold]}
+                  >
                     {member[1].status}
                   </Text>
                   {/* <Text style={styles.cardDescription}>Distance to event:</Text> */}
@@ -108,7 +125,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     flex: 1,
-    // width: '100%',
+    width: '100%',
     height: '100%',
     alignSelf: 'center',
     borderRadius: 4
@@ -121,7 +138,7 @@ const styles = StyleSheet.create({
   textContent: {
     flex: 3,
     paddingVertical: padding,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   cardtitle: {
     fontFamily: fontFamily.bold,
@@ -135,7 +152,7 @@ const styles = StyleSheet.create({
     color: color.blue,
     alignSelf: 'center'
   },
-  descriptionBold:{
+  descriptionBold: {
     fontFamily: fontFamily.extrabold
   }
 });

@@ -214,10 +214,15 @@ export const updateMyEventStatus = (uid, status, event) => async dispatch => {
         const eventsToUpdate = store.getState().event.allEvents;
         const updatedEvent = eventsToUpdate[eventUid];
         const myName = store.getState().user.user.firstName;
-        sendInvites(event.invites, event, myName, status, true);
-        //NEED TO UPDATE SINGLE EVENT PAGE AND MAP!!!
-        // await dispatch(setSelectedEvent({}))
-        // await dispatch(setSelectedEvent(updatedEvent));
+        sendInvites(
+          event.invites,
+          event,
+          myName,
+          status,
+          true,
+          thisIndex,
+          myEmail
+        );
       });
 
     // refetch all events to trigger re-render
@@ -225,9 +230,37 @@ export const updateMyEventStatus = (uid, status, event) => async dispatch => {
     console.error(err);
   }
 };
+//THE BELOW
+// const checkMembersInDB = async members => {
+//   console.log('members in', members);
+//   const currUsers = database.ref('/Users/');
+//   let membersToTrack = [];
+//   const allUsers = await currUsers
+//     .orderByChild('email')
+//     .once('value', async snapshot => {
+//       const userObj = snapshot.val();
+//       //rearrange users by email
 
-export const trackMembersStart = (members, newRegion) => dispatch => {
+//       const userByEmail = {};
+//       for (let key in userObj) {
+//         let thisEmail = userObj[key]['email'].toLowerCase();
+//         userByEmail[thisEmail] = userObj[key];
+//       }
+
+//       members.forEach(invitee => {
+//         let thisInvitee = invitee.email.toLowerCase();
+//         if (thisInvitee in userByEmail) {
+//           membersToTrack.push(invitee);
+//         }
+//       });
+//     });
+//   return membersToTrack;
+// };
+
+export const trackMembersStart = (members, newRegion) => async dispatch => {
   try {
+    // let members = await checkMembersInDB(unfMembers);
+
     const userLocationsDB = database.ref(`/Devices/`);
     members.forEach(async member => {
       await userLocationsDB
@@ -259,8 +292,9 @@ export const trackMembersStart = (members, newRegion) => dispatch => {
   }
 };
 
-export const trackMembersStop = members => dispatch => {
+export const trackMembersStop = members => async dispatch => {
   try {
+    // let members = await checkMembersInDB(unfMembers);
     const userLocationsDB = database.ref(`/Devices/`);
 
     members.forEach(async member => {

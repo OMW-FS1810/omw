@@ -4,7 +4,13 @@ import { Notifications, Audio } from 'expo';
 import { View, StyleSheet, AppState, Text } from 'react-native';
 import { Snackbar, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { addEventToList } from '../redux/event';
+import {
+  addEventToList,
+  fetchAllEvents,
+  setSelectedEvent,
+  trackMembersStart,
+  trackMembersStop
+} from '../redux/event';
 
 class Notify extends React.Component {
   state = {
@@ -18,7 +24,7 @@ class Notify extends React.Component {
     );
   }
   _handleNotification = async notification => {
-    this.setState({ incoming: notification.data, visible: true });
+    await this.setState({ incoming: notification.data, visible: true });
     if (AppState.currentState === 'active') {
       const soundObject = new Audio.Sound();
       try {
@@ -26,6 +32,46 @@ class Notify extends React.Component {
         await soundObject.playAsync();
         if (this.state.incoming.messageType === 'new-event') {
           this.props.addEvent(this.state.incoming.newEventObject);
+        } else if (this.state.incoming.messageType === 'update') {
+          this.props.fetchAllEvents(this.props.myEmail);
+          if (Object.keys(this.props.selectedEvent).length) {
+            let oldEvent = this.props.selectedEvent;
+            let oldInvites = Object.values(this.props.selectedEvent)[0].invites;
+            let { thisIndex } = this.state.incoming;
+            let newInvites = oldInvites.map((item, index) => {
+              if (index == thisIndex) {
+                return {
+                  email: this.state.incoming.myEmail,
+                  status: this.state.incoming.newEventObject
+                };
+              } else {
+                return item;
+              }
+            });
+            //maybe need to clear old ones?
+            this.props.setSelectedEvent({});
+            const thisOldKey = Object.keys(oldEvent)[0];
+            const thisOldEvent = Object.values(oldEvent)[0];
+            const updatedEvent = {
+              [thisOldKey]: { ...thisOldEvent, invites: newInvites }
+            };
+            this.props.setSelectedEvent(updatedEvent);
+            this.props.trackMembersStop(Object.values(oldInvites));
+            const location = Object.values(this.props.selectedEvent)[0]
+              .location;
+            const latitude = location.locationGeocode.lat;
+            const longitude = location.locationGeocode.lng;
+            const newRegion = {
+              latitude,
+              longitude,
+              latitudeDelta: 0.1226,
+              longitudeDelta: 0.0467
+            };
+            this.props.trackMembersStart(
+              Object.values(this.props.selectedEvent)[0].invites,
+              newRegion
+            );
+          }
         }
       } catch (err) {
         console.error(err);
@@ -66,12 +112,20 @@ class Notify extends React.Component {
 const styles = StyleSheet.create({
   snackbar: {}
 });
-
+const mapState = ({ user, event }) => ({
+  myEmail: user.user.email,
+  selectedEvent: event.selectedEvent
+});
 const mapDispatch = dispatch => ({
-  addEvent: event => dispatch(addEventToList(event))
+  addEvent: event => dispatch(addEventToList(event)),
+  fetchAllEvents: email => dispatch(fetchAllEvents(email)),
+  setSelectedEvent: event => dispatch(setSelectedEvent(event)),
+  trackMembersStart: (members, newRegion) =>
+    dispatch(trackMembersStart(members, newRegion)),
+  trackMembersStop: members => dispatch(trackMembersStop(members))
 });
 
 export default connect(
-  null,
+  mapState,
   mapDispatch
 )(Notify);
