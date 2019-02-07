@@ -32,7 +32,9 @@ export const sendPushNotification = (
   body,
   sender,
   messageType,
-  newEventObject = null
+  newEventObject = null,
+  thisIndex,
+  myEmail
 ) => {
   try {
     fetch('https://exp.host/--/api/v2/push/send', {
@@ -41,7 +43,13 @@ export const sendPushNotification = (
         sound: 'default',
         title: `OMW - ${title}`,
         body: body,
-        data: { message: `${title} - ${body}`, messageType, newEventObject }
+        data: {
+          message: `${title} - ${body}`,
+          messageType,
+          newEventObject,
+          thisIndex,
+          myEmail
+        }
       }),
       headers: {
         'Content-Type': 'application/json'

@@ -11,7 +11,9 @@ export const sendInvites = async (
   eventDetails,
   host,
   newEventObject,
-  isUpdate
+  isUpdate,
+  thisIndex,
+  myEmail
 ) => {
   // need to invite unregistered users, notify registered users, and notify host
   const currUsers = database.ref('/Users/');
@@ -21,11 +23,8 @@ export const sendInvites = async (
       const userObj = snapshot.val();
       //rearrange users by email
       const userByEmail = {};
-      console.log(userObj);
       for (let key in userObj) {
         let thisEmail = await userObj[key].email;
-        console.log(thisEmail);
-        //.toLowerCase();
         userByEmail[thisEmail] = userObj[key];
       }
       //sort invitees into emails and messages
@@ -57,7 +56,9 @@ export const sendInvites = async (
 
               '',
               'update',
-              newEventObject
+              newEventObject,
+              thisIndex,
+              myEmail
             );
         });
       } else {
