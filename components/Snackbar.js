@@ -38,14 +38,7 @@ class Notify extends React.Component {
             let oldEvent = this.props.selectedEvent;
             let oldInvites = Object.values(this.props.selectedEvent)[0].invites;
             let { thisIndex } = this.state.incoming;
-            console.log('incoming', this.state.incoming);
             let newInvites = oldInvites.map((item, index) => {
-              console.log(
-                'item and index and thisIndex',
-                item,
-                index,
-                thisIndex
-              );
               if (index == thisIndex) {
                 return {
                   email: this.state.incoming.myEmail,
@@ -55,7 +48,6 @@ class Notify extends React.Component {
                 return item;
               }
             });
-            console.log('old', oldInvites, 'new', newInvites);
             //maybe need to clear old ones?
             this.props.setSelectedEvent({});
             const thisOldKey = Object.keys(oldEvent)[0];
@@ -63,7 +55,6 @@ class Notify extends React.Component {
             const updatedEvent = {
               [thisOldKey]: { ...thisOldEvent, invites: newInvites }
             };
-            console.log('updated', updatedEvent);
             this.props.setSelectedEvent(updatedEvent);
             this.props.trackMembersStop(Object.values(oldInvites));
             const location = Object.values(this.props.selectedEvent)[0]

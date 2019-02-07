@@ -23,11 +23,8 @@ export const sendInvites = async (
       const userObj = snapshot.val();
       //rearrange users by email
       const userByEmail = {};
-      console.log(userObj);
       for (let key in userObj) {
         let thisEmail = await userObj[key].email;
-        console.log(thisEmail);
-        //.toLowerCase();
         userByEmail[thisEmail] = userObj[key];
       }
       //sort invitees into emails and messages
@@ -50,7 +47,6 @@ export const sendInvites = async (
         }
       });
       if (isUpdate) {
-        console.log('made it here', messageInvites);
         messageInvites.forEach(token => {
           if (token)
             sendPushNotification(

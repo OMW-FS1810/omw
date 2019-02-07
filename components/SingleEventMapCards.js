@@ -17,11 +17,9 @@ export default class SingleEventMapCards extends React.Component {
     const memberArr = Object.keys(this.props.eventMembers).map(member => {
       return [member, this.props.eventMembers[member]];
     });
-    console.log(memberArr);
   }
   loadImages = memberArr => {
     memberArr.forEach(async member => {
-      console.log(member[1].user.pictureUrl);
       if (member[1].user.pictureUrl) {
         await Image.prefetch(member[1].user.pictureUrl);
       }
