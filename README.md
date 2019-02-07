@@ -14,7 +14,7 @@
 
 ### Technologies used:
 
-React Native • Expo.io • Redux • Firebase • Google Maps API • Facebook OAuth
+React Native • Expo.io • Redux • Firebase • Google Maps and Google Places
 
 ---
 
