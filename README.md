@@ -8,8 +8,6 @@
 - _Developer:_ Adam Sisk -- [GitHub](https://github.com/calamityadam) • [LinkedIn](https://www.linkedin.com/in/adamsisk/)
 - _Project Manager:_ Stasha Yancho -- [GitHub](https://github.com/stashayancho) • [LinkedIn](https://www.linkedin.com/in/stasha-yancho/)
 
-### [Project Statement](https://docs.google.com/document/d/19-GzGxkFH0VIxhLCDV5rntvDTKsyI-F6YMPThgIARZg/edit?usp=sharing)
-
 ---
 
 ### Technologies used:
