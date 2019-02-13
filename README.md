@@ -4,6 +4,8 @@ _on my way is a social collaboration mobile app that helps bring people together
 
 _Users create an event, mark it with a destination and time, invite their friends, and then track in real-time as everyone arrives._
 
+---
+
 ## A [Fullstack Academy](https://www.fullstackacademy.com/) Capstone Project by:
 
 - _Developer:_ Rami Dihu -- [GitHub](https://github.com/rjdihu) • [LinkedIn](https://www.linkedin.com/in/ramidihu/)
