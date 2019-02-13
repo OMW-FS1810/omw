@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -8,15 +9,19 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  Button,
+  // Button,
   AsyncStorage
 } from 'react-native';
+import { Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { setUserAndDevice, setUser } from '../redux/store';
 // import { Button } from 'react-native-paper'
 import { database } from '../config/firebase';
 import * as firebase from 'firebase';
-import { ImagePicker, Permissions } from 'expo';
+import { ImagePicker, Permissions, Location, ImageManipulator } from 'expo';
+import { setBackgroundLocationToggle } from '../helpers/location';
+
+const SEND_LOCATION = 'sendLocation';
 
 const styles = StyleSheet.create({
   header: {
@@ -91,6 +96,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#aaa',
     marginVertical: 10
+  },
+  button: {
+    color: '#000'
   }
 });
 
@@ -101,7 +109,8 @@ class Profile extends Component {
     editLastName: this.props.user.lastName,
     err: '',
     editSuccess: '',
-    profilePicture: null
+    profilePicture: null,
+    isPolling: false
   };
 
   // Current state is based on previous state
@@ -110,8 +119,9 @@ class Profile extends Component {
   };
 
   editInfo = () => {
-    const { editFirstName, editLastName } = this.state;
-    const { uid, pictureUrl, deviceId, email } = this.props.user;
+    const { editFirstName, editLastName, pictureUrl } = this.state;
+    // not currently updating user photo until logout / login need to look into why we can't pull the updated image -- it's probably due to authentication issues
+    const { uid, deviceId, email } = this.props.user;
     if (editFirstName.trim().length > 0 && editLastName.trim().length > 0) {
       database
         .ref(`/Users/${this.props.user.uid}`)
@@ -124,6 +134,7 @@ class Profile extends Component {
         isEditing: !prevState.isEditing,
         editSuccess: 'Successfully updated'
       }));
+
       this.props.setUser({
         uid,
         email,
@@ -191,35 +202,61 @@ class Profile extends Component {
   };
 
   uploadImage = async (uri, imageName) => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function(e) {
-        console.error(e);
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
+    try {
+      const resizedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 200 } }],
+        { compress: 0.8, format: 'jpeg' }
+      );
 
-    var ref = firebase
-      .storage()
-      .ref()
-      .child('images/' + imageName);
-    var metadata = {
-      contentType: 'image/jpeg'
-    };
-    const snapshot = await ref.put(blob, metadata);
-    blob.close();
+      const newUri = await resizedImage.uri;
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function() {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function(e) {
+          console.error(e);
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', newUri, true);
+        xhr.send(null);
+      });
 
-    return snapshot.ref.getDownloadURL();
+      var ref = firebase
+        .storage()
+        .ref()
+        .child('images/' + imageName);
+      var metadata = {
+        contentType: 'image/jpeg'
+      };
+      const snapshot = await ref.put(blob, metadata);
+
+      blob.close();
+
+      return snapshot.ref.getDownloadURL();
+    } catch (err) {
+      console.error(err);
+    }
   };
-
+  async componentDidMount() {
+    let locationStatus = await Location.hasStartedLocationUpdatesAsync(
+      SEND_LOCATION
+    );
+    this.setState({
+      isPolling: locationStatus,
+      profilePicture: this.props.user.pictureUrl
+    });
+  }
   render() {
-    const { isEditing, err, editSuccess, profilePicture } = this.state;
+    const {
+      isEditing,
+      err,
+      editSuccess,
+      profilePicture,
+      isPolling
+    } = this.state;
     return (
       <View style={styles.container}>
         {isEditing ? (
@@ -303,19 +340,61 @@ class Profile extends Component {
               <Text>Events</Text>
             </TouchableOpacity>
           </View>
-          <Button title="Sign out" onPress={this.signOutUser}>
+
+          <Button
+            color={'black'}
+            mode="outlined"
+            title="Sign out"
+            onPress={this.signOutUser}
+          >
             Sign out
           </Button>
           {editSuccess ? <Text> {editSuccess} </Text> : null}
           {err ? <Text> {err} </Text> : null}
           {!isEditing && (
-            <Button title="Edit" onPress={this.toggleEdit}>
-              Edit Name
+            <Button
+              title="Edit"
+              color={'black'}
+              mode="outlined"
+              onPress={this.toggleEdit}
+            >
+              Edit
             </Button>
           )}
           {isEditing && (
-            <Button title="Save" onPress={this.editInfo}>
+            <Button
+              title="Save"
+              mode="contained"
+              color={'black'}
+              onPress={this.editInfo}
+            >
               Save
+            </Button>
+          )}
+
+          {isPolling ? (
+            <Button
+              mode="outlined"
+              color={'black'}
+              title="Stop Background Location"
+              onPress={() => {
+                setBackgroundLocationToggle();
+                this.setState({ isPolling: false });
+              }}
+            >
+              Stop Background Location
+            </Button>
+          ) : (
+            <Button
+              mode="outlined"
+              color={'black'}
+              title="Start Background Location"
+              onPress={() => {
+                setBackgroundLocationToggle();
+                this.setState({ isPolling: true });
+              }}
+            >
+              Start Background Location
             </Button>
           )}
         </View>

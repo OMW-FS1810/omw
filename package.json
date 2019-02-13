@@ -4,12 +4,14 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "test": "jest --watchAll"
   },
   "dependencies": {
     "expo": "^32.0.0",
     "expo-server-sdk": "^3.1.0",
     "firebase": "^5.8.0",
+    "jest": "^24.1.0",
     "moment": "^2.24.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
@@ -18,6 +20,7 @@
     "react-native-elements": "^1.0.0",
     "react-native-google-places-autocomplete": "^1.3.9",
     "react-native-google-signin": "^1.0.2",
+    "react-native-image-resizer": "^1.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-paper": "^2.6.1",
     "react-native-size-matters": "^0.1.6",
