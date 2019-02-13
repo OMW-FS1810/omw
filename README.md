@@ -6,10 +6,7 @@ _Users create an event, mark it with a destination and time, invite their friend
 
 ## A [Fullstack Academy](https://www.fullstackacademy.com/) Capstone Project by:
 
-- _Developer:_ Rami Dihu -- [GitHub](https://github.com/rjdihu)
-
-* [LinkedIn](https://www.linkedin.com/in/ramidihu/)
-
+- _Developer:_ Rami Dihu -- [GitHub](https://github.com/rjdihu) • [LinkedIn](https://www.linkedin.com/in/ramidihu/)
 - _Developer:_ Gregory Edwards -- [GitHub](https://github.com/apoyando) • [LinkedIn](https://www.linkedin.com/in/gsedwards/)
 - _Developer:_ Jingtin Tim Lin -- [GitHub](https://github.com/linjingt) • [LinkedIn](https://www.linkedin.com/in/jingtintimlin/)
 - _Developer:_ Adam Sisk -- [GitHub](https://github.com/calamityadam) • [LinkedIn](https://www.linkedin.com/in/adamsisk/)
@@ -17,7 +14,7 @@ _Users create an event, mark it with a destination and time, invite their friend
 
 ---
 
-### Dependencies
+### Dependencies and Technologies
 
 - [React Native](https://facebook.github.io/react-native/)
 - [Expo](https://expo.io/)
@@ -30,4 +27,4 @@ _Users create an event, mark it with a destination and time, invite their friend
 
 ## Copyright and attribution
 
-Copyright (c) 2019 OMW. Released under the [MIT License](https://github.com/OMW-FS1810/omw).
+Copyright (c) 2019 OMW. Released under the [MIT License](https://github.com/OMW-FS1810/omw/blob/master/LICENSE).
