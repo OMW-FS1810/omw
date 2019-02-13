@@ -1,4 +1,10 @@
-# OMW - On My Way!
+# _OMW - On My Way!_
+
+_on my way is a social collaboration mobile app that helps bring people together for successful events._
+
+_Users create an event, mark it with a destination and time, invite their friends, and then track in real-time as everyone arrives._
+
+---
 
 ## A [Fullstack Academy](https://www.fullstackacademy.com/) Capstone Project by:
 
@@ -10,12 +16,17 @@
 
 ---
 
-### Technologies used:
+### Dependencies and Technologies
 
-React Native • Expo.io • Redux • Firebase • Google Maps and Google Places
+- [React Native](https://facebook.github.io/react-native/)
+- [Expo](https://expo.io/)
+- [Redux](https://redux.js.org/)
+- [Firebase](https://firebase.google.com/)
+- [Google Maps](https://developers.google.com/maps/documentation/)
+- [Google Places](https://developers.google.com/places/web-service/intro)
 
 ---
 
-OMW (On My Way) is a social collaboration mobile app that helps bring people together for successful events.
+## Copyright and attribution
 
-Users create an event, mark it with a destination and time, invite their friends, and then track in real-time as everyone arrives.
+Copyright (c) 2019 OMW. Released under the [MIT License](https://github.com/OMW-FS1810/omw/blob/master/LICENSE).
