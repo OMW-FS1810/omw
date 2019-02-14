@@ -230,43 +230,17 @@ export const updateMyEventStatus = (uid, status, event) => async dispatch => {
     console.error(err);
   }
 };
-//THE BELOW
-// const checkMembersInDB = async members => {
-//   console.log('members in', members);
-//   const currUsers = database.ref('/Users/');
-//   let membersToTrack = [];
-//   const allUsers = await currUsers
-//     .orderByChild('email')
-//     .once('value', async snapshot => {
-//       const userObj = snapshot.val();
-//       //rearrange users by email
-
-//       const userByEmail = {};
-//       for (let key in userObj) {
-//         let thisEmail = userObj[key]['email'].toLowerCase();
-//         userByEmail[thisEmail] = userObj[key];
-//       }
-
-//       members.forEach(invitee => {
-//         let thisInvitee = invitee.email.toLowerCase();
-//         if (thisInvitee in userByEmail) {
-//           membersToTrack.push(invitee);
-//         }
-//       });
-//     });
-//   return membersToTrack;
-// };
 
 export const trackMembersStart = (members, newRegion) => async dispatch => {
   try {
-    // let members = await checkMembersInDB(unfMembers);
-
     const userLocationsDB = database.ref(`/Devices/`);
     members.forEach(async member => {
       await userLocationsDB
         .orderByChild('email')
         .equalTo(member.email.toLowerCase())
         .on('value', snapshot => {
+          //first we check to see if user has registered; if not we return nothing
+          if (snapshot.val() === null || undefined) return;
           let thisMember = Object.values(snapshot.val())[0];
           let memberDistance = distance(
             thisMember.coords.latitude,
@@ -294,7 +268,6 @@ export const trackMembersStart = (members, newRegion) => async dispatch => {
 
 export const trackMembersStop = members => async dispatch => {
   try {
-    // let members = await checkMembersInDB(unfMembers);
     const userLocationsDB = database.ref(`/Devices/`);
 
     members.forEach(async member => {

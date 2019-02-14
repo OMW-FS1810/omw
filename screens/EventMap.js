@@ -395,10 +395,10 @@ class EventMap extends React.Component {
                     animateToMapPosition={this.animateToMapPosition}
                   />
                   <TouchableOpacity key={Math.random() * 100}>
-                    <View style={styles.card} opacity=".0" />
+                    <View style={styles.card} opacity={0.0} />
                   </TouchableOpacity>
                   <TouchableOpacity key={Math.random() * 100}>
-                    <View style={styles.card} opacity=".0" />
+                    <View style={styles.card} opacity={0.0} />
                   </TouchableOpacity>
                 </>
               ) : (
@@ -411,7 +411,7 @@ class EventMap extends React.Component {
                   />
                   {/* the following is a blank card to fix scrolling issues */}
                   <TouchableOpacity key={Math.random() * 100}>
-                    <View style={styles.card} opacity=".0" />
+                    <View style={styles.card} opacity={0.0} />
                   </TouchableOpacity>
                 </>
               )}
