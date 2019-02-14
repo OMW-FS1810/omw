@@ -46,6 +46,7 @@ export const sendInvites = async (
           emailInvites.push(invitee);
         }
       });
+      console.log(emailInvites, 'message', messageInvites);
       if (isUpdate) {
         messageInvites.forEach(token => {
           if (token)
@@ -80,7 +81,7 @@ export const sendInvites = async (
         //send emails
 
         if (emailInvites.length > 0) {
-          await composeMail(messageInvites, eventDetails, host.email);
+          await composeMail(emailInvites, eventDetails, host.email);
         }
       }
     });
