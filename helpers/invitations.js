@@ -46,7 +46,6 @@ export const sendInvites = async (
           emailInvites.push(invitee);
         }
       });
-      console.log(emailInvites, 'message', messageInvites);
       if (isUpdate) {
         messageInvites.forEach(token => {
           if (token)
